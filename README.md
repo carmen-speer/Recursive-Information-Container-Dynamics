@@ -11,13 +11,24 @@ framework (Parts 6, 7, 8, and 10.5b specifically) against U.S. higher-education
 data; the manuscript itself is domain-independent and covers considerably more
 than the tracker uses.
 
+**The original source documents RICD was built from live in
+[`source-documents/`](source-documents/):** the quartet of poems, the
+Pentagonal Theorem of the Mathematical Nature of Evil, and Shaking Bowls —
+Carmen Speer's own original creative and theoretical writing, which became
+FDFM and RICS respectively, then nested into RICS-FDFM, then RICD, before
+107 further revisions arrived at the manuscript above. See that folder's own
+README for the full lineage and what is independently verified versus
+reported on Carmen's own account.
+
 **The narrative, findings, and process record of how this tracker was built
 live in [`reports/`](reports/):** the findings document, the narrative account
 of how each result was actually reached, the consolidated process log, a
 separate analysis of what the results imply about the U.S. higher-education
 sector as a whole, a record of Carmen Speer's role in building the framework
-and the tracker, a roadmap for planned future trackers in other domains, and
-a seed note for a genuinely different kind of tracker planned for later: an
+and the tracker, a roadmap for planned future trackers in other domains, an
+instructional manual for engineers working with the RICD adapter contract
+directly, and a seed note for a genuinely different kind of tracker planned
+for later: an
 **actor tracker**, which would investigate the specific real decisions and
 actors behind a collapse (board minutes, depositions, investigative
 findings), rather than the aggregate financial and enrollment effects this
@@ -139,6 +150,11 @@ data/
   panel/panel.json           The real, validated 54-institution panel
 manuscript/
   RICD_10_7_manuscript.pdf    The full, domain-independent RICD theory
+source-documents/
+  Quartet_of_poems.pdf                                            Original poems
+  The_Pentagonal_Theorem_of_the_Mathematical_Nature_of_Evil_-2.pdf  Became FDFM
+  Shaking_Bowls_Thought_Experiment-1.pdf                            Became RICS
+  README.md                                                          Full lineage
 reports/
   RICD_Tracker_Findings.docx        Final findings document
   RICD_Tracker_Narrative.docx       Narrative account of how results were reached
@@ -147,6 +163,7 @@ reports/
   Carmens_Role.docx                  Carmen Speer's role in building RICD and the tracker
   Future_Trackers_Roadmap.docx       Planned future trackers in other domains
   Actor_Tracker_Seed_Note.docx       Seed note for a mechanism-layer (actor) tracker, planned for later
+  RICD_Adapter_Instructional_Manual.docx   Adapter-contract implementation guide, for engineers
 results/
   latest_scores.json         Most recent scoring run (populated by the scheduled workflow)
 docs/
