@@ -1,0 +1,57 @@
+name: Re-score panel and check for new data
+
+# IPEDS is not live data -- it releases on a fixed institutional
+# schedule (provisional data a few times a year, final data
+# annually). Running weekly is cheap and just means most runs find
+# nothing new, which is the expected, normal outcome, not a failure.
+on:
+  schedule:
+    - cron: "0 13 * * 1"  # Every Monday, 13:00 UTC
+  workflow_dispatch: {}     # Allows a manual run from the Actions tab too
+
+jobs:
+  rescore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Verify the validation panel still reproduces the validated result
+        run: |
+          cd src
+          python -c "
+          from classifier import RICDClassifier, load_panel
+          panel = load_panel('../data/panel/panel.json')
+          clf = RICDClassifier()
+          acc, misclassified = clf.leave_one_out_accuracy(panel)
+          print(f'Accuracy: {acc:.2%}')
+          print(f'Misclassified: {misclassified}')
+          if acc < 0.95:
+              raise SystemExit('Validation accuracy regressed below 95% -- investigate before proceeding.')
+          "
+
+      # Real re-scoring of any live-tracked institutions runs here once
+      # score_institution.py's live-data trajectory-fitting step is
+      # complete (see README's Known Gaps). Left as an explicit,
+      # visible placeholder rather than silently skipped, so the gap
+      # stays honest in the workflow itself, not just in prose.
+      - name: Re-score live-tracked institutions (pending full implementation)
+        run: |
+          echo "score_institution.py's end-to-end live pipeline is not yet complete."
+          echo "See README.md's 'Known Gaps' section. This step is a real,"
+          echo "visible placeholder, not a silent skip."
+        continue-on-error: true
+
+      - name: Commit updated results, if any
+        run: |
+          git config user.name "ricd-tracker-bot"
+          git config user.email "actions@github.com"
+          git add results/ || true
+          git diff --quiet && git diff --staged --quiet || git commit -m "Automated re-score run"
+          git push || echo "Nothing to push"
