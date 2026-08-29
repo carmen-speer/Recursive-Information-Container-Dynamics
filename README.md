@@ -16,7 +16,14 @@ live in [`reports/`](reports/):** the findings document, the narrative account
 of how each result was actually reached, the consolidated process log, a
 separate analysis of what the results imply about the U.S. higher-education
 sector as a whole, a record of Carmen Speer's role in building the framework
-and the tracker, and a roadmap for planned future trackers in other domains.
+and the tracker, a roadmap for planned future trackers in other domains, and
+a seed note for a genuinely different kind of tracker planned for later: an
+**actor tracker**, which would investigate the specific real decisions and
+actors behind a collapse (board minutes, depositions, investigative
+findings), rather than the aggregate financial and enrollment effects this
+higher-ed tracker measures. The two are complementary, not competing —
+see the seed note itself for why an actor tracker needs a different kind of
+evidence entirely, and why it wasn't attempted here.
 
 ## What this is
 
@@ -139,6 +146,7 @@ reports/
   Higher_Ed_Sector_Findings.docx    What the results imply about the sector
   Carmens_Role.docx                  Carmen Speer's role in building RICD and the tracker
   Future_Trackers_Roadmap.docx       Planned future trackers in other domains
+  Actor_Tracker_Seed_Note.docx       Seed note for a mechanism-layer (actor) tracker, planned for later
 results/
   latest_scores.json         Most recent scoring run (populated by the scheduled workflow)
 docs/
