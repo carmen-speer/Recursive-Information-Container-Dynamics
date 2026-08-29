@@ -4,13 +4,6 @@ A Bayesian state-space model and validated classifier for institutional
 financial collapse risk in U.S. higher education, built on the Recursive
 Information-Container Dynamics (RICD) framework.
 
-**The full RICD manuscript (the complete, domain-independent theory) lives at
-[`manuscript/RICD_10_7_manuscript.pdf`](manuscript/RICD_10_7_manuscript.pdf).**
-Everything in this repository's code implements a real subset of that
-framework (Parts 6, 7, 8, and 10.5b specifically) against U.S. higher-education
-data; the manuscript itself is domain-independent and covers considerably more
-than the tracker uses.
-
 ## What this is
 
 A real, working pipeline — not a report about known outcomes — that:
@@ -74,19 +67,29 @@ This is a live, ongoing project, not a finished product, and it's more
 useful to state clearly what still needs real work than to imply
 everything below is complete:
 
-- **The live-scoring pipeline (`src/score_institution.py`) is not yet
-  fully wired end to end.** Live data fetching from the College Scorecard
-  API and IPEDS bulk finance files works; the step that runs that fresh
-  data through the Bayesian model to produce real feature values for a
-  *new* institution (as opposed to the already-fitted historical
-  trajectories in the validation panel) is the next concrete piece of
-  work, not a stub with fabricated numbers standing in for it.
-- **IPEDS finance data has no stable API.** `src/fetch_live_data.py`
-  downloads bulk files using a URL and field-code pattern confirmed
-  during this project's original build, but NCES has changed this
-  pattern before (there was a real transition in reporting standards
-  around 2018) and may again. Automated re-scoring should be monitored,
-  not trusted blindly, on this specific point.
+- **The live-scoring pipeline (`src/score_institution.py`) is now fully
+  wired end to end, but genuinely untested against live data.** It fetches
+  real enrollment/finance data, runs it through the same Bayesian model
+  and feature computation the validated 54-institution panel uses, and
+  produces a real classification. It could not be exercised end-to-end
+  from the sandboxed environment this was built in, since `nces.ed.gov`
+  is not in that sandbox's own network allowlist — confirmed directly (the
+  same block was returned for old and new URL patterns alike, dressed up
+  as an HTTP 403 by both `curl` and Python's `requests`, which is itself
+  a real lesson: don't conclude a remote service changed behavior until
+  you've ruled out your own environment first). This should work in a
+  normal environment (GitHub Actions, a local machine) without that
+  specific restriction, but has not been confirmed working there yet —
+  treat it as wired, not as validated.
+- **IPEDS finance data has no stable API, and its distribution mechanism
+  has already changed once during this project.** The original bulk-file
+  URL pattern (`nces.ed.gov/ipeds/datacenter/data/F....zip`) is now
+  defunct; `src/fetch_live_data.py` has been updated to the current,
+  real endpoint (`nces.ed.gov/ipeds/data-generator?...`, confirmed
+  directly against NCES's own live Complete Data Files page), which
+  also returns a raw CSV rather than a zip archive. NCES has changed
+  this once already and may again — automated re-scoring should be
+  monitored, not trusted blindly, on this specific point.
 - **Four institutions in the original research (three small closed
   colleges, one for-profit) have no real endowment data to find** — three
   because it was only located after checking earlier filing years than

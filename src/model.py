@@ -18,7 +18,7 @@ import numpy as np
 import pymc as pm
 import pytensor.tensor as pt
 
-from ricd_bssm_highered.jump_diffusion import build_shock_type_latent, compute_spike_deterministic
+from jump_diffusion import build_shock_type_latent, compute_spike_deterministic
 
 
 def build_model(obs_Oo, obs_Op, obs_types_Oo, obs_types_Op, dt=1.0):
