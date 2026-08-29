@@ -161,8 +161,8 @@ source-documents/
   intermediate-development/
     Feedback_Divergence_Field_Model...justice_system....docx          Early FDFM justice-tracker proposal
     RICS_FDFM_Multiscale_Information_Geometric_Model.pdf               Expanded nested RICS-FDFM
-    RICD_5_0.docx, RICD_5_3.pdf, RICD_5_4.pdf,                         Five earlier RICD versions
-    RICD_5_5.docx, RICD_5_6.pdf
+    RICD_5_0.docx, RICD_5_3.pdf, RICD_5_4.pdf,                         Six earlier RICD versions
+    RICD_5_5.docx, RICD_5_6.pdf, RICD_1_2_or_1_3_early_version.pdf
 reports/
   RICD_Tracker_Findings.docx        Final findings document
   RICD_Tracker_Narrative.docx       Narrative account of how results were reached

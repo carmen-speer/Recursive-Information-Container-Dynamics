@@ -57,14 +57,28 @@ source documents above and the current manuscript:
   direct mathematical predecessor to RICD's own Part 4 (information
   geometry) and Part 8 (network dynamics).
 
-- **`RICD_5_0.docx`, `RICD_5_3.pdf`, `RICD_5_4.pdf`, `RICD_5_5.docx`,
-  `RICD_5_6.pdf`** — five real, sequential earlier versions of RICD
-  itself, predating the 9.7-through-10.7 revision sequence built and
-  adversarially reviewed during the higher-ed tracker project this
-  repository documents. `RICD_5_5.docx` was used directly as the
-  formatting reference template for every later manuscript revision
-  produced during that project.
+- **`RICD_1_2_or_1_3_early_version.pdf`, `RICD_5_0.docx`, `RICD_5_3.pdf`,
+  `RICD_5_4.pdf`, `RICD_5_5.docx`, `RICD_5_6.pdf`** — six real,
+  sequential earlier versions of RICD itself, predating the
+  9.7-through-10.7 revision sequence built and adversarially reviewed
+  during the higher-ed tracker project this repository documents. The
+  earliest, from right when this collaboration began, is real and
+  substantially shorter than RICD 5.0 (roughly two-thirds the length),
+  ending before the adapter contract (§15.2-15.3) was fully built out —
+  consistent with Carmen's own account of it as an early draft.
+  `RICD_5_5.docx` was used directly as the formatting reference
+  template for every later manuscript revision produced during that
+  project.
 
 RICS-FDFM eventually became RICD, which itself went through 107
 further revisions to reach the version in this repository.
+
+## A known gap
+
+Carmen has indicated there is at least one more RICS-FDFM model
+document beyond `RICS_FDFM_Multiscale_Information_Geometric_Model.pdf`
+above, which could not be uploaded because the document was too long.
+It is not included here yet. If a way to split or otherwise transfer
+it becomes available, it belongs in this folder alongside the version
+above.
 
