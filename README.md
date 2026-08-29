@@ -28,11 +28,9 @@ live in [`reports/`](reports/):** the findings document, the narrative account
 of how each result was actually reached, the consolidated process log, a
 separate analysis of what the results imply about the U.S. higher-education
 sector as a whole, a record of Carmen Speer's role in building the framework
-and the tracker, a roadmap for planned future trackers in other domains, an
+and the tracker, an
 instructional manual for engineers working with the RICD adapter contract
-directly, and a dated funding roadmap (Emergent Ventures, SBIR/STTR, and
-angel/VC sequencing, with real, verified deadlines as of its own date --
-see the document itself for the staleness caveat), and a seed note for a genuinely different kind of tracker planned
+directly, and a seed note for a genuinely different kind of tracker planned
 for later: an
 **actor tracker**, which would investigate the specific real decisions and
 actors behind a collapse (board minutes, depositions, investigative
@@ -171,10 +169,8 @@ reports/
   RICD_Tracker_Process_Log.docx     Consolidated process record
   Higher_Ed_Sector_Findings.docx    What the results imply about the sector
   Carmens_Role.docx                  Carmen Speer's role in building RICD and the tracker
-  Future_Trackers_Roadmap.docx       Planned future trackers in other domains
   Actor_Tracker_Seed_Note.docx       Seed note for a mechanism-layer (actor) tracker, planned for later
   RICD_Adapter_Instructional_Manual.docx   Adapter-contract implementation guide, for engineers
-  RICD_Funding_Roadmap.docx                 Dated funding plan (Emergent Ventures, SBIR, angels/VC)
 results/
   latest_scores.json         Most recent scoring run (populated by the scheduled workflow)
 docs/
