@@ -30,7 +30,7 @@
   </div>
 
   <div class="scope-note" style="border-left-color:#555; background:#eef2f5;">
-    Full theoretical framework: <a href="../manuscript/RICD_10_7_manuscript.pdf"><strong>Recursive Information-Container Dynamics — full manuscript (PDF)</strong></a>.
+    Full theoretical framework: <a href="manuscript/RICD_10_7_manuscript.pdf"><strong>Recursive Information-Container Dynamics — full manuscript (PDF)</strong></a>.
     The tracker above implements a real subset of this framework (Parts 6, 7, 8, and 10.5b)
     against U.S. higher-education data; the manuscript covers the complete, domain-independent theory.
   </div>
@@ -57,7 +57,7 @@ let sortKey = 'name';
 let sortAsc = true;
 
 async function loadPanel() {
-  const resp = await fetch('../data/panel/panel.json');
+  const resp = await fetch('data/panel.json');
   panelData = await resp.json();
   renderMetrics();
   renderTable();
