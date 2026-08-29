@@ -16,9 +16,12 @@ than the tracker uses.
 Pentagonal Theorem of the Mathematical Nature of Evil, and Shaking Bowls —
 Carmen Speer's own original creative and theoretical writing, which became
 FDFM and RICS respectively, then nested into RICS-FDFM, then RICD, before
-107 further revisions arrived at the manuscript above. See that folder's own
-README for the full lineage and what is independently verified versus
-reported on Carmen's own account.
+107 further revisions arrived at the manuscript above. The folder's
+`intermediate-development/` subfolder holds real, surviving milestones from
+that path: an early FDFM application proposing a justice-system tracker
+(directly cited by RICD 5.0's own editorial notes, not a lost document), the
+expanded RICS-FDFM formalization, and five earlier RICD versions (5.0
+through 5.6). See that folder's own README for the full lineage.
 
 **The narrative, findings, and process record of how this tracker was built
 live in [`reports/`](reports/):** the findings document, the narrative account
@@ -155,6 +158,11 @@ source-documents/
   The_Pentagonal_Theorem_of_the_Mathematical_Nature_of_Evil_-2.pdf  Became FDFM
   Shaking_Bowls_Thought_Experiment-1.pdf                            Became RICS
   README.md                                                          Full lineage
+  intermediate-development/
+    Feedback_Divergence_Field_Model...justice_system....docx          Early FDFM justice-tracker proposal
+    RICS_FDFM_Multiscale_Information_Geometric_Model.pdf               Expanded nested RICS-FDFM
+    RICD_5_0.docx, RICD_5_3.pdf, RICD_5_4.pdf,                         Five earlier RICD versions
+    RICD_5_5.docx, RICD_5_6.pdf
 reports/
   RICD_Tracker_Findings.docx        Final findings document
   RICD_Tracker_Narrative.docx       Narrative account of how results were reached

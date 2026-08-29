@@ -1,49 +1,70 @@
 # Source Documents
 
-These three documents are the original, independently-authored source
-material RICD was built from, before any of it was formalized with AI
-assistance. All three are Carmen Speer's own original creative and
-theoretical writing.
+These documents are the original and intermediate material RICD was
+built from, before it reached the version in
+[`manuscript/RICD_10_7_manuscript.pdf`](../manuscript/RICD_10_7_manuscript.pdf).
+All original creative and theoretical writing here is Carmen Speer's
+own, predating any AI-assisted formalization.
 
 ## The lineage
 
-1. **`Quartet_of_poems.pdf`** — a set of four original poems. Carmen
-   first noticed a set of recurring mathematical patterns in how she
-   was structuring this work here, before any formal theory existed.
+1. **`Quartet_of_poems.pdf`** — four original poems. Carmen first
+   noticed a set of recurring mathematical patterns in how she was
+   structuring this work here, before any formal theory existed.
 
 2. **`The_Pentagonal_Theorem_of_the_Mathematical_Nature_of_Evil_-2.pdf`**
-   — an original theoretical document, written by Carmen alone, growing
-   directly out of the patterns noticed in the poems. Working with
-   ChatGPT, this became **Feedback Divergence Field Mechanics (FDFM)**.
+   — an original theoretical document, written by Carmen alone,
+   growing directly out of the patterns noticed in the poems. Working
+   with ChatGPT, this became **Feedback Divergence Field Mechanics
+   (FDFM)**.
 
 3. **`Shaking_Bowls_Thought_Experiment-1.pdf`** — a second original
    thought experiment, also written by Carmen alone. Working with
    ChatGPT, this became **RICS**.
 
 FDFM and RICS were then combined into a single, nested framework,
-**RICS-FDFM**. According to Carmen's own account, dozens of further
-iterations of FDFM, RICS, and RICS-FDFM followed before the framework
-took the form it has today. One early iteration of FDFM specifically
-was used to build a proposed Bayesian state-space tracker for the
-U.S. federal justice system — a real, substantial application distinct
-from the higher-education tracker this repository documents.
+**RICS-FDFM**. Dozens of further iterations of FDFM, RICS, and
+RICS-FDFM followed. This lineage is not only reported on Carmen's own
+account — it is directly, textually confirmed by the manuscript's own
+editorial history: RICD version 5.0's own editorial note explicitly
+cites "a companion document (a Feedback Divergence Field Model
+application to the U.S. justice system)" as having "already worked
+out concrete, computable forms" informing that revision.
 
-RICS-FDFM eventually became **RICD** (Recursive Information-Container
-Dynamics), the framework this repository's manuscript and tracker are
-built on. From that point, RICD itself went through 107 further
-revisions before reaching the version in this repository,
-[`manuscript/RICD_10_7_manuscript.pdf`](../manuscript/RICD_10_7_manuscript.pdf).
+## `intermediate-development/`
 
-## A note on independent verification
+The real, surviving intermediate milestones between the original
+source documents above and the current manuscript:
 
-Part of this lineage is independently verified against an actual
-session transcript from this collaboration, not reported on Carmen's
-word alone: a real exchange in which Carmen uploaded the Pentagonal
-Theorem and the Quartet of Poems, leading to a genuine, found
-inconsistency between two of RICD's own formulas (S(t) and I(t)); and
-a separate real exchange in which Carmen is recorded directly
-correcting a formal RICD definition using Shaking Bowls' own
-vocabulary (distinguishing an operational layer that is "buried" from
-one that is genuinely "captive"). See
-[`reports/Carmens_Role.docx`](../reports/Carmens_Role.docx) for the
-fuller, sourced account of how this framework was actually built.
+- **`Feedback_Divergence_Field_Model...justice_system_application_and_research_proposal.docx`**
+  — an early, substantial application of FDFM: a proposed Bayesian
+  state-space tracker for the U.S. federal justice system, including a
+  full empirical model, a proposed data schema, and cited real data
+  sources (Bureau of Justice Statistics, Pew Research). This is the
+  document RICD 5.0 itself cites as already having informed its own
+  development. Real and substantial, not a lost or abandoned draft —
+  a real future project, not yet rebuilt (see
+  `reports/Future_Trackers_Roadmap.docx`).
+
+- **`RICS_FDFM_Multiscale_Information_Geometric_Model.pdf`** — the
+  "Expanded Mathematical Edition" of nested RICS-FDFM (dated July
+  2026), formalizing the framework as a recursive, multiscale,
+  information-geometric stochastic hybrid system: Jensen-Shannon and
+  Fisher-Rao geometry on the probability simplex in place of
+  Euclidean signal mismatch, adaptive network topology with edge
+  birth/death and coalition formation, explicit Volterra memory
+  kernels, and a full generator and stability analysis. This is the
+  direct mathematical predecessor to RICD's own Part 4 (information
+  geometry) and Part 8 (network dynamics).
+
+- **`RICD_5_0.docx`, `RICD_5_3.pdf`, `RICD_5_4.pdf`, `RICD_5_5.docx`,
+  `RICD_5_6.pdf`** — five real, sequential earlier versions of RICD
+  itself, predating the 9.7-through-10.7 revision sequence built and
+  adversarially reviewed during the higher-ed tracker project this
+  repository documents. `RICD_5_5.docx` was used directly as the
+  formatting reference template for every later manuscript revision
+  produced during that project.
+
+RICS-FDFM eventually became RICD, which itself went through 107
+further revisions to reach the version in this repository.
+
