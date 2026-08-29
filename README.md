@@ -4,6 +4,13 @@ A Bayesian state-space model and validated classifier for institutional
 financial collapse risk in U.S. higher education, built on the Recursive
 Information-Container Dynamics (RICD) framework.
 
+**The full RICD manuscript (the complete, domain-independent theory) lives at
+[`manuscript/RICD_10_7_manuscript.pdf`](manuscript/RICD_10_7_manuscript.pdf).**
+Everything in this repository's code implements a real subset of that
+framework (Parts 6, 7, 8, and 10.5b specifically) against U.S. higher-education
+data; the manuscript itself is domain-independent and covers considerably more
+than the tracker uses.
+
 ## What this is
 
 A real, working pipeline — not a report about known outcomes — that:
