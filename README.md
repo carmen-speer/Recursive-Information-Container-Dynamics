@@ -4,6 +4,20 @@ A Bayesian state-space model and validated classifier for institutional
 financial collapse risk in U.S. higher education, built on the Recursive
 Information-Container Dynamics (RICD) framework.
 
+**The full RICD manuscript (the complete, domain-independent theory) lives at
+[`manuscript/RICD_10_7_manuscript.pdf`](manuscript/RICD_10_7_manuscript.pdf).**
+Everything in this repository's code implements a real subset of that
+framework (Parts 6, 7, 8, and 10.5b specifically) against U.S. higher-education
+data; the manuscript itself is domain-independent and covers considerably more
+than the tracker uses.
+
+**The narrative, findings, and process record of how this tracker was built
+live in [`reports/`](reports/):** the findings document, the narrative account
+of how each result was actually reached, the consolidated process log, a
+separate analysis of what the results imply about the U.S. higher-education
+sector as a whole, a record of Carmen Speer's role in building the framework
+and the tracker, and a roadmap for planned future trackers in other domains.
+
 ## What this is
 
 A real, working pipeline — not a report about known outcomes — that:
@@ -116,6 +130,15 @@ src/
   score_institution.py       End-to-end scoring entry point (see Known Gaps)
 data/
   panel/panel.json           The real, validated 54-institution panel
+manuscript/
+  RICD_10_7_manuscript.pdf    The full, domain-independent RICD theory
+reports/
+  RICD_Tracker_Findings.docx        Final findings document
+  RICD_Tracker_Narrative.docx       Narrative account of how results were reached
+  RICD_Tracker_Process_Log.docx     Consolidated process record
+  Higher_Ed_Sector_Findings.docx    What the results imply about the sector
+  Carmens_Role.docx                  Carmen Speer's role in building RICD and the tracker
+  Future_Trackers_Roadmap.docx       Planned future trackers in other domains
 results/
   latest_scores.json         Most recent scoring run (populated by the scheduled workflow)
 docs/
