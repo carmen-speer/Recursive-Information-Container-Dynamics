@@ -36,16 +36,30 @@ jobs:
               raise SystemExit('Validation accuracy regressed below 95% -- investigate before proceeding.')
           "
 
-      # Real re-scoring of any live-tracked institutions runs here once
-      # score_institution.py's live-data trajectory-fitting step is
-      # complete (see README's Known Gaps). Left as an explicit,
-      # visible placeholder rather than silently skipped, so the gap
-      # stays honest in the workflow itself, not just in prose.
-      - name: Re-score live-tracked institutions (pending full implementation)
+      # Real, first end-to-end test of the live pipeline against one
+      # real, chosen institution -- University of Michigan-Ann Arbor
+      # (UNITID 170976), picked specifically for being large, stable,
+      # public, and unlikely to have missing-data edge cases, so a
+      # failure here is informative about the pipeline itself rather
+      # than about a hard institution. This never ran from the
+      # sandboxed environment the pipeline was originally built in,
+      # since that sandbox could not reach nces.ed.gov at all --
+      # GitHub Actions' own runners are not under that restriction,
+      # so this is the actual first real test of whether the live
+      # pipeline works, not a repeat of an already-known result.
+      # Requires the COLLEGE_SCORECARD_API_KEY repository secret to
+      # be set (Settings -> Secrets and variables -> Actions -> New
+      # repository secret) -- get a free key at
+      # https://api.data.gov/signup/. Runs with continue-on-error so
+      # a failure here is visible in the Actions log without blocking
+      # the panel-validation step above, since this is explicitly a
+      # test of new, unverified code, not the already-proven pipeline.
+      - name: Test live pipeline against one real institution (University of Michigan-Ann Arbor)
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
         run: |
-          echo "score_institution.py's end-to-end live pipeline is not yet complete."
-          echo "See README.md's 'Known Gaps' section. This step is a real,"
-          echo "visible placeholder, not a silent skip."
+          cd src
+          python score_institution.py 170976 University of Michigan-Ann Arbor --sector public
         continue-on-error: true
 
       - name: Commit updated results, if any
