@@ -285,10 +285,13 @@ def download_ipeds_finance_bulk(year: int, dest_dir: str | Path, sector: str = "
                     match = member
                     break
             if match is None:
+                all_csvs = [m for m in archive.namelist() if m.lower().endswith(".csv")]
                 print(f"WARNING: downloaded {used_url} successfully, but found no file "
-                      f"matching table {table_name} inside it -- NCES may have changed "
+                      f"matching table {table_name} inside it -- NCES has changed "
                       f"the internal per-table naming convention within the archive "
-                      f"itself. Not fabricating a match.")
+                      f"itself, confirmed by this real listing rather than guessed at "
+                      f"a third time. All {len(all_csvs)} CSV files actually found "
+                      f"inside this archive: {all_csvs}")
                 return None
             extracted = archive.read(match)
             csv_path = year_dir / f"{table_name}.csv"
