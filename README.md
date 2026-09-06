@@ -39,51 +39,94 @@ Known gaps — stated honestly, not smoothed over
 This is a live, ongoing project, not a finished product, and it’s more useful to state clearly what still needs real work than to imply everything below is complete:
 
 The live-scoring pipeline (src/score_institution.py) is now fully wired end to end, but genuinely untested against live data. It fetches real enrollment/finance data, runs it through the same Bayesian model and feature computation the validated 54-institution panel uses, and produces a real classification. It could not be exercised end-to-end from the sandboxed environment this was built in, since nces.ed.gov is not in that sandbox’s own network allowlist — confirmed directly (the same block was returned for old and new URL patterns alike, dressed up as an HTTP 403 by both curl and Python’s requests, which is itself a real lesson: don’t conclude a remote service changed behavior until you’ve ruled out your own environment first). This should work in a normal environment (GitHub Actions, a local machine) without that specific restriction, but has not been confirmed working there yet — treat it as wired, not as validated.
+
 IPEDS finance data has no stable API, and its distribution mechanism has already changed once during this project. The original bulk-file URL pattern (nces.ed.gov/ipeds/datacenter/data/F....zip) is now defunct; src/fetch_live_data.py has been updated to the current, real endpoint (nces.ed.gov/ipeds/data-generator?..., confirmed directly against NCES’s own live Complete Data Files page), which also returns a raw CSV rather than a zip archive. NCES has changed this once already and may again — automated re-scoring should be monitored, not trusted blindly, on this specific point.
 
 Four institutions in the original research (three small closed colleges, one for-profit) have no real endowment data to find — three because it was only located after checking earlier filing years than initially tried, one (a for-profit) because for-profit institutions do not report an endowment field at all, a genuine structural fact rather than a gap.
+
 The harder half of the coupling machinery (asymmetric, predatory resource extraction between containers, as opposed to a clean merger or a mutual-benefit arrangement) has one real, worked instance (documented in the manuscript) but has not been validated against a full retrospective panel fit — the subordinate institution’s own chaotic collapse left no single clean container to test against.
 
 Repository structure
+
 src/
   model.py               Bayesian state-space model (PyMC)
-  jump_diffusion.py       Shock-type latent process for debt
-  common_cause.py         Shared-external-shock detector
-  real_adapter.py          Real IPEDS/Scorecard data loading (historical, local files)
-  fetch_live_data.py       Live data fetching (College Scorecard API + IPEDS bulk files)
-  classifier.py             The 8-feature + governance-override classifier
-  score_institution.py       End-to-end scoring entry point (see Known Gaps)
+  jump_diffusion.py       
+  
+  Shock-type latent process for debt
+  common_cause.py         
+  
+  Shared-external-shock detector
+  real_adapter.py          
+  
+  Real IPEDS/Scorecard data loading (historical, local files)
+  fetch_live_data.py       
+  
+  Live data fetching (College Scorecard API + IPEDS bulk files)
+  classifier.py             
+  
+  The 8-feature + governance-override classifier
+  score_institution.py       
+  
+  End-to-end scoring entry point (see Known Gaps)
 data/
-  panel/panel.json           The real, validated 54-institution panel
+  panel/panel.json           
+  
+  The real, validated 54-institution panel
 manuscript/
-  RICD_12_7_manuscript.pdf    The full, domain-independent RICD theory
+  RICD_12_7_manuscript.pdf    
+  
+  The full, domain-independent RICD theory
 source-documents/
-  Quartet_of_poems.pdf                                            Original poems
+  
+  
+  Quartet_of_poems.pdf                                            
+  
+  Original poems
+ 
   The_Pentagonal_Theorem_of_the_Mathematical_Nature_of_Evil_-2.pdf  Became FDFM
+  
   Shaking_Bowls_Thought_Experiment-1.pdf                            Became RICS
+  
   README.md                                                          Full lineage
   intermediate-development/
+    
     Feedback_Divergence_Field_Model...justice_system....docx          Early FDFM justice-tracker proposal
+   
     RICS_FDFM_Multiscale_Information_Geometric_Model.pdf               Expanded nested RICS-FDFM
+    
     RICD_5_0.docx, RICD_5_3.pdf, RICD_5_4.pdf,                         Six earlier RICD versions
+   
     RICD_5_5.docx, RICD_5_6.pdf, RICD_1_2_or_1_3_early_version.pdf
 reports/
+  
   RICD_Tracker_Findings.docx        Final findings document
+ 
   RICD_Tracker_Narrative.docx       Narrative account of how results were reached
+ 
   RICD_Tracker_Process_Log.docx     Consolidated process record
+  
   Higher_Ed_Sector_Findings.docx    What the results imply about the sector
+  
   Carmens_Role.docx                  Carmen Speer's role in building RICD and the tracker
+  
   Actor_Tracker_Seed_Note.docx       Seed note for a mechanism-layer (actor) tracker, planned for later
+  
   RICD_Adapter_Instructional_Manual.docx   Adapter-contract implementation guide, for engineers
+  
   RICD_Integration_Manifest_Complete.docx  Every mechanism confirmed built into RICD, with the manuscript text shown for each
+  
   Source_Translation_Ledger.docx           The four source poems set directly alongside RICD's own mathematics, line by line
 results/
+ 
   latest_scores.json         Most recent scoring run (populated by the scheduled workflow)
 docs/
+ 
   index.html                 Simple public results dashboard (GitHub Pages)
 .github/workflows/
+ 
   rescore.yml                 Scheduled re-scoring workflow
   
 Re-scoring cadence
 
-IPEDS is not live data — it releases on a fixed institutional schedule (provisional data a few times a year, final data annually). The scheduled workflow in .github/workflows/rescore.yml runs periodically and checks for new data rather than assuming a fixed release date; a run that finds nothing new is a normal, expected outcome, not a failure.
+IPEDS is not live data — it releases on a fixed institutional schedule (provisional data a few times a year, final data annually). 
+The scheduled workflow in .github/workflows/rescore.yml runs periodically and checks for new data rather than assuming a fixed release date; a run that finds nothing new is a normal, expected outcome, not a failure.
