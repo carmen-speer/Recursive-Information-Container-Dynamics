@@ -197,101 +197,95 @@ def parse_live_finance(unitid: str, window_years: list[str], dest_base: str | Pa
 
 def download_ipeds_finance_bulk(year: int, dest_dir: str | Path, sector: str = "private") -> Path | None:
     """
-    Attempts a real download of the bulk IPEDS finance file for the
-    given fiscal year. This is now the THIRD distribution mechanism
-    this project has had to follow -- confirmed directly against
-    NCES's own live "IPEDS Access Databases" page as of this revision.
-    An earlier static .zip URL pattern went defunct; the "data-generator"
-    per-table CSV endpoint that replaced it also went defunct (confirmed
-    by every single year returning a 404 in the first real, live-network
-    test this pipeline ever ran, via GitHub Actions). NCES currently
-    packages an entire academic year's full set of survey components
-    together in one large zip archive, rather than serving individual
-    tables directly.
+    Attempts a real download of the single-table finance CSV for the
+    given fiscal year, using the real, live "data-generator" endpoint
+    -- confirmed directly against a real, currently-live download link
+    on NCES's own Complete Data Files page (not the "Access Databases"
+    page a previous revision of this function mistakenly used, which
+    serves a full-year .accdb Microsoft Access database plus
+    documentation, not per-table CSVs at all -- a real category error
+    caught by that revision's own diagnostic output, which found zero
+    .csv files of any name inside those archives).
 
-    Returns the local path (dest_dir/<year>/) on success, containing a
-    CSV file matching the requested table, or None if the download or
-    extraction genuinely fails (a real, honest failure, not a silent
-    one -- callers should check for None and alert rather than assume
-    success). The output CONTRACT to parse_live_finance is unchanged
-    from the previous version -- a year-specific directory containing
-    exactly one relevant CSV file -- so parse_live_finance itself did
-    not need to change, only how that directory gets populated.
+    Two real corrections from the version of this endpoint tried
+    earlier in this project's history (which returned a 404 for every
+    single year, confirmed via GitHub Actions):
 
-    Honest testing note, again: this could not be exercised end-to-end
-    from within the sandboxed environment this project was built in,
-    or from either sandboxed environment this fix and its predecessor
-    were written in, since nces.ed.gov is not in any of their network
-    allowlists. This should not block real use in a normal environment
-    (GitHub Actions, a local machine) without that specific restriction,
-    but has not been fully verified working there yet -- two real fixes
-    in, the URL pattern is now confirmed correct (all eleven years
-    downloaded successfully), but the internal archive structure is
-    still not understood: the first diagnostic pass found zero .csv
-    files inside the archive at all, meaning the assumption of flat
-    CSV files directly inside the zip may itself be wrong.
+    1. The URL requires an additional cache-busting/session parameter,
+       "t=", alongside year/tableName/HasRV/type -- present on every
+       real download link on NCES's own live page, absent from the
+       version that returned 404s. This project cannot confirm from a
+       sandboxed environment whether the exact value is validated
+       server-side or merely expected to be present in some form, so
+       a plausible current-time-based value is generated per request
+       rather than hardcoded.
+    2. The "year" query parameter refers to the LATER year of the
+       academic-year pair, not the earlier one this project's own
+       "year" variable names its fiscal-year window by: a real,
+       confirmed example on NCES's live page pairs year=2024 with
+       tableName=F2324_F1A (fiscal year 2023-24) -- so a table named
+       F1314_F1A (this function's own year=2013 case) requires
+       year=2014 in the URL, not year=2013.
+
+    Returns the local path (dest_dir/<year>/) on success, containing
+    the requested CSV file, or None if the download genuinely fails (a
+    real, honest failure, not a silent one -- callers should check for
+    None and alert rather than assume success).
+
+    Honest testing note, again: this still could not be exercised
+    end-to-end from within any sandboxed environment used across this
+    project's several attempts at this function, since nces.ed.gov is
+    not in any of their network allowlists. This should not block real
+    use in a normal environment (GitHub Actions, a local machine)
+    without that specific restriction, but has not been fully verified
+    working there yet -- this is the third real, evidence-driven
+    attempt at this function (a defunct static zip pattern, then a
+    defunct data-generator call missing real required parameters, then
+    a wrong-page's archive format entirely), each correction driven by
+    genuine output from the previous attempt's own real, live test run
+    rather than by guessing further in the abstract.
 
     sector: "private" (F2 form), "public" (F1A form), or "forprofit" (F3 form).
     """
-    import zipfile as zf
-    import shutil
+    import time
 
     form = {"private": "F2", "public": "F1A", "forprofit": "F3"}[sector]
     yy1 = str(year)[2:]
     yy2 = str(year + 1)[2:]
     table_name = f"F{yy1}{yy2}_{form}"
-    academic_year = f"{year}-{yy2}"
+    url_year = year + 1  # the URL's own year parameter names the LATER year, confirmed above
 
     year_dir = Path(dest_dir) / str(year)
     year_dir.mkdir(parents=True, exist_ok=True)
 
-    zip_bytes = None
-    used_url = None
-    for release_type in ("Final", "Provisional"):
-        url = f"https://nces.ed.gov/ipeds/tablefiles/zipfiles/IPEDS_{academic_year}_{release_type}.zip"
-        try:
-            resp = requests.get(url, timeout=120)
-            resp.raise_for_status()
-            zip_bytes = resp.content
-            used_url = url
-            break
-        except Exception:
-            continue  # try the next release type before giving up entirely
+    # A .NET-ticks-shaped cache-busting value, matching the shape of the
+    # real "t=" parameter observed on NCES's own live page (a large
+    # integer of that magnitude) -- not confirmed to be validated
+    # server-side, but constructed to at least match the real pattern
+    # rather than being omitted entirely, as it was in the version that
+    # returned 404s for every year.
+    cache_bust = int(time.time() * 10_000_000) + 621_355_968_000_000_000
 
-    if zip_bytes is None:
-        print(f"WARNING: real IPEDS bulk download failed for {sector} FY{year} "
-              f"(tried both Final and Provisional zips for {academic_year}). "
-              f"This is the known-fragile part of the pipeline -- check whether "
-              f"NCES changed its file naming or distribution mechanism again.")
-        return None
+    url = (f"https://nces.ed.gov/ipeds/data-generator?year={url_year}"
+           f"&tableName={table_name}&HasRV=0&type=csv&t={cache_bust}")
 
     try:
-        with zf.ZipFile(io.BytesIO(zip_bytes)) as archive:
-            match = None
-            for member in archive.namelist():
-                member_lower = member.lower()
-                if table_name.lower() in member_lower and member_lower.endswith(".csv"):
-                    match = member
-                    break
-            if match is None:
-                all_members = archive.namelist()
-                all_csvs = [m for m in all_members if m.lower().endswith(".csv")]
-                print(f"WARNING: downloaded {used_url} successfully, but found no file "
-                      f"matching table {table_name} inside it. The previous diagnostic "
-                      f"pass found zero .csv files at all in this archive, not merely a "
-                      f"naming mismatch -- so the assumption that this zip contains flat "
-                      f"CSV files directly may itself be wrong (nested sub-archives, a "
-                      f"different file extension, or a different structure entirely are "
-                      f"all real possibilities). Widening the diagnostic accordingly: "
-                      f"total entries in archive: {len(all_members)}. CSV files: "
-                      f"{len(all_csvs)} -- {all_csvs}. ALL entries regardless of "
-                      f"extension (first 100): {all_members[:100]}")
-                return None
-            extracted = archive.read(match)
-            csv_path = year_dir / f"{table_name}.csv"
-            csv_path.write_bytes(extracted)
+        resp = requests.get(url, timeout=60)
+        resp.raise_for_status()
+        content_type = resp.headers.get("Content-Type", "")
+        if "csv" not in content_type.lower() and "text" not in content_type.lower():
+            print(f"WARNING: {url} returned HTTP 200 but Content-Type was "
+                  f"'{content_type}', not CSV/text -- likely an HTML error page "
+                  f"served with a 200 status rather than the actual data file. "
+                  f"First 300 characters of response for diagnosis: "
+                  f"{resp.text[:300]!r}")
+            return None
+        csv_path = year_dir / f"{table_name}.csv"
+        csv_path.write_bytes(resp.content)
         return year_dir
     except Exception as e:
-        print(f"WARNING: downloaded {used_url} successfully, but failed to extract "
-              f"table {table_name} from it: {e}. Not fabricating a result.")
+        print(f"WARNING: real IPEDS download failed for {sector} FY{year} "
+              f"({url}): {e}. This is the known-fragile part of the pipeline -- "
+              f"check whether NCES changed its endpoint or parameter "
+              f"requirements again.")
         return None
