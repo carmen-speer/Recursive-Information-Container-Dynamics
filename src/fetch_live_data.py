@@ -207,12 +207,7 @@ def download_ipeds_finance_bulk(year: int, dest_dir: str | Path, sector: str = "
     test this pipeline ever ran, via GitHub Actions). NCES currently
     packages an entire academic year's full set of survey components
     together in one large zip archive, rather than serving individual
-    tables directly:
-
-        https://nces.ed.gov/ipeds/tablefiles/zipfiles/IPEDS_<YYYY>-<YY>_Final.zip
-
-    with "_Provisional.zip" as the fallback for the most recent
-    collection year, before Final data has been released.
+    tables directly.
 
     Returns the local path (dest_dir/<year>/) on success, containing a
     CSV file matching the requested table, or None if the download or
@@ -225,18 +220,16 @@ def download_ipeds_finance_bulk(year: int, dest_dir: str | Path, sector: str = "
 
     Honest testing note, again: this could not be exercised end-to-end
     from within the sandboxed environment this project was built in,
-    or from the sandboxed environment this specific fix was written
-    in either, since nces.ed.gov is not in either sandbox's own
-    network allowlist. This should not block real use in a normal
-    environment (GitHub Actions, a local machine) without that
-    specific restriction, but -- exactly as with the previous version
-    of this function -- has not been verified working there yet. The
-    zip-file URL pattern, filenames, and internal table-file naming
-    convention below are constructed from NCES's own documented,
-    currently-live page, not fabricated, but this function's own
-    history (two prior confirmed-then-broken patterns) is itself the
-    reason to treat this as "best current understanding," not "solved
-    for good."
+    or from either sandboxed environment this fix and its predecessor
+    were written in, since nces.ed.gov is not in any of their network
+    allowlists. This should not block real use in a normal environment
+    (GitHub Actions, a local machine) without that specific restriction,
+    but has not been fully verified working there yet -- two real fixes
+    in, the URL pattern is now confirmed correct (all eleven years
+    downloaded successfully), but the internal archive structure is
+    still not understood: the first diagnostic pass found zero .csv
+    files inside the archive at all, meaning the assumption of flat
+    CSV files directly inside the zip may itself be wrong.
 
     sector: "private" (F2 form), "public" (F1A form), or "forprofit" (F3 form).
     """
@@ -272,10 +265,6 @@ def download_ipeds_finance_bulk(year: int, dest_dir: str | Path, sector: str = "
               f"NCES changed its file naming or distribution mechanism again.")
         return None
 
-    # Extract just the one table file we need, rather than the entire
-    # (often 50-90mb) year archive, and place it at the same predictable
-    # path parse_live_finance already expects -- keeping that function's
-    # own contract unchanged.
     try:
         with zf.ZipFile(io.BytesIO(zip_bytes)) as archive:
             match = None
@@ -285,13 +274,18 @@ def download_ipeds_finance_bulk(year: int, dest_dir: str | Path, sector: str = "
                     match = member
                     break
             if match is None:
-                all_csvs = [m for m in archive.namelist() if m.lower().endswith(".csv")]
+                all_members = archive.namelist()
+                all_csvs = [m for m in all_members if m.lower().endswith(".csv")]
                 print(f"WARNING: downloaded {used_url} successfully, but found no file "
-                      f"matching table {table_name} inside it -- NCES has changed "
-                      f"the internal per-table naming convention within the archive "
-                      f"itself, confirmed by this real listing rather than guessed at "
-                      f"a third time. All {len(all_csvs)} CSV files actually found "
-                      f"inside this archive: {all_csvs}")
+                      f"matching table {table_name} inside it. The previous diagnostic "
+                      f"pass found zero .csv files at all in this archive, not merely a "
+                      f"naming mismatch -- so the assumption that this zip contains flat "
+                      f"CSV files directly may itself be wrong (nested sub-archives, a "
+                      f"different file extension, or a different structure entirely are "
+                      f"all real possibilities). Widening the diagnostic accordingly: "
+                      f"total entries in archive: {len(all_members)}. CSV files: "
+                      f"{len(all_csvs)} -- {all_csvs}. ALL entries regardless of "
+                      f"extension (first 100): {all_members[:100]}")
                 return None
             extracted = archive.read(match)
             csv_path = year_dir / f"{table_name}.csv"
