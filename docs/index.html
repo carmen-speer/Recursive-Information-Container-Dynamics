@@ -45,6 +45,27 @@
     <tbody id="panel-body"></tbody>
   </table>
 
+  <h2 style="margin-top:40px;">Live-scored institutions</h2>
+  <div class="scope-note" id="live-scope-note" style="display:none;">
+    These institutions were scored automatically from real, current government
+    data by the live pipeline (separate from the 54-institution validation
+    panel above). "Insufficient data" means the pipeline ran but real data
+    for that institution was genuinely incomplete -- not a fabricated result.
+  </div>
+  <table id="live-table" style="display:none;">
+    <thead>
+      <tr>
+        <th>Institution</th>
+        <th>Prediction</th>
+        <th>Probability</th>
+        <th>Method</th>
+        <th>Last scored (UTC)</th>
+      </tr>
+    </thead>
+    <tbody id="live-body"></tbody>
+  </table>
+  <p id="live-empty" style="color:#666; font-size:0.9em;">No institutions have been live-scored yet.</p>
+
 <script>
 let panelData = [];
 let sortKey = 'name';
@@ -93,6 +114,35 @@ function renderTable() {
 
 document.getElementById('search').addEventListener('input', renderTable);
 loadPanel();
+
+async function loadLiveScores() {
+  try {
+    const resp = await fetch('data/live_scores.json');
+    if (!resp.ok) return; // file doesn't exist yet -- leave the "none yet" message showing
+    const liveData = await resp.json();
+    if (!Array.isArray(liveData) || liveData.length === 0) return;
+    document.getElementById('live-empty').style.display = 'none';
+    document.getElementById('live-scope-note').style.display = 'block';
+    document.getElementById('live-table').style.display = 'table';
+    document.getElementById('live-body').innerHTML = liveData.map(d => {
+      const predClass = d.prediction === 'high_risk' ? 'closure' : (d.prediction === 'stable' ? 'stable' : '');
+      const prob = (typeof d.probability === 'number') ? (d.probability * 100).toFixed(1) + '%' : '—';
+      const scored = d.scored_at ? new Date(d.scored_at).toLocaleString() : '—';
+      return `
+        <tr>
+          <td>${d.name}</td>
+          <td class="${predClass}">${d.prediction}</td>
+          <td>${prob}</td>
+          <td>${d.method || '—'}</td>
+          <td>${scored}</td>
+        </tr>
+      `;
+    }).join('');
+  } catch (e) {
+    // a real failure to load -- leave the "none yet" message showing rather than break the page
+  }
+}
+loadLiveScores();
 </script>
 </body>
 </html>
