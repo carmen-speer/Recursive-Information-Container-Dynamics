@@ -186,4 +186,76 @@ everything below is complete:
   reserves), and the university received a real $1.3B infusion from
   the new Texas University Fund in this same period -- a large,
   genuine, *positive* resource shock that this feature has no way to
-  tell apart from a debt collapse of
+  tell apart from a debt collapse of the same magnitude. This is not
+  a hypothetical: the validated panel itself already contains real
+  closures (Green Mountain, Marygrove, MacMurray) sitting at the same
+  0.8–1.0 `frac_high_entropy` values Houston now shows, so the fitted
+  classifier has no basis in its training data for separating "erratic
+  because collapsing" from "erratic because of a sudden windfall."
+  This is the same underlying failure mode as the facilities-and-
+  athletics-spending and online-class-share proxies that were tested
+  and honestly rejected during the original feature-selection work
+  (see `reports/RICD Tracker Findings Final.pdf`) — a magnitude-only
+  signal that means either thriving or collapse depending on context
+  it doesn't have access to — except this instance made it into the
+  final 8 validated features rather than being caught beforehand. A
+  real fix (giving the regime classifier access to the signed
+  direction of a shock, not just its magnitude, likely by cross-
+  referencing it against the already-signed debt/reserve features
+  rather than replacing it outright) is planned, but has not been
+  built or re-validated against the full 54-institution panel yet —
+  stated here honestly as open, unfixed work, not quietly patched
+  without re-validation.
+
+## Repository structure
+
+````
+src/
+  model.py               Bayesian state-space model (PyMC)
+  jump_diffusion.py       Shock-type latent process for debt
+  common_cause.py         Shared-external-shock detector
+  real_adapter.py          Real IPEDS/Scorecard data loading (historical, local files)
+  fetch_live_data.py       Live data fetching (College Scorecard API + IPEDS bulk files)
+  classifier.py             The 8-feature + governance-override classifier
+  score_institution.py       End-to-end scoring entry point (see Known Gaps)
+  dynamics.py                 Core RICD dynamical-system equations used by the model
+  legacy_peer_density_reference.py   Retained reference implementation from an earlier peer-density approach
+data/
+  panel/panel.json           The real, validated 54-institution panel
+docs/
+  RICD 15.6 master.docx, .tex    The full, domain-independent RICD theory
+  index.html                      Public results dashboard (GitHub Pages)
+  data/panel.json                  Validated 54-institution panel data
+  data/live_scores.json            Real institutions scored live by score_institution.py
+source-documents/
+  Quartet of poems.pdf                                                 Original poems
+  The Pentagonal Theorem of the Mathematical Nature of Evil.pdf       Became FDFM
+  Shaking Bowls Thought Experiment.pdf                                 Became RICS
+  Source Translation Ledger source poems explained mathematically.pdf   Poems set line-by-line alongside RICD's math
+  README.md                                                               Full lineage
+  intermediate-development/
+    Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx               Early FDFM justice-tracker proposal
+    RICS FDFM Multiscale Information Geometric Model.pdf                    Expanded nested RICS-FDFM
+    RICD 5.0.pdf, RICD 5.3.pdf, RICD 5.4.pdf,                              Earlier RICD versions
+    RICD 5.5.pdf, RICD 5.6.pdf, RICD 1.2 or 1.3 early version.pdf
+reports/
+  RICD Tracker Findings Final.pdf        Final findings document
+  RICD Tracker Narrative Final.pdf       Narrative account of how results were reached
+  RICD Tracker Process Log Final.pdf     Consolidated process record
+  Higher Ed Sector Findings.pdf           What the results imply about the sector
+  Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf   Claude's own account of the collaboration
+  ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, and RICD.pdf   ChatGPT's own account of the collaboration
+  Actor Tracker Seed Note.pdf             Seed note for a mechanism-layer (actor) tracker, planned for later
+  RICD Adapter Instructional Manual.pdf  Adapter-contract implementation guide, for engineers
+  RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
+.github/workflows/
+  rescore.yml                 Scheduled re-scoring workflow
+````
+
+## Re-scoring cadence
+
+IPEDS is not live data — it releases on a fixed institutional schedule
+(provisional data a few times a year, final data annually). The scheduled
+workflow in `.github/workflows/rescore.yml` runs periodically and checks
+for new data rather than assuming a fixed release date; a run that finds
+nothing new is a normal, expected outcome, not a failure.
