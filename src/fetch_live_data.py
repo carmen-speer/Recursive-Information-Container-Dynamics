@@ -11,23 +11,25 @@ Honest scope note: not everything here is fully automatable yet.
   set as the COLLEGE_SCORECARD_API_KEY environment variable.
 
 - IPEDS finance, debt, and endowment data: NOT available through a
-  clean, stable API. NCES publishes these as bulk CSV files under a
-  URL pattern that has stayed consistent across the years used to
-  build the original panel (https://nces.ed.gov/ipeds/datacenter/data/...),
-  but the exact file-naming convention and the specific field codes
-  used within each file have changed at least once across the
-  original panel's window (2018 was the actual transition year for
-  the private-institution finance form; public and for-profit
-  institutions use their own separate forms and field codes entirely,
-  confirmed and worked through by hand across this project's original
-  build). A new NCES release could change either the file-naming
-  pattern or the internal field codes again without notice.
+  clean, stable REST API -- NCES distributes it as downloadable data
+  files instead. The exact download mechanism has changed more than
+  once during this project: a defunct static zip pattern, then a
+  defunct "data-generator" query-string endpoint (confirmed dead via
+  a live GitHub Actions run on 2026-09-15 -- every single fiscal year
+  returned a 404). A same-day diagnostic run against NCES's own live
+  Data Center page found the real, current mechanism: NCES now serves
+  each complete data file as a plain static ZIP archive at
+  https://nces.ed.gov/ipeds/complete-data-files/<table_name>.zip --
+  no session, login, or query parameters required at all, a genuinely
+  simpler system than any previous version of this function assumed.
+  This was confirmed directly from real link text scraped off NCES's
+  own live page, not guessed.
 
   This module downloads the most recent available bulk finance file
-  it can find using the known pattern, but this part of the pipeline
-  is genuinely more fragile than the enrollment side, and should be
-  monitored (see the GitHub Actions workflow's failure notifications)
-  rather than trusted blindly.
+  it can find using that real, current pattern, but NCES has changed
+  this mechanism multiple times before and may again -- this part of
+  the pipeline should be monitored (see the GitHub Actions workflow's
+  results), not trusted blindly forever.
 """
 
 from __future__ import annotations
@@ -197,95 +199,76 @@ def parse_live_finance(unitid: str, window_years: list[str], dest_base: str | Pa
 
 def download_ipeds_finance_bulk(year: int, dest_dir: str | Path, sector: str = "private") -> Path | None:
     """
-    Attempts a real download of the single-table finance CSV for the
-    given fiscal year, using the real, live "data-generator" endpoint
-    -- confirmed directly against a real, currently-live download link
-    on NCES's own Complete Data Files page (not the "Access Databases"
-    page a previous revision of this function mistakenly used, which
-    serves a full-year .accdb Microsoft Access database plus
-    documentation, not per-table CSVs at all -- a real category error
-    caught by that revision's own diagnostic output, which found zero
-    .csv files of any name inside those archives).
+    Attempts a real download of the single-table finance data file for
+    the given fiscal year, using NCES's current, real, live static-file
+    download mechanism.
 
-    Two real corrections from the version of this endpoint tried
-    earlier in this project's history (which returned a 404 for every
-    single year, confirmed via GitHub Actions):
+    Confirmed directly on 2026-09-15, via a live diagnostic run against
+    NCES's own Data Center page (run from GitHub Actions, which can
+    actually reach nces.ed.gov -- this project's sandboxed development
+    environments cannot): NCES now serves each complete data file as a
+    plain static ZIP at https://nces.ed.gov/ipeds/complete-data-files/
+    <table_name>.zip -- no login, session, or query parameters at all.
+    The real, live link scraped directly off NCES's own page for public
+    FY2022-23 finance data was exactly
+    https://nces.ed.gov/ipeds/complete-data-files/F2223_F1A.zip, which
+    matches this function's own table_name construction exactly.
 
-    1. The URL requires an additional cache-busting/session parameter,
-       "t=", alongside year/tableName/HasRV/type -- present on every
-       real download link on NCES's own live page, absent from the
-       version that returned 404s. This project cannot confirm from a
-       sandboxed environment whether the exact value is validated
-       server-side or merely expected to be present in some form, so
-       a plausible current-time-based value is generated per request
-       rather than hardcoded.
-    2. The "year" query parameter refers to the LATER year of the
-       academic-year pair, not the earlier one this project's own
-       "year" variable names its fiscal-year window by: a real,
-       confirmed example on NCES's live page pairs year=2024 with
-       tableName=F2324_F1A (fiscal year 2023-24) -- so a table named
-       F1314_F1A (this function's own year=2013 case) requires
-       year=2014 in the URL, not year=2013.
+    This replaces the previous "data-generator" query-string endpoint,
+    confirmed dead the same day (a real 404 for every fiscal year in a
+    live GitHub Actions run) -- NCES has changed this mechanism more
+    than once across this project's history and may again; this should
+    be monitored (see the GitHub Actions workflow's results) rather
+    than trusted blindly forever.
+
+    The downloaded file is a real ZIP archive (not a raw CSV, as the
+    previous endpoint claimed) containing the actual data CSV alongside
+    other files (dictionaries, revised-value flags); this function
+    extracts the first real .csv file found inside it.
 
     Returns the local path (dest_dir/<year>/) on success, containing
-    the requested CSV file, or None if the download genuinely fails (a
+    the extracted CSV file, or None if the download genuinely fails (a
     real, honest failure, not a silent one -- callers should check for
     None and alert rather than assume success).
 
-    Honest testing note, again: this still could not be exercised
-    end-to-end from within any sandboxed environment used across this
-    project's several attempts at this function, since nces.ed.gov is
-    not in any of their network allowlists. This should not block real
-    use in a normal environment (GitHub Actions, a local machine)
-    without that specific restriction, but has not been fully verified
-    working there yet -- this is the third real, evidence-driven
-    attempt at this function (a defunct static zip pattern, then a
-    defunct data-generator call missing real required parameters, then
-    a wrong-page's archive format entirely), each correction driven by
-    genuine output from the previous attempt's own real, live test run
-    rather than by guessing further in the abstract.
-
     sector: "private" (F2 form), "public" (F1A form), or "forprofit" (F3 form).
     """
-    import time
-
     form = {"private": "F2", "public": "F1A", "forprofit": "F3"}[sector]
     yy1 = str(year)[2:]
     yy2 = str(year + 1)[2:]
     table_name = f"F{yy1}{yy2}_{form}"
-    url_year = year + 1  # the URL's own year parameter names the LATER year, confirmed above
 
     year_dir = Path(dest_dir) / str(year)
     year_dir.mkdir(parents=True, exist_ok=True)
 
-    # A .NET-ticks-shaped cache-busting value, matching the shape of the
-    # real "t=" parameter observed on NCES's own live page (a large
-    # integer of that magnitude) -- not confirmed to be validated
-    # server-side, but constructed to at least match the real pattern
-    # rather than being omitted entirely, as it was in the version that
-    # returned 404s for every year.
-    cache_bust = int(time.time() * 10_000_000) + 621_355_968_000_000_000
-
-    url = (f"https://nces.ed.gov/ipeds/data-generator?year={url_year}"
-           f"&tableName={table_name}&HasRV=0&type=csv&t={cache_bust}")
+    url = f"https://nces.ed.gov/ipeds/complete-data-files/{table_name}.zip"
 
     try:
         resp = requests.get(url, timeout=60)
         resp.raise_for_status()
         content_type = resp.headers.get("Content-Type", "")
-        if "csv" not in content_type.lower() and "text" not in content_type.lower():
+        if "zip" not in content_type.lower() and "octet-stream" not in content_type.lower():
             print(f"WARNING: {url} returned HTTP 200 but Content-Type was "
-                  f"'{content_type}', not CSV/text -- likely an HTML error page "
-                  f"served with a 200 status rather than the actual data file. "
+                  f"'{content_type}', not a ZIP archive -- likely an HTML error "
+                  f"page served with a 200 status rather than the real file. "
                   f"First 300 characters of response for diagnosis: "
-                  f"{resp.text[:300]!r}")
+                  f"{resp.content[:300]!r}")
             return None
+
+        with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+            csv_names = [n for n in zf.namelist() if n.lower().endswith(".csv")]
+            if not csv_names:
+                print(f"WARNING: {url} downloaded successfully but the archive "
+                      f"contained no .csv file. Archive contents were: "
+                      f"{zf.namelist()}")
+                return None
+            csv_bytes = zf.read(csv_names[0])
+
         csv_path = year_dir / f"{table_name}.csv"
-        csv_path.write_bytes(resp.content)
+        csv_path.write_bytes(csv_bytes)
         return year_dir
     except Exception as e:
         print(f"WARNING: real IPEDS download failed for {sector} FY{year} "
               f"({url}): {e}. This is the known-fragile part of the pipeline -- "
-              f"check whether NCES changed its endpoint or parameter "
-              f"requirements again.")
+              f"check whether NCES changed its endpoint or file format again.")
         return None
