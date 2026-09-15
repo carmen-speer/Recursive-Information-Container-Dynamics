@@ -91,7 +91,7 @@ panel (23 confirmed closures spanning seven distinct collapse
 mechanisms, 31 confirmed-stable comparisons), with zero misclassifications.
 Reproduce this directly:
 
-```bash
+````bash
 pip install -r requirements.txt
 cd src
 python -c "
@@ -102,7 +102,7 @@ acc, misclassified = clf.leave_one_out_accuracy(panel)
 print(f'Accuracy: {acc:.2%}')
 print(f'Misclassified: {misclassified}')
 "
-```
+````
 
 **A live public dashboard is at
 [carmen-speer.github.io/Recursive-Information-Container-Dynamics](https://carmen-speer.github.io/Recursive-Information-Container-Dynamics/)**
@@ -171,7 +171,7 @@ everything below is complete:
 
 ## Repository structure
 
-```
+````
 src/
   model.py               Bayesian state-space model (PyMC)
   jump_diffusion.py       Shock-type latent process for debt
@@ -198,7 +198,7 @@ source-documents/
   intermediate-development/
     Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx               Early FDFM justice-tracker proposal
     RICS FDFM Multiscale Information Geometric Model.pdf                    Expanded nested RICS-FDFM
-    RICD 5.0.docx, RICD 5.3.pdf, RICD 5.4.pdf,                              Earlier RICD versions
+    RICD 5.0.pdf, RICD 5.3.pdf, RICD 5.4.pdf,                              Earlier RICD versions
     RICD 5.5.pdf, RICD 5.6.pdf, RICD 1.2 or 1.3 early version.pdf
 reports/
   RICD Tracker Findings Final.pdf        Final findings document
@@ -212,7 +212,7 @@ reports/
   RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
 .github/workflows/
   rescore.yml                 Scheduled re-scoring workflow
-```
+````
 
 ## Re-scoring cadence
 
