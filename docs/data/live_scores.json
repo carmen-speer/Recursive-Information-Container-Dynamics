@@ -5,7 +5,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.986481081599232,
-    "scored_at": "2026-09-15T10:50:31.475846+00:00"
+    "scored_at": "2026-09-15T16:34:01.431773+00:00"
   },
   {
     "unitid": "217882",
@@ -13,7 +13,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.7232205235874546,
-    "scored_at": "2026-09-15T10:51:38.228658+00:00"
+    "scored_at": "2026-09-15T16:35:14.499550+00:00"
   },
   {
     "unitid": "134097",
@@ -21,7 +21,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.871175353034607,
-    "scored_at": "2026-09-15T10:54:08.225722+00:00"
+    "scored_at": "2026-09-15T16:37:29.167281+00:00"
   },
   {
     "unitid": "233718",
@@ -29,7 +29,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.5241872834258516,
-    "scored_at": "2026-09-15T10:45:59.621557+00:00"
+    "scored_at": "2026-09-15T16:29:00.288595+00:00"
   },
   {
     "unitid": "196088",
@@ -37,7 +37,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.807004565219752,
-    "scored_at": "2026-09-15T10:55:20.454316+00:00"
+    "scored_at": "2026-09-15T16:38:34.369924+00:00"
   },
   {
     "unitid": "132903",
@@ -45,7 +45,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.9542753645493872,
-    "scored_at": "2026-09-15T10:52:53.748367+00:00"
+    "scored_at": "2026-09-15T16:36:18.234023+00:00"
   },
   {
     "unitid": "225511",
@@ -53,7 +53,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.8733775275624052,
-    "scored_at": "2026-09-15T10:49:28.646120+00:00"
+    "scored_at": "2026-09-15T16:32:47.260557+00:00"
   },
   {
     "unitid": "170976",
@@ -61,7 +61,7 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.25605562810700877,
-    "scored_at": "2026-09-15T10:44:52.081999+00:00"
+    "scored_at": "2026-09-15T16:27:55.331939+00:00"
   },
   {
     "unitid": "484613",
@@ -69,7 +69,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.9999588042520495,
-    "scored_at": "2026-09-15T10:47:18.219079+00:00"
+    "scored_at": "2026-09-15T16:30:09.269638+00:00"
   },
   {
     "unitid": "238032",
@@ -77,6 +77,6 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.6797502127454736,
-    "scored_at": "2026-09-15T10:48:21.557348+00:00"
+    "scored_at": "2026-09-15T16:31:24.435346+00:00"
   }
 ]
