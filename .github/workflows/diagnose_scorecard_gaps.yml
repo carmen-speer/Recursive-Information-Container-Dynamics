@@ -1,0 +1,34 @@
+name: Diagnose College Scorecard data gaps
+
+# Manual-only diagnostic. Prints, per year and per field, exactly which
+# College Scorecard data is present or missing for the given
+# institutions, so the real cause of "insufficient enrollment data" can
+# be confirmed instead of guessed. Run this once from the Actions tab,
+# then read the real per-year, per-field breakdown in the run's log.
+on:
+  workflow_dispatch:
+    inputs:
+      unitids:
+        description: "Space-separated UNITIDs to check (default: Phoenix, WVU)"
+        required: false
+        default: "484613 238032"
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Print real per-year, per-field Scorecard availability
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_scorecard_gaps.py ${{ github.event.inputs.unitids }}
