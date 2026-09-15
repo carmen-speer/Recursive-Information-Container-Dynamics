@@ -42,7 +42,7 @@ others, and a real, honest "insufficient_data" result is itself
 useful information, not a reason to stop.
 """
 
-from __future__ import annotations
+from score_institution import compute_features_for_institution, save_live_score, prune_stale_live_scores
 
 import json
 
@@ -91,7 +91,7 @@ def main():
         save_live_score(result_dict)
         results.append(result_dict)
 
-    print(f"\n{'=' * 70}\nBATCH DONE -- {len(results)} institutions attempted\n{'=' * 70}")
+        prune_stale_live_scores({unitid for unitid, _, _ in INSTITUTIONS})print(f"\n{'=' * 70}\nBATCH DONE -- {len(results)} institutions attempted\n{'=' * 70}")
 
 
 if __name__ == "__main__":
