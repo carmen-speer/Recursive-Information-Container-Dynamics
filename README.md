@@ -106,10 +106,12 @@ print(f'Misclassified: {misclassified}')
 "
 ```
 
-**A live public dashboard of the validated panel is at
+**A live public dashboard is at
 [carmen-speer.github.io/Recursive-Information-Container-Dynamics](https://carmen-speer.github.io/Recursive-Information-Container-Dynamics/)**
-(built from [`docs/index.html`](docs/index.html) and
-[`docs/data/panel.json`](docs/data/panel.json) via GitHub Pages).
+(built from [`docs/index.html`](docs/index.html) via GitHub Pages), showing
+both the validated 54-institution panel ([`docs/data/panel.json`](docs/data/panel.json))
+and, in a separate section below it, real institutions scored live by the
+pipeline described in Known Gaps below ([`docs/data/live_scores.json`](docs/data/live_scores.json)).
 
 ## The panel is a validation set, not a survey
 
@@ -128,32 +130,34 @@ This is a live, ongoing project, not a finished product, and it's more
 useful to state clearly what still needs real work than to imply
 everything below is complete:
 
-- **The live-scoring pipeline (`src/score_institution.py`) is fully wired
-  end to end, but not yet confirmed working against live data**, and it
-  does not yet write its output anywhere for the scheduled workflow to
-  publish — right now it only prints one institution's classification to
-  the workflow log as a pipeline smoke test. There is no `results/`
-  directory in this repository yet; `.github/workflows/rescore.yml`'s
-  "commit updated results" step currently has nothing to commit. Turning
-  this into an actual self-updating tracker means writing a script that
-  scores more than one institution and saves the output somewhere the
-  dashboard can read — genuine, not-yet-done work, not a configuration
-  problem.
+- **The live-scoring pipeline (`src/score_institution.py`) is confirmed
+  working end to end against real, live data** (first successful run:
+  2026-09-15, University of Michigan-Ann Arbor, UNITID 170976 -- a real
+  classification produced from data fetched live from NCES and the
+  College Scorecard API, not from any pre-downloaded local file). Its
+  result is saved to [`docs/data/live_scores.json`](docs/data/live_scores.json)
+  and shown in a "Live-scored institutions" section on the
+  [public dashboard](https://carmen-speer.github.io/Recursive-Information-Container-Dynamics/).
+  It still only scores one hardcoded institution per run, as a smoke
+  test -- turning this into a tracker that scores a real, broader list
+  of institutions on its own schedule is the next real step, genuine
+  not-yet-done work, not a configuration problem.
 - **IPEDS finance data has no stable API, and its distribution mechanism
-  has already changed more than once during this project.** The original
-  bulk-file URL pattern (`nces.ed.gov/ipeds/datacenter/data/F....zip`) is
-  defunct; `src/fetch_live_data.py` has been updated to the current, real
-  endpoint (`nces.ed.gov/ipeds/data-generator?...`, confirmed directly
-  against NCES's own live Complete Data Files page), which also returns a
-  raw CSV rather than a zip archive. This part of the pipeline has never
-  been exercised end-to-end from any sandboxed AI environment used on this
-  project, since `nces.ed.gov` and `api.data.gov` are outside every one of
-  those sandboxes' network allowlists — confirmed directly, repeatedly.
-  GitHub Actions' own runners are not under that restriction, so a manual
-  or scheduled run of `rescore.yml` is the actual first real test of
-  whether this works, not a repeat of an already-known result. NCES has
-  changed this endpoint before and may again — automated re-scoring
-  should be monitored, not trusted blindly, on this specific point.
+  has changed more than once during this project -- now confirmed
+  working, not just attempted.** `src/fetch_live_data.py` tries two
+  real, live addresses in order: the newest year or two at
+  `nces.ed.gov/ipeds/complete-data-files/<table>.zip`, falling back
+  automatically to `nces.ed.gov/ipeds/datacenter/data/<table>.zip` for
+  older years -- both confirmed directly against NCES's own live pages
+  on 2026-09-15, via GitHub Actions (the only environment used on this
+  project that can actually reach nces.ed.gov; every sandboxed AI
+  environment used to develop this code is blocked from it). A live
+  run that same day downloaded all 11 real fiscal years for a real
+  institution and produced a real classification. NCES has changed
+  this mechanism multiple times before across this project's history
+  and may again -- automated re-scoring should still be monitored, not
+  trusted blindly forever, but this is no longer an unverified
+  assumption.
 - **Four institutions in the original research (three small closed
   colleges, one for-profit) have no real endowment data to find** — three
   because it was only located after checking earlier filing years than
@@ -185,7 +189,8 @@ data/
 docs/
   RICD_15_6_master.docx, .tex    The full, domain-independent RICD theory
   index.html                      Public results dashboard (GitHub Pages)
-  data/panel.json                  Panel data the dashboard reads from
+  data/panel.json                  Validated 54-institution panel data
+  data/live_scores.json            Real institutions scored live by score_institution.py
 source-documents/
   Quartet_of_poems.pdf                                                 Original poems
   The_Pentagonal_Theorem_of_the_Mathematical_Nature_of_Evil_-2.pdf       Became FDFM
