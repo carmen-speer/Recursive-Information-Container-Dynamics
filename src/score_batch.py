@@ -17,9 +17,24 @@ Chosen deliberately for real diversity, not convenience:
   for-profit code path specifically, including the real, structural
   absence of endowment data for for-profit institutions (see
   score_institution.py's own handling of that case).
-- Youngstown State University (206695, public): a public regional
-  university with a real history of enrollment pressure, a more
-  informative test than another large, obviously-safe flagship.
+- West Virginia University (238032, public): swapped in on 2026-09-15
+  for Youngstown State University (206695), which came back
+  "insufficient_data" for a real, different reason than the for-profit
+  field-code bug above -- fetch_live_data.build_live_series() requires
+  every year 2013-2023 to have a complete College Scorecard record
+  across enrollment, admission rate, completion rate, and tuition, with
+  zero tolerance for a single missing field in a single year, and
+  Youngstown hit that wall somewhere in its real record (the exact
+  field/year was never pinned down). West Virginia University is a
+  real, informative choice for the same reason Youngstown was picked
+  originally -- not another large, obviously-safe flagship like
+  Michigan, but an institution that went through a genuine, widely
+  reported financial crisis and program/faculty cuts starting in 2023
+  -- while being large and well-established enough that Scorecard
+  suppressing a field for small cohort size is far less likely than it
+  may have been for Youngstown. This does not guarantee a clean run --
+  the exact original failure was never confirmed, so this is a real,
+  reasoned choice rather than a proven fix.
 
 Continues to the next institution if one fails or comes back
 "insufficient_data" -- one hard institution should never block the
@@ -37,7 +52,7 @@ from score_institution import compute_features_for_institution, save_live_score
 INSTITUTIONS = [
     ("233718", "Sweet Briar College", "private"),
     ("484613", "University of Phoenix-Arizona", "forprofit"),
-    ("206695", "Youngstown State University", "public"),
+    ("238032", "West Virginia University", "public"),
 ]
 
 
