@@ -168,56 +168,22 @@ everything below is complete:
   (documented in the manuscript) but has not been validated against a
   full retrospective panel fit** — the subordinate institution's own
   chaotic collapse left no single clean container to test against.
-
-## Repository structure
-
-````
-src/
-  model.py               Bayesian state-space model (PyMC)
-  jump_diffusion.py       Shock-type latent process for debt
-  common_cause.py         Shared-external-shock detector
-  real_adapter.py          Real IPEDS/Scorecard data loading (historical, local files)
-  fetch_live_data.py       Live data fetching (College Scorecard API + IPEDS bulk files)
-  classifier.py             The 8-feature + governance-override classifier
-  score_institution.py       End-to-end scoring entry point (see Known Gaps)
-  dynamics.py                 Core RICD dynamical-system equations used by the model
-  legacy_peer_density_reference.py   Retained reference implementation from an earlier peer-density approach
-data/
-  panel/panel.json           The real, validated 54-institution panel
-docs/
-  RICD 15.6 master.docx, .tex    The full, domain-independent RICD theory
-  index.html                      Public results dashboard (GitHub Pages)
-  data/panel.json                  Validated 54-institution panel data
-  data/live_scores.json            Real institutions scored live by score_institution.py
-source-documents/
-  Quartet of poems.pdf                                                 Original poems
-  The Pentagonal Theorem of the Mathematical Nature of Evil.pdf       Became FDFM
-  Shaking Bowls Thought Experiment.pdf                                 Became RICS
-  Source Translation Ledger source poems explained mathematically.pdf   Poems set line-by-line alongside RICD's math
-  README.md                                                               Full lineage
-  intermediate-development/
-    Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx               Early FDFM justice-tracker proposal
-    RICS FDFM Multiscale Information Geometric Model.pdf                    Expanded nested RICS-FDFM
-    RICD 5.0.pdf, RICD 5.3.pdf, RICD 5.4.pdf,                              Earlier RICD versions
-    RICD 5.5.pdf, RICD 5.6.pdf, RICD 1.2 or 1.3 early version.pdf
-reports/
-  RICD Tracker Findings Final.pdf        Final findings document
-  RICD Tracker Narrative Final.pdf       Narrative account of how results were reached
-  RICD Tracker Process Log Final.pdf     Consolidated process record
-  Higher Ed Sector Findings.pdf           What the results imply about the sector
-  Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf   Claude's own account of the collaboration
-  ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, and RICD.pdf   ChatGPT's own account of the collaboration
-  Actor Tracker Seed Note.pdf             Seed note for a mechanism-layer (actor) tracker, planned for later
-  RICD Adapter Instructional Manual.pdf  Adapter-contract implementation guide, for engineers
-  RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
-.github/workflows/
-  rescore.yml                 Scheduled re-scoring workflow
-````
-
-## Re-scoring cadence
-
-IPEDS is not live data — it releases on a fixed institutional schedule
-(provisional data a few times a year, final data annually). The scheduled
-workflow in `.github/workflows/rescore.yml` runs periodically and checks
-for new data rather than assuming a fixed release date; a run that finds
-nothing new is a normal, expected outcome, not a failure.
+- **The `frac_high_entropy` feature cannot currently distinguish a large
+  positive shock from a destabilizing one — a real, evidenced limitation,
+  found and confirmed 2026-09-15, not yet fixed.** `dynamics.py`'s
+  `rolling_causal_variance()` computes plain `.var()` on a channel's
+  first differences, and `classify_regime()` compares two of these
+  variances to flag "high-entropy" periods; variance is a squared-
+  deviation measure, so it is symmetric by construction and cannot
+  represent the *direction* of a swing, only its size. Live-scoring
+  University of Houston (UNITID 225511) surfaced this directly: its
+  `frac_high_entropy` came back 1.0000 (every one of the last 5
+  periods flagged high-entropy) against exactly 0.0000 for every
+  comparable public flagship already in the validated panel (Michigan,
+  UVA, UNC-Chapel Hill, Florida, Wisconsin) — yet Houston's real 2025
+  financial condition is the opposite of distressed (S&P upgraded its
+  bond rating to AA+, citing a $287M operating surplus and $3.3B in
+  reserves), and the university received a real $1.3B infusion from
+  the new Texas University Fund in this same period -- a large,
+  genuine, *positive* resource shock that this feature has no way to
+  tell apart from a debt collapse of
