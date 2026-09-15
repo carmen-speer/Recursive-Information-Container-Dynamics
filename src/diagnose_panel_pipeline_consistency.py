@@ -57,7 +57,7 @@ TARGETS = [
     ("240444", "Wisconsin", "public", 2013),
 ]
 
-PANEL_PATH = Path(__file__).parent.parent / "data" / "panel" / "panel.json"
+PANEL_PATH = Path(__file__).resolve().parent.parent / "data" / "panel" / "panel.json"
 
 FEATURE_FIELDS = [
     "d_A_trend", "d_A_final", "delta_R_final", "frac_high_entropy",
