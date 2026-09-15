@@ -84,10 +84,20 @@ jobs:
           python score_batch.py
         continue-on-error: true
 
+      # Bakes docs/data/live_scores.json into docs/index.html as real,
+      # static HTML rows (not just the JavaScript-only placeholder), so
+      # anything that reads the raw page source instead of running its
+      # JavaScript -- an AI summarizer, a search crawler -- sees the
+      # actual live results too. See src/render_dashboard.py for why.
+      - name: Bake live scores into the dashboard's static HTML
+        run: |
+          cd src
+          python render_dashboard.py
+
       - name: Commit updated results, if any
         run: |
           git config user.name "ricd-tracker-bot"
           git config user.email "actions@github.com"
-          git add docs/data/live_scores.json
+          git add docs/data/live_scores.json docs/index.html
           git diff --quiet && git diff --staged --quiet || git commit -m "Automated re-score run: update live scores"
           git push || echo "Nothing to push"
