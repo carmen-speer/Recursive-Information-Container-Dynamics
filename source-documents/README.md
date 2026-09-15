@@ -19,7 +19,7 @@ AI-assisted formalization.
    a second original thought experiment, also written by Carmen alone.
    Working with ChatGPT, this became RICS.
 
-An interlinear **[Source Translation Ledger](<Source Translation Ledger: source poems explained mathematically.pdf>)**
+An interlinear **[Source Translation Ledger](<Source Translation Ledger source poems explained mathematically.pdf>)**
 sets RICD's own mathematics directly alongside the four original poems it
 was built from, line by line, so the connection between the source material
 and the formal framework is checkable rather than asserted.
