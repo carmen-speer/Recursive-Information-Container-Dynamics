@@ -94,10 +94,35 @@ jobs:
           cd src
           python render_dashboard.py
 
+      # Real fix, 2026-09-15: this used to end with
+      # `git push || echo "Nothing to push"`, which could not tell the
+      # difference between two very different situations -- "nothing
+      # changed, so there was nothing to push" and "something changed,
+      # a commit was made, but the push was REJECTED" (e.g. because a
+      # manual commit landed on main while this job was still running
+      # its several minutes of sampling, leaving this job's local main
+      # behind origin/main -- a real, confirmed cause of a real silent
+      # failure on 2026-09-15, not a hypothetical). The old line
+      # printed the same reassuring message either way, so a rejected
+      # push looked identical in the log to a normal no-op run.
+      # Now: a plain "nothing changed" case is detected explicitly and
+      # only prints a message, with no commit and no push attempted.
+      # When there IS something to commit, this fetches and rebases
+      # onto the current origin/main first, so a manual commit made
+      # during the run is absorbed instead of causing a conflict, and
+      # then pushes for real, with nothing left to swallow the error --
+      # if that push still fails, the step now fails loudly and shows
+      # red in the Actions log, instead of silently doing nothing.
       - name: Commit updated results, if any
         run: |
           git config user.name "ricd-tracker-bot"
           git config user.email "actions@github.com"
           git add docs/data/live_scores.json docs/index.html
-          git diff --quiet && git diff --staged --quiet || git commit -m "Automated re-score run: update live scores"
-          git push || echo "Nothing to push"
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No changes to commit -- nothing new from this run."
+          else
+            git commit -m "Automated re-score run: update live scores"
+            git fetch origin main
+            git rebase origin/main
+            git push
+          fi
