@@ -200,36 +200,46 @@ def parse_live_finance(unitid: str, window_years: list[str], dest_base: str | Pa
 def download_ipeds_finance_bulk(year: int, dest_dir: str | Path, sector: str = "private") -> Path | None:
     """
     Attempts a real download of the single-table finance data file for
-    the given fiscal year, using NCES's current, real, live static-file
-    download mechanism.
+    the given fiscal year, using NCES's current, real, live download
+    mechanism -- confirmed directly via two separate live diagnostic
+    runs against NCES's own Data Center pages on 2026-09-15 (run from
+    GitHub Actions, which can actually reach nces.ed.gov -- this
+    project's sandboxed development environments cannot).
 
-    Confirmed directly on 2026-09-15, via a live diagnostic run against
-    NCES's own Data Center page (run from GitHub Actions, which can
-    actually reach nces.ed.gov -- this project's sandboxed development
-    environments cannot): NCES now serves each complete data file as a
-    plain static ZIP at https://nces.ed.gov/ipeds/complete-data-files/
-    <table_name>.zip -- no login, session, or query parameters at all.
-    The real, live link scraped directly off NCES's own page for public
-    FY2022-23 finance data was exactly
-    https://nces.ed.gov/ipeds/complete-data-files/F2223_F1A.zip, which
-    matches this function's own table_name construction exactly.
+    NCES actually splits this across two real, live addresses, by how
+    recent the year is, not one:
 
-    This replaces the previous "data-generator" query-string endpoint,
-    confirmed dead the same day (a real 404 for every fiscal year in a
-    live GitHub Actions run) -- NCES has changed this mechanism more
-    than once across this project's history and may again; this should
-    be monitored (see the GitHub Actions workflow's results) rather
-    than trusted blindly forever.
+    1. The newest year or two: a plain static ZIP with no session
+       needed, at https://nces.ed.gov/ipeds/complete-data-files/
+       <table_name>.zip -- confirmed via real link text scraped
+       directly off NCES's own live page for FY2022-23
+       (.../complete-data-files/F2223_F1A.zip).
+    2. Older years: NOT retired, but served from a second real
+       address, https://nces.ed.gov/ipeds/datacenter/data/
+       <table_name>.zip -- confirmed via real link text scraped off
+       NCES's own live page for FY2017-18, AND independently confirmed
+       with a direct, successful (HTTP 200) request for FY2018-19's
+       table at that exact address. This is the same URL pattern an
+       earlier revision of this function marked "defunct" -- it either
+       came back, or the earlier failure was caused by something else
+       (a wrong table-name construction, a missing session) rather
+       than the address itself being gone; today's live, direct test
+       is the real evidence, not that earlier assumption.
 
-    The downloaded file is a real ZIP archive (not a raw CSV, as the
-    previous endpoint claimed) containing the actual data CSV alongside
-    other files (dictionaries, revised-value flags); this function
-    extracts the first real .csv file found inside it.
+    This function tries address 1 first (correct for the newest
+    years), and automatically falls back to address 2 if that 404s --
+    so it keeps working as years roll from "newest" into "older"
+    without needing a hardcoded cutoff year that would itself go stale.
+
+    The downloaded file is a real ZIP archive (not a raw CSV) containing
+    the actual data CSV alongside other files (dictionaries,
+    revised-value flags); this function extracts the first real .csv
+    file found inside it.
 
     Returns the local path (dest_dir/<year>/) on success, containing
-    the extracted CSV file, or None if the download genuinely fails (a
-    real, honest failure, not a silent one -- callers should check for
-    None and alert rather than assume success).
+    the extracted CSV file, or None if both real addresses genuinely
+    fail (an honest failure, not a silent one -- callers should check
+    for None and alert rather than assume success).
 
     sector: "private" (F2 form), "public" (F1A form), or "forprofit" (F3 form).
     """
@@ -241,34 +251,48 @@ def download_ipeds_finance_bulk(year: int, dest_dir: str | Path, sector: str = "
     year_dir = Path(dest_dir) / str(year)
     year_dir.mkdir(parents=True, exist_ok=True)
 
-    url = f"https://nces.ed.gov/ipeds/complete-data-files/{table_name}.zip"
+    candidate_urls = [
+        f"https://nces.ed.gov/ipeds/complete-data-files/{table_name}.zip",
+        f"https://nces.ed.gov/ipeds/datacenter/data/{table_name}.zip",
+    ]
 
-    try:
-        resp = requests.get(url, timeout=60)
-        resp.raise_for_status()
-        content_type = resp.headers.get("Content-Type", "")
-        if "zip" not in content_type.lower() and "octet-stream" not in content_type.lower():
-            print(f"WARNING: {url} returned HTTP 200 but Content-Type was "
-                  f"'{content_type}', not a ZIP archive -- likely an HTML error "
-                  f"page served with a 200 status rather than the real file. "
-                  f"First 300 characters of response for diagnosis: "
-                  f"{resp.content[:300]!r}")
-            return None
+    last_error = None
+    for url in candidate_urls:
+        try:
+            resp = requests.get(url, timeout=60)
+            if resp.status_code == 404:
+                last_error = f"404 Not Found at {url}"
+                continue  # try the next real, known address before giving up
+            resp.raise_for_status()
+            content_type = resp.headers.get("Content-Type", "")
+            if "zip" not in content_type.lower() and "octet-stream" not in content_type.lower():
+                print(f"WARNING: {url} returned HTTP 200 but Content-Type was "
+                      f"'{content_type}', not a ZIP archive -- likely an HTML "
+                      f"error or session page served with a 200 status rather "
+                      f"than the real file. First 300 characters of response "
+                      f"for diagnosis: {resp.content[:300]!r}")
+                last_error = f"non-ZIP 200 response at {url}"
+                continue  # try the next real, known address before giving up
 
-        with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
-            csv_names = [n for n in zf.namelist() if n.lower().endswith(".csv")]
-            if not csv_names:
-                print(f"WARNING: {url} downloaded successfully but the archive "
-                      f"contained no .csv file. Archive contents were: "
-                      f"{zf.namelist()}")
-                return None
-            csv_bytes = zf.read(csv_names[0])
+            with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+                csv_names = [n for n in zf.namelist() if n.lower().endswith(".csv")]
+                if not csv_names:
+                    print(f"WARNING: {url} downloaded successfully but the "
+                          f"archive contained no .csv file. Archive contents "
+                          f"were: {zf.namelist()}")
+                    last_error = f"no .csv inside ZIP at {url}"
+                    continue  # try the next real, known address before giving up
+                csv_bytes = zf.read(csv_names[0])
 
-        csv_path = year_dir / f"{table_name}.csv"
-        csv_path.write_bytes(csv_bytes)
-        return year_dir
-    except Exception as e:
-        print(f"WARNING: real IPEDS download failed for {sector} FY{year} "
-              f"({url}): {e}. This is the known-fragile part of the pipeline -- "
-              f"check whether NCES changed its endpoint or file format again.")
-        return None
+            csv_path = year_dir / f"{table_name}.csv"
+            csv_path.write_bytes(csv_bytes)
+            return year_dir
+        except Exception as e:
+            last_error = f"{e} (at {url})"
+            continue  # try the next real, known address before giving up
+
+    print(f"WARNING: real IPEDS download failed for {sector} FY{year} across "
+          f"both known real addresses -- last error: {last_error}. This is "
+          f"the known-fragile part of the pipeline -- check whether NCES "
+          f"changed its endpoint or file format again.")
+    return None
