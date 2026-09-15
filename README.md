@@ -34,7 +34,7 @@ live in [`reports/`](reports/):** [`RICD_Tracker_Findings Final.pdf`](reports/RI
 [`RICD_Tracker_Process_Log Final.pdf`](reports/RICD_Tracker_Process_Log%20Final.pdf) --
 the findings document, the narrative account of how each result was actually
 reached, and the consolidated process log -- alongside
-[`Higher_Ed_Sector_Findings.docx`](reports/Higher_Ed_Sector_Findings.docx) (a
+[`Higher Ed Sector Findings.pdf`](<reports/Higher Ed Sector Findings.pdf>) (a
 separate analysis of what the results imply about the U.S. higher-education
 sector as a whole), [`Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf`](<reports/Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf>)
 and [`ChatGPT's Account of Its own Role in Building FDFM, RICS, and RICD 1.0.pdf`](<reports/ChatGPT's Account of Its own Role in Building FDFM, RICS, and RICD 1.0.pdf>)
@@ -42,7 +42,7 @@ and [`ChatGPT's Account of Its own Role in Building FDFM, RICS, and RICD 1.0.pdf
 the tracker, asked for and included so the actual division of labor is checkable
 rather than asserted), [`RICD_Adapter_Instructional_Manual_3.pdf`](reports/RICD_Adapter_Instructional_Manual_3.pdf) (an instructional manual for
 engineers working with the RICD adapter contract directly),
-[`Actor_Tracker_Seed_Note.docx`](reports/Actor_Tracker_Seed_Note.docx) (a seed
+[`Actor Tracker Seed Note .pdf`](<reports/Actor Tracker Seed Note .pdf>) (a seed
 note for a genuinely different kind of tracker planned for later), and the
 complete [`RICD_Integration_Manifest_Complete.pdf`](reports/RICD_Integration_Manifest_Complete.pdf) described above. An
 interlinear **Source Translation Ledger**
@@ -201,10 +201,10 @@ reports/
   RICD_Tracker_Findings Final.pdf        Final findings document
   RICD_Tracker_Narrative final.pdf       Narrative account of how results were reached
   RICD_Tracker_Process_Log Final.pdf     Consolidated process record
-  Higher_Ed_Sector_Findings.docx          What the results imply about the sector
+  Higher Ed Sector Findings.pdf           What the results imply about the sector
   Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf   Claude's own account of the collaboration
   ChatGPT's Account of Its own Role in Building FDFM, RICS, and RICD 1.0.pdf          ChatGPT's own account of the collaboration
-  Actor_Tracker_Seed_Note.docx             Seed note for a mechanism-layer (actor) tracker, planned for later
+  Actor Tracker Seed Note .pdf             Seed note for a mechanism-layer (actor) tracker, planned for later
   RICD_Adapter_Instructional_Manual_3.pdf  Adapter-contract implementation guide, for engineers
   RICD_Integration_Manifest_Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
 .github/workflows/
