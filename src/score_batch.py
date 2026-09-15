@@ -75,6 +75,45 @@ NCES IPEDS profile, not guessed:
 All three are public institutions, so they exercise the
 already-validated PUBLIC_FINANCE_FIELDS path, not a new or
 recently-patched one.
+
+Real result from that first neutral batch (2026-09-15): all three came
+back high_risk. Real reporting supports two of the three -- Cal State
+Long Beach has a real, documented enrollment collapse (38,000 to
+36,000 students, projected to ~33,000, alongside a real $42M cut) and
+Clemson has real, documented rising long-term liabilities ($2.65B, up
+$231.9M year-over-year) and expense growth outpacing revenue -- but
+University of Houston's real financial condition is the opposite of
+high_risk: S&P upgraded its bond rating to AA+ in 2025, citing a
+$287M operating surplus and $3.3B in reserves. A real feature-level
+diagnostic (src/diagnose_feature_values.py) found the likely cause is
+not a data-quality gap but a real, specific feature value: Houston's
+frac_high_entropy came back 1.0000 (every one of the last 5 periods
+classified into the model's "high-entropy" regime), against exactly
+0.0000 for every comparable public flagship already in the validated
+panel (Michigan, UVA, UNC, Florida, Wisconsin). Whether that reflects
+a genuine regime-detection weakness, an MCMC convergence artifact (the
+2-chain/300-draw sampling shows real rhat/ESS problems on every run),
+or the classifier failing to distinguish a large POSITIVE resource
+shock (the $1.3B Texas University Fund infusion) from a destabilizing
+one is not yet resolved -- flagged here rather than smoothed over.
+
+Added 2026-09-15, a second time: three more institutions, to avoid a
+different real problem -- after the first neutral batch above came
+back 3-for-3 high_risk, adding institutions chosen because they were
+*expected* to come back stable would be exactly the same cherry-picking
+this whole neutral-selection approach exists to prevent, just aimed in
+the opposite direction. So the same neutral rule was extended instead,
+with new positions picked purely by position number, decided before
+looking up any of the three institutions this pattern would name:
+positions #5, #25, and #45 on the same CollegeXpress list (an
+arithmetic sequence, 20 ranks apart, starting from position 5 --
+avoiding every position already used above). UNITIDs confirmed for
+real from each institution's own NCES IPEDS profile page, not guessed:
+- University of Central Florida (132903, public) -- rank #5.
+- Florida State University (134097, public) -- rank #25.
+- University at Buffalo (196088, public) -- rank #45 (not to be
+  confused with SUNY Buffalo State, UNITID 196130, a separate
+  institution with a similar name).
 """
 
 from __future__ import annotations
@@ -91,6 +130,9 @@ INSTITUTIONS = [
     ("225511", "University of Houston", "public", 2013),
     ("110583", "California State University-Long Beach", "public", 2013),
     ("217882", "Clemson University", "public", 2013),
+    ("132903", "University of Central Florida", "public", 2013),
+    ("134097", "Florida State University", "public", 2013),
+    ("196088", "University at Buffalo", "public", 2013),
 ]
 
 
