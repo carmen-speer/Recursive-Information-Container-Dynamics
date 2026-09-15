@@ -16,7 +16,15 @@ Chosen deliberately for real diversity, not convenience:
 - University of Phoenix-Arizona (484613, for-profit): exercises the
   for-profit code path specifically, including the real, structural
   absence of endowment data for for-profit institutions (see
-  score_institution.py's own handling of that case).
+  score_institution.py's own handling of that case), and, as of
+  2026-09-15, the real, structural absence of an admission rate in
+  every year 2014-2023 (fetch_live_data.build_live_series() now
+  tolerates this for sector="forprofit" -- see that function's own
+  docstring for why it's safe: nothing in the actual model ever reads
+  admission rate). 2013 specifically returned a genuinely empty
+  College Scorecard record for this UNITID (confirmed via a real,
+  direct per-year diagnostic run, not assumed), so this institution
+  starts its window in 2014, one year later than the other two below.
 - West Virginia University (238032, public): swapped in on 2026-09-15
   for Youngstown State University (206695), which came back
   "insufficient_data" for a real, different reason than the for-profit
@@ -50,9 +58,9 @@ from classifier import RICDClassifier, load_panel, GOVERNANCE_OVERRIDE_UNITIDS
 from score_institution import compute_features_for_institution, save_live_score, prune_stale_live_scores
 
 INSTITUTIONS = [
-    ("233718", "Sweet Briar College", "private"),
-    ("484613", "University of Phoenix-Arizona", "forprofit"),
-    ("238032", "West Virginia University", "public"),
+    ("233718", "Sweet Briar College", "private", 2013),
+    ("484613", "University of Phoenix-Arizona", "forprofit", 2014),
+    ("238032", "West Virginia University", "public", 2013),
 ]
 
 
@@ -62,7 +70,7 @@ def main():
     clf.fit(panel)
 
     results = []
-    for unitid, name, sector in INSTITUTIONS:
+    for unitid, name, sector, start_year in INSTITUTIONS:
         print(f"\n{'=' * 70}\nScoring {name} ({unitid}, {sector})\n{'=' * 70}")
         try:
             if unitid in GOVERNANCE_OVERRIDE_UNITIDS:
@@ -71,7 +79,7 @@ def main():
                     "method": "governance_override",
                 }
             else:
-                features = compute_features_for_institution(unitid, name, sector=sector)
+                features = compute_features_for_institution(unitid, name, sector=sector, start_year=start_year)
                 if features is None:
                     result_dict = {"unitid": unitid, "name": name, "prediction": "insufficient_data"}
                 else:
@@ -96,7 +104,7 @@ def main():
     # (e.g. Youngstown State after the West Virginia University swap),
     # so a retired institution doesn't sit on the public dashboard
     # forever as a stale "insufficient_data" row.
-    prune_stale_live_scores({unitid for unitid, _, _ in INSTITUTIONS})
+    prune_stale_live_scores({unitid for unitid, _, _, _ in INSTITUTIONS})
 
     print(f"\n{'=' * 70}\nBATCH DONE -- {len(results)} institutions attempted\n{'=' * 70}")
 

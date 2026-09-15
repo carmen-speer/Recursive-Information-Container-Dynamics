@@ -159,7 +159,8 @@ def fetch_enrollment_series(unitid: str, start_year: int, end_year: int, api_key
     return series
 
 
-def build_live_series(unitid: str, start_year: int, end_year: int, api_key: str | None = None) -> dict | None:
+def build_live_series(unitid: str, start_year: int, end_year: int, api_key: str | None = None,
+                       sector: str = "private") -> dict | None:
     """
     Real, live equivalent of real_adapter.extract_institution_series --
     produces the identical dict format (completion, tuition, admit_rate,
@@ -167,6 +168,19 @@ def build_live_series(unitid: str, start_year: int, end_year: int, api_key: str 
     pre-downloaded local file. Returns None if any year in the window
     is missing a required field, exactly matching the local version's
     behavior -- never fabricates a value to fill a gap.
+
+    Admission rate is the one deliberate exception, and only when
+    sector="forprofit": real_adapter.compute_O_o_O_p() only ever uses
+    completion & tuition, never admission rate, and nothing else
+    downstream uses it either -- it has only ever been a gate here, not
+    a real model input. A real, direct per-year API check on
+    2026-09-15 (University of Phoenix-Arizona, UNITID 484613) confirmed
+    admission rate is absent in every single year 2014-2023, the same
+    kind of real, structural for-profit/open-enrollment gap as the
+    missing endowment field, not a fetch bug -- so requiring it here
+    was rejecting real, usable data for no modeling reason. Every other
+    sector, and every other required field, keeps the original
+    zero-tolerance behavior unchanged.
     """
     completion, tuition, admit_rate, n_undergrads = [], [], [], []
     for year in range(start_year, end_year):
@@ -179,9 +193,17 @@ def build_live_series(unitid: str, start_year: int, end_year: int, api_key: str 
         try:
             result = fetch_scorecard_fields(unitid, fields, api_key)
             n_undergrads.append(float(result[f"{year}.student.size"]))
-            admit_rate.append(float(result[f"{year}.admissions.admission_rate.overall"]))
             completion.append(float(result[f"{year}.completion.completion_rate_4yr_150nt"]))
             tuition.append(float(result[f"{year}.cost.tuition.in_state"]))
+            try:
+                admit_rate.append(float(result[f"{year}.admissions.admission_rate.overall"]))
+            except (KeyError, TypeError, ValueError):
+                if sector == "forprofit":
+                    # Real, structural gap, not a fabricated value -- NaN,
+                    # not a guess, and never read by compute_O_o_O_p anyway.
+                    admit_rate.append(float("nan"))
+                else:
+                    raise
         except (KeyError, TypeError, ValueError):
             return None  # a real, honest gap year -- matches the local extractor's all-or-nothing behavior
     import numpy as np

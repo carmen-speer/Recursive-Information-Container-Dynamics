@@ -50,7 +50,7 @@ def compute_features_for_institution(
     window_years = [f"{y}-{str(y + 1)[2:]}" for y in range(start_year, end_year)]
 
     # --- Real, live enrollment/admissions/completion series ---
-    series = fld.build_live_series(unitid, start_year, end_year)
+    series = fld.build_live_series(unitid, start_year, end_year, sector=sector)
     if series is None:
         print(f"INSUFFICIENT ENROLLMENT DATA: could not build a complete real "
               f"series for {name} ({unitid}) across {start_year}-{end_year}. "
