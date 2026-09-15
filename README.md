@@ -5,13 +5,13 @@ financial collapse risk in U.S. higher education, built on the Recursive
 Information-Container Dynamics (RICD) framework.
 
 **The full RICD manuscript (the complete, domain-independent theory) lives at
-[`docs/RICD_15_6_master.docx`](docs/RICD_15_6_master.docx)
-(also available as [`.tex`](docs/RICD_15_6_master.tex)).**
+[`docs/RICD 15.6 master.docx`](<docs/RICD 15.6 master.docx>)
+(also available as [`.tex`](<docs/RICD 15.6 master.tex>)).**
 Everything in this repository's code implements a real subset of that
 framework (Parts 6, 7, 8, and 10.5b specifically) against U.S. higher-education
 data; the manuscript itself is domain-independent and covers considerably more
 than the tracker uses. The manuscript's own
-[Integration Manifest](reports/RICD_Integration_Manifest_Complete.pdf) records
+[Integration Manifest](<reports/RICD Integration Manifest Complete.pdf>) records
 every mechanism confirmed built into the framework, section by section, with
 the exact manuscript text shown for each -- a standing verification record kept
 specifically to be checked against the manuscript, not trusted on its own.
@@ -29,9 +29,9 @@ expanded RICS-FDFM formalization, and earlier RICD versions (5.0
 through 5.6). See that folder's own README for the full lineage.
 
 **The narrative, findings, and process record of how this tracker was built
-live in [`reports/`](reports/):** [`RICD_Tracker_Findings Final.pdf`](reports/RICD_Tracker_Findings%20Final.pdf),
-[`RICD_Tracker_Narrative final.pdf`](reports/RICD_Tracker_Narrative%20final.pdf), and
-[`RICD_Tracker_Process_Log Final.pdf`](reports/RICD_Tracker_Process_Log%20Final.pdf) --
+live in [`reports/`](reports/):** [`RICD Tracker Findings Final.pdf`](<reports/RICD Tracker Findings Final.pdf>),
+[`RICD Tracker Narrative Final.pdf`](<reports/RICD Tracker Narrative Final.pdf>), and
+[`RICD Tracker Process Log Final.pdf`](<reports/RICD Tracker Process Log Final.pdf>) --
 the findings document, the narrative account of how each result was actually
 reached, and the consolidated process log -- alongside
 [`Higher Ed Sector Findings.pdf`](<reports/Higher Ed Sector Findings.pdf>) (a
@@ -40,13 +40,13 @@ sector as a whole), [`Claude's Account of Carmen's Role in Building RICD and the
 and [`ChatGPT's Account of Its own Role in Building FDFM, RICS, and RICD 1.0.pdf`](<reports/ChatGPT's Account of Its own Role in Building FDFM, RICS, and RICD 1.0.pdf>)
 (each AI collaborator's own account of working with Carmen on the framework and
 the tracker, asked for and included so the actual division of labor is checkable
-rather than asserted), [`RICD_Adapter_Instructional_Manual_3.pdf`](reports/RICD_Adapter_Instructional_Manual_3.pdf) (an instructional manual for
+rather than asserted), [`RICD Adapter Instructional Manual.pdf`](<reports/RICD Adapter Instructional Manual.pdf>) (an instructional manual for
 engineers working with the RICD adapter contract directly),
-[`Actor Tracker Seed Note .pdf`](<reports/Actor Tracker Seed Note .pdf>) (a seed
+[`Actor Tracker Seed Note.pdf`](<reports/Actor Tracker Seed Note.pdf>) (a seed
 note for a genuinely different kind of tracker planned for later), and the
-complete [`RICD_Integration_Manifest_Complete.pdf`](reports/RICD_Integration_Manifest_Complete.pdf) described above. An
+complete [`RICD Integration Manifest Complete.pdf`](<reports/RICD Integration Manifest Complete.pdf>) described above. An
 interlinear **Source Translation Ledger**
-([`source-documents/Source_Translation_Ledger_ RICD source poems explained mathematically.pdf`](<source-documents/Source_Translation_Ledger_ RICD source poems explained mathematically.pdf>))
+([`source-documents/Source Translation Ledger: source poems explained mathematically.pdf`](<source-documents/Source Translation Ledger: source poems explained mathematically.pdf>))
 is also included, setting RICD's own mathematics directly alongside the
 four original poems it was built from, line by line, so the connection
 between the source material and the formal framework is checkable rather
@@ -187,31 +187,31 @@ src/
 data/
   panel/panel.json           The real, validated 54-institution panel
 docs/
-  RICD_15_6_master.docx, .tex    The full, domain-independent RICD theory
+  RICD 15.6 master.docx, .tex    The full, domain-independent RICD theory
   index.html                      Public results dashboard (GitHub Pages)
   data/panel.json                  Validated 54-institution panel data
   data/live_scores.json            Real institutions scored live by score_institution.py
 source-documents/
-  Quartet_of_poems.pdf                                                 Original poems
-  The_Pentagonal_Theorem_of_the_Mathematical_Nature_of_Evil_-2.pdf       Became FDFM
-  Shaking_Bowls_Thought_Experiment-1.pdf                                 Became RICS
-  Source_Translation_Ledger_ RICD source poems explained mathematically.pdf   Poems set line-by-line alongside RICD's math
+  Quartet of poems.pdf                                                 Original poems
+  The Pentagonal Theorem of the Mathematical Nature of Evil.pdf       Became FDFM
+  Shaking Bowls Thought Experiment.pdf                                 Became RICS
+  Source Translation Ledger: source poems explained mathematically.pdf   Poems set line-by-line alongside RICD's math
   README.md                                                               Full lineage
   intermediate-development/
-    Feedback_Divergence_Field_Model...justice_system....docx               Early FDFM justice-tracker proposal
-    RICS_FDFM_Multiscale_Information_Geometric_Model.pdf                    Expanded nested RICS-FDFM
-    RICD_5_0.docx, RICD_5_3.pdf, RICD_5_4.pdf,                              Earlier RICD versions
-    RICD_5_5.docx, RICD_5_6.pdf, RICD_1_2_or_1_3_early_version.pdf
+    Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx               Early FDFM justice-tracker proposal
+    RICS FDFM Multiscale Information Geometric Model.pdf                    Expanded nested RICS-FDFM
+    RICD 5.0.docx, RICD 5.3.pdf, RICD 5.4.pdf,                              Earlier RICD versions
+    RICD 5.5.pdf, RICD 5.6.pdf, RICD 1.2 or 1.3 early version.pdf
 reports/
-  RICD_Tracker_Findings Final.pdf        Final findings document
-  RICD_Tracker_Narrative final.pdf       Narrative account of how results were reached
-  RICD_Tracker_Process_Log Final.pdf     Consolidated process record
+  RICD Tracker Findings Final.pdf        Final findings document
+  RICD Tracker Narrative Final.pdf       Narrative account of how results were reached
+  RICD Tracker Process Log Final.pdf     Consolidated process record
   Higher Ed Sector Findings.pdf           What the results imply about the sector
   Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf   Claude's own account of the collaboration
   ChatGPT's Account of Its own Role in Building FDFM, RICS, and RICD 1.0.pdf          ChatGPT's own account of the collaboration
-  Actor Tracker Seed Note .pdf             Seed note for a mechanism-layer (actor) tracker, planned for later
-  RICD_Adapter_Instructional_Manual_3.pdf  Adapter-contract implementation guide, for engineers
-  RICD_Integration_Manifest_Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
+  Actor Tracker Seed Note.pdf             Seed note for a mechanism-layer (actor) tracker, planned for later
+  RICD Adapter Instructional Manual.pdf  Adapter-contract implementation guide, for engineers
+  RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
 .github/workflows/
   rescore.yml                 Scheduled re-scoring workflow
 ```
