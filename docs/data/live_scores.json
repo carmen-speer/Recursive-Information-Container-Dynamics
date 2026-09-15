@@ -4,29 +4,31 @@
     "name": "Sweet Briar College",
     "prediction": "high_risk",
     "method": "statistical_classifier",
-    "probability": 0.5184688783771576,
-    "scored_at": "2026-09-15T04:42:50.457943+00:00"
+    "probability": 0.5241872834258516,
+    "scored_at": "2026-09-15T06:14:42.281879+00:00"
   },
   {
     "unitid": "170976",
     "name": "University of Michigan-Ann Arbor",
     "prediction": "stable",
     "method": "statistical_classifier",
-    "probability": 0.24994098951794555,
-    "scored_at": "2026-09-15T04:41:51.783968+00:00"
+    "probability": 0.25605562810700877,
+    "scored_at": "2026-09-15T06:13:33.797229+00:00"
   },
   {
     "unitid": "484613",
     "name": "University of Phoenix-Arizona",
-    "prediction": "insufficient_data",
-    "scored_at": "2026-09-15T04:42:51.097715+00:00"
+    "prediction": "high_risk",
+    "method": "statistical_classifier",
+    "probability": 0.9999588042520495,
+    "scored_at": "2026-09-15T06:16:03.351344+00:00"
   },
   {
     "unitid": "238032",
     "name": "West Virginia University",
     "prediction": "high_risk",
     "method": "statistical_classifier",
-    "probability": 0.7457853587106917,
-    "scored_at": "2026-09-15T04:43:43.713180+00:00"
+    "probability": 0.6797502127454736,
+    "scored_at": "2026-09-15T06:17:17.400524+00:00"
   }
 ]
