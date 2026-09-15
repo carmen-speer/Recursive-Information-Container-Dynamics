@@ -13,6 +13,20 @@ surplus, $3.3B in reserves) directly contradicts the live pipeline's
 whether that's a genuine model weakness or a fixable pipeline issue --
 not to assume either answer in advance.
 
+Extended 2026-09-15, same day, to the second neutral-rule batch --
+University of Central Florida (132903), Florida State University
+(134097), University at Buffalo (196088) -- after all three also came
+back high_risk on the live dashboard. Real bond-ratings check (Florida
+Board of Governors filing, 2/27/26) found UCF at Moody's Aa2/Fitch AA
+stable and FSU at Moody's Aa1/Fitch AA+ stable, neither with a negative
+outlook -- the same shape of real-world contradiction as Houston, not
+assumed to have the same cause. Buffalo is a real, different case:
+current reporting (UB's own statement, Rep. Kennedy's office) documents
+about $47M in real federal research-funding cuts this year -- genuine
+strain, but not the debt/reserve/enrollment mechanism this model is
+built to detect, so its 80.7% call needs this same feature-level check
+before being read as either confirmed or an artifact.
+
 Prints each institution's real feature vector alongside the ALREADY-
 VALIDATED feature vectors of five public flagships already in the
 54-institution panel (Michigan, UVA, UNC-Chapel Hill, Florida,
@@ -39,7 +53,7 @@ import traceback
 
 from score_institution import compute_features_for_institution
 
-# The three institutions in question, plus their real sector and the
+# The six institutions in question, plus their real sector and the
 # real start_year already in use for them in score_batch.py -- kept
 # identical here so this diagnostic reflects exactly what the batch
 # run actually does, not a different configuration.
@@ -47,6 +61,9 @@ TARGETS = [
     ("225511", "University of Houston", "public", 2013),
     ("110583", "California State University-Long Beach", "public", 2013),
     ("217882", "Clemson University", "public", 2013),
+    ("132903", "University of Central Florida", "public", 2013),
+    ("134097", "Florida State University", "public", 2013),
+    ("196088", "University at Buffalo", "public", 2013),
 ]
 
 # Real, already-validated feature vectors for five public flagships
@@ -54,10 +71,10 @@ TARGETS = [
 # transcribed directly from that file, not estimated -- every one of
 # these classified correctly as stable in leave-one-out testing. Used
 # purely as a real point of comparison for the live numbers above,
-# since these are the closest real analogues to Houston/Long
-# Beach/Clemson already in the validated panel (all research-ratio
-# UNKNOWN via the same public-sector gap discussed below, all large
-# public research universities).
+# since these are the closest real analogues to the six institutions
+# above already in the validated panel (all research-ratio UNKNOWN via
+# the same public-sector gap discussed below, all large public research
+# universities).
 PANEL_PUBLIC_REFERENCE = [
     {"name": "Michigan", "outcome": "stable", "d_A_trend": -0.066, "d_A_final": None,
      "delta_R_final": 1.214, "frac_high_entropy": 0.000, "debt_spike": 0.057,
@@ -83,8 +100,8 @@ PANEL_PUBLIC_REFERENCE = [
 # pipeline -- every public institution already in the validated panel
 # (Michigan, UVA, UNC, Florida, Wisconsin, all printed above) also has
 # research_ratio pinned at exactly 0.0000. So this diagnostic does not
-# treat research_ratio as a live-only bug or a likely cause of a
-# Houston-specific misclassification -- it's a real, pre-existing
+# treat research_ratio as a live-only bug or a likely cause of any of
+# these misclassification questions -- it's a real, pre-existing
 # convention the classifier was validated under, not a new gap.
 
 
