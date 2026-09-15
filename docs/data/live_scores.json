@@ -1,0 +1,10 @@
+[
+  {
+    "unitid": "170976",
+    "name": "University of Michigan-Ann Arbor",
+    "prediction": "stable",
+    "method": "statistical_classifier",
+    "probability": 0.24994098951794555,
+    "scored_at": "2026-09-15T02:20:14.116459+00:00"
+  }
+]
