@@ -185,6 +185,45 @@ def compute_features_for_institution(
     )
 
 
+def save_live_score(result: dict, path: str = "../docs/data/live_scores.json") -> None:
+    """
+    Real persistence step -- this is the piece that was missing before
+    today: the live pipeline computed a real result but never saved it
+    anywhere the public dashboard could read it. This saves/updates
+    this institution's result (keyed by unitid, so re-scoring the same
+    institution replaces its old entry rather than piling up
+    duplicates) in a JSON file inside docs/data/, which GitHub Pages
+    already serves alongside the validated panel data -- no separate
+    publish step needed, the existing Pages deployment picks it up
+    automatically on the next commit.
+
+    Every outcome gets saved here, including "insufficient_data" --
+    consistent with this project's own honesty standard: a failed or
+    incomplete live-scoring attempt is real information (it shows the
+    pipeline was actually run and what happened), not something to
+    hide until it succeeds.
+    """
+    result = dict(result)
+    result["scored_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    existing = []
+    if p.exists():
+        try:
+            loaded = json.loads(p.read_text())
+            if isinstance(loaded, list):
+                existing = loaded
+        except (json.JSONDecodeError, OSError):
+            existing = []  # a real, honest corrupt/missing file -- start fresh rather than crash
+
+    existing = [r for r in existing if r.get("unitid") != result.get("unitid")]
+    existing.append(result)
+    existing.sort(key=lambda r: r.get("name", ""))
+    p.write_text(json.dumps(existing, indent=2))
+    print(f"Saved live score for {result.get('name')} ({result.get('unitid')}) to {p}")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("unitid")
@@ -198,23 +237,24 @@ def main():
     clf.fit(panel)
 
     if unitid in GOVERNANCE_OVERRIDE_UNITIDS:
-        print(json.dumps({
+        result_dict = {
             "unitid": unitid, "name": name, "prediction": "high_risk",
             "method": "governance_override",
-        }, indent=2))
-        return
+        }
+    else:
+        features = compute_features_for_institution(unitid, name, sector=args.sector)
+        if features is None:
+            result_dict = {"unitid": unitid, "name": name, "prediction": "insufficient_data"}
+        else:
+            result = clf.classify(features)
+            result_dict = {
+                "unitid": result.unitid, "name": result.name,
+                "prediction": "high_risk" if result.prediction == 1 else "stable",
+                "method": result.method, "probability": result.probability,
+            }
 
-    features = compute_features_for_institution(unitid, name, sector=args.sector)
-    if features is None:
-        print(json.dumps({"unitid": unitid, "name": name, "prediction": "insufficient_data"}, indent=2))
-        return
-
-    result = clf.classify(features)
-    print(json.dumps({
-        "unitid": result.unitid, "name": result.name,
-        "prediction": "high_risk" if result.prediction == 1 else "stable",
-        "method": result.method, "probability": result.probability,
-    }, indent=2))
+    print(json.dumps(result_dict, indent=2))
+    save_live_score(result_dict)
 
 
 if __name__ == "__main__":
