@@ -9,6 +9,14 @@ on:
     - cron: "0 13 * * 1"  # Every Monday, 13:00 UTC
   workflow_dispatch: {}     # Allows a manual run from the Actions tab too
 
+# The automatic token GitHub Actions gives each run is read-only by
+# default -- this line is what lets the "Commit updated results" step
+# below actually push its commit back to the repository, rather than
+# failing with a 403 (confirmed real cause of a real failed run on
+# 2026-09-15, not a credentials or account problem).
+permissions:
+  contents: write
+
 jobs:
   rescore:
     runs-on: ubuntu-latest
