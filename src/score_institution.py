@@ -119,10 +119,19 @@ def compute_features_for_institution(
     delta_R_trend = delta_R_trend_from(delta_R_t)
 
     # --- The remaining features, computed directly from real parsed data ---
-    liabilities_field = fld.PRIVATE_FINANCE_FIELDS["total_liabilities"] if sector == "private" \
-        else fld.PUBLIC_FINANCE_FIELDS["total_liabilities"]
-    endowment_field = fld.PRIVATE_FINANCE_FIELDS["endowment"] if sector == "private" \
-        else fld.PUBLIC_FINANCE_FIELDS["endowment"]
+    if sector == "private":
+        _fields_for_sector = fld.PRIVATE_FINANCE_FIELDS
+    elif sector == "forprofit":
+        _fields_for_sector = fld.FORPROFIT_FINANCE_FIELDS
+    else:
+        _fields_for_sector = fld.PUBLIC_FINANCE_FIELDS
+    liabilities_field = _fields_for_sector["total_liabilities"]
+    # For-profit institutions have no real "endowment" key at all (see
+    # FORPROFIT_FINANCE_FIELDS's own comment) -- .get() with a sentinel
+    # that can't match a real column lets the lookup below fail
+    # gracefully into the existing "no real endowment data" path
+    # instead of a KeyError here, before that path even runs.
+    endowment_field = _fields_for_sector.get("endowment", "NO_ENDOWMENT_FIELD_FOR_THIS_SECTOR")
 
     liabilities_by_year, endowment_val, research_val, instruction_val = {}, None, None, None
     for year in finance_years_available:
