@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-                description: "Optional: a single UNITID to check (default: all six -- Houston, Long Beach, Clemson, UCF, FSU, Buffalo)"
+      description: "Optional: a single UNITID to check (default: all six -- Houston, Long Beach, Clemson, UCF, FSU, Buffalo)"
         required: false
         default: ""
 
