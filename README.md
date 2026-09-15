@@ -217,16 +217,23 @@ src/
   real_adapter.py          Real IPEDS/Scorecard data loading (historical, local files)
   fetch_live_data.py       Live data fetching (College Scorecard API + IPEDS bulk files)
   classifier.py             The 8-feature + governance-override classifier
-  score_institution.py       End-to-end scoring entry point (see Known Gaps)
-  dynamics.py                 Core RICD dynamical-system equations used by the model
+  score_institution.py       End-to-end scoring entry point for one institution (see Known Gaps)
+  score_batch.py              Scores a fixed, disclosed list of real institutions in one run (see Known Gaps)
+  render_dashboard.py          Bakes docs/data/live_scores.json into docs/index.html as static HTML
+  dynamics.py                   Core RICD dynamical-system equations used by the model
   legacy_peer_density_reference.py   Retained reference implementation from an earlier peer-density approach
+  diagnose_scorecard_gaps.py    One-off diagnostic: real per-year, per-field College Scorecard completeness for a given institution
+  diagnose_feature_values.py    One-off diagnostic: real 8-feature vectors for given institutions vs. real validated-panel reference values (see Known Gaps)
+  diagnose_f3_fields.py         One-off diagnostic: confirmed the real F3 (for-profit) finance form's column codes against a live filing
+  diagnose_ipeds_access.py      One-off diagnostic: found NCES's real, current bulk-file URL pattern for the newest 1-2 years, after the old one went dead
+  diagnose_ipeds_access2.py     One-off diagnostic: found NCES's real, current bulk-file URL pattern for older years (FY2013-FY2021), served from a different location than the newest years
 data/
   panel/panel.json           The real, validated 54-institution panel
 docs/
   RICD 15.6 master.docx, .tex    The full, domain-independent RICD theory
   index.html                      Public results dashboard (GitHub Pages)
   data/panel.json                  Validated 54-institution panel data
-  data/live_scores.json            Real institutions scored live by score_institution.py
+  data/live_scores.json            Real institutions scored live by score_institution.py / score_batch.py
 source-documents/
   Quartet of poems.pdf                                                 Original poems
   The Pentagonal Theorem of the Mathematical Nature of Evil.pdf       Became FDFM
@@ -249,7 +256,11 @@ reports/
   RICD Adapter Instructional Manual.pdf  Adapter-contract implementation guide, for engineers
   RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
 .github/workflows/
-  rescore.yml                 Scheduled re-scoring workflow
+  rescore.yml                     Scheduled re-scoring workflow (score_batch.py + score_institution.py + render_dashboard.py)
+  diagnose_scorecard_gaps.yml      Manual-only: runs diagnose_scorecard_gaps.py
+  diagnose_feature_values.yml      Manual-only: runs diagnose_feature_values.py
+  diagnose_f3_fields.yml            Manual-only: runs diagnose_f3_fields.py
+  diagnose_ipeds.yml                Manual-only: runs the IPEDS-access diagnostics
 ````
 
 ## Re-scoring cadence
