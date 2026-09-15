@@ -51,13 +51,28 @@
   </table>
 
   <h2 id="live-section" style="margin-top:40px;">Live-scored institutions</h2>
-  <div class="scope-note" id="live-scope-note" style="display:none;">
+  <!--
+    The section below is baked as real, static HTML by
+    src/render_dashboard.py every time the automated re-score workflow
+    runs (see .github/workflows/rescore.yml), reading directly from
+    docs/data/live_scores.json. This is deliberate: a tool that reads
+    only the raw page source -- an AI summarizer, a search-engine
+    crawler, a screen reader that skips JavaScript -- would otherwise
+    see nothing but the JavaScript-only placeholder state, since the
+    live table used to be populated exclusively by the script at the
+    bottom of this file. That script still runs for a real browser and
+    re-renders the same data client-side; that's harmless and
+    intentionally redundant. The static markup and the script are two
+    independent paths to the same real data, not two different sources
+    of truth -- both are generated from docs/data/live_scores.json.
+  -->
+  <div class="scope-note" id="live-scope-note" style="display:block;">
     These institutions were scored automatically from real, current government
     data by the live pipeline (separate from the 54-institution validation
     panel above). "Insufficient data" means the pipeline ran but real data
     for that institution was genuinely incomplete -- not a fabricated result.
   </div>
-  <table id="live-table" style="display:none;">
+  <table id="live-table" style="display:table;">
     <thead>
       <tr>
         <th>Institution</th>
@@ -67,9 +82,40 @@
         <th>Last scored (UTC)</th>
       </tr>
     </thead>
-    <tbody id="live-body"></tbody>
+    <tbody id="live-body">
+<!-- STATIC_LIVE_ROWS_START -->
+        <tr>
+          <td>Sweet Briar College</td>
+          <td class="closure">high_risk</td>
+          <td>52.4%</td>
+          <td>statistical_classifier</td>
+          <td>2026-09-15 02:33 UTC</td>
+        </tr>
+        <tr>
+          <td>University of Michigan-Ann Arbor</td>
+          <td class="stable">stable</td>
+          <td>25.6%</td>
+          <td>statistical_classifier</td>
+          <td>2026-09-15 02:32 UTC</td>
+        </tr>
+        <tr>
+          <td>University of Phoenix-Arizona</td>
+          <td class="">insufficient_data</td>
+          <td>—</td>
+          <td>—</td>
+          <td>2026-09-15 02:33 UTC</td>
+        </tr>
+        <tr>
+          <td>Youngstown State University</td>
+          <td class="">insufficient_data</td>
+          <td>—</td>
+          <td>—</td>
+          <td>2026-09-15 02:33 UTC</td>
+        </tr>
+<!-- STATIC_LIVE_ROWS_END -->
+    </tbody>
   </table>
-  <p id="live-empty" style="color:#666; font-size:0.9em;">No institutions have been live-scored yet.</p>
+  <p id="live-empty" style="color:#666; font-size:0.9em; display:none;">No institutions have been live-scored yet.</p>
 
 <script>
 let panelData = [];
@@ -123,7 +169,7 @@ loadPanel();
 async function loadLiveScores() {
   try {
     const resp = await fetch('data/live_scores.json');
-    if (!resp.ok) return; // file doesn't exist yet -- leave the "none yet" message showing
+    if (!resp.ok) return; // file doesn't exist yet -- leave the baked-in static state showing
     const liveData = await resp.json();
     if (!Array.isArray(liveData) || liveData.length === 0) return;
     document.getElementById('live-empty').style.display = 'none';
@@ -144,7 +190,7 @@ async function loadLiveScores() {
       `;
     }).join('');
   } catch (e) {
-    // a real failure to load -- leave the "none yet" message showing rather than break the page
+    // a real failure to load -- leave the baked-in static state showing rather than break the page
   }
 }
 loadLiveScores();
