@@ -1,0 +1,38 @@
+name: Diagnose F3 (for-profit) finance field codes
+
+# Manual-only diagnostic. Prints the real column headers -- and one
+# real institution's actual row -- from the real IPEDS F3 bulk finance
+# file, so the real for-profit field codes can be read directly from
+# government data instead of guessed from IPEDS documentation (which
+# could not be pinned down for the current form revision -- see
+# src/diagnose_f3_fields.py's own docstring). Run this once from the
+# Actions tab, then read the real column names in the run's log.
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: "Fiscal year to check (e.g. 2022)"
+        required: false
+        default: "2022"
+      unitid:
+        description: "UNITID to look up in the file"
+        required: false
+        default: "484613"  # University of Phoenix-Arizona
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Print real F3 column headers and one real row
+        run: |
+          cd src
+          python diagnose_f3_fields.py "${{ github.event.inputs.year }}" "${{ github.event.inputs.unitid }}"
