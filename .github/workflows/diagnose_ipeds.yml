@@ -14,4 +14,4 @@ jobs:
       - name: Install requests
         run: pip install requests
       - name: Run diagnostic
-        run: python src/diagnose_ipeds_access.py
+        run: python src/diagnose_ipeds_access2.py
