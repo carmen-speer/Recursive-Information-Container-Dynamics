@@ -1,0 +1,43 @@
+name: Diagnose real feature values for live-scored institutions
+
+# Manual-only diagnostic. Runs the exact same compute_features_for_institution()
+# used by score_institution.py / score_batch.py against University of
+# Houston, Cal State Long Beach, and Clemson, and prints the real,
+# full 8-feature vector for each -- alongside the already-validated
+# feature vectors of five public flagships already in the panel
+# (Michigan, UVA, UNC, Florida, Wisconsin) -- so a surprising
+# classification (e.g. Houston's 87.3% high_risk despite a real 2025
+# S&P upgrade) can be investigated against real numbers instead of
+# guessed at. Does not touch docs/data/live_scores.json -- diagnostic
+# only, never writes to the public dashboard.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Optional: a single UNITID to check (default: all three -- Houston, Long Beach, Clemson)"
+        required: false
+        default: ""
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Print real feature vectors vs. real validated panel reference
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          if [ -n "${{ github.event.inputs.only }}" ]; then
+            python diagnose_feature_values.py --only "${{ github.event.inputs.only }}"
+          else
+            python diagnose_feature_values.py
+          fi
