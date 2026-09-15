@@ -21,7 +21,11 @@ specifically to be checked against the manuscript, not trusted on its own.
 Pentagonal Theorem of the Mathematical Nature of Evil, and Shaking Bowls —
 Carmen Speer's own original creative and theoretical writing, which became
 FDFM and RICS respectively, then nested into RICS-FDFM, then RICD, before
-further revisions arrived at the manuscript above. The folder's
+further revisions arrived at the manuscript above. An interlinear
+**[Source Translation Ledger](<source-documents/Source Translation Ledger source poems explained mathematically.pdf>)**
+sets RICD's own mathematics directly alongside the four original poems it
+was built from, line by line, so the connection between the source material
+and the formal framework is checkable rather than asserted. The folder's
 `intermediate-development/` subfolder holds real, surviving milestones from
 that path: an early FDFM application proposing a justice-system tracker
 (directly cited by RICD 5.0's own editorial notes, not a lost document), the
@@ -44,13 +48,7 @@ rather than asserted), [`RICD Adapter Instructional Manual.pdf`](<reports/RICD A
 engineers working with the RICD adapter contract directly),
 [`Actor Tracker Seed Note.pdf`](<reports/Actor Tracker Seed Note.pdf>) (a seed
 note for a genuinely different kind of tracker planned for later), and the
-complete [`RICD Integration Manifest Complete.pdf`](<reports/RICD Integration Manifest Complete.pdf>) described above. An
-interlinear **Source Translation Ledger**
-([`source-documents/Source Translation Ledger: source poems explained mathematically.pdf`](<source-documents/Source Translation Ledger: source poems explained mathematically.pdf>))
-is also included, setting RICD's own mathematics directly alongside the
-four original poems it was built from, line by line, so the connection
-between the source material and the formal framework is checkable rather
-than asserted.
+complete [`RICD Integration Manifest Complete.pdf`](<reports/RICD Integration Manifest Complete.pdf>) described above.
 
 The planned future tracker mentioned above is an
 **actor tracker**, which would investigate the specific real decisions and
@@ -195,7 +193,7 @@ source-documents/
   Quartet of poems.pdf                                                 Original poems
   The Pentagonal Theorem of the Mathematical Nature of Evil.pdf       Became FDFM
   Shaking Bowls Thought Experiment.pdf                                 Became RICS
-  Source Translation Ledger: source poems explained mathematically.pdf   Poems set line-by-line alongside RICD's math
+  Source Translation Ledger source poems explained mathematically.pdf   Poems set line-by-line alongside RICD's math
   README.md                                                               Full lineage
   intermediate-development/
     Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx               Early FDFM justice-tracker proposal
