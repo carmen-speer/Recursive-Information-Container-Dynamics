@@ -60,4 +60,4 @@ for url in urls_to_try:
     except Exception as e:
         print(f"REQUEST FAILED: {type(e).__name__}: {e}")
 
-print("\n\nDONE
+print("\n\nDONE. Copy this entire output and send it back for the real fix.")
