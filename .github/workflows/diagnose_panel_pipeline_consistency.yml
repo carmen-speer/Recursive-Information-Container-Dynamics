@@ -1,0 +1,43 @@
+name: Diagnose panel vs. live pipeline consistency
+
+# Manual-only diagnostic. Recomputes Michigan/UVA/UNC/Florida/Wisconsin
+# -- all five already in the validated panel with a frozen, known
+# feature vector -- through the live pipeline, and diffs the result
+# against the panel record. Tests whether the live-scored neutral
+# batch (Houston, Long Beach, Clemson, UCF, FSU, Buffalo -- all
+# high_risk, all with nonzero frac_high_entropy) reflects a real
+# live-vs-training data-window mismatch, since compute_features_for_institution()
+# defaults its end_year to today's year minus two. Does not touch
+# docs/data/live_scores.json -- diagnostic only, never writes to the
+# public dashboard.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Optional: a single UNITID to check (default: all five -- Michigan, UVA, UNC, Florida, Wisconsin)"
+        required: false
+        default: ""
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Diff panel-frozen features against live recomputation
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          if [ -n "${{ github.event.inputs.only }}" ]; then
+            python diagnose_panel_pipeline_consistency.py --only "${{ github.event.inputs.only }}"
+          else
+            python diagnose_panel_pipeline_consistency.py
+          fi
