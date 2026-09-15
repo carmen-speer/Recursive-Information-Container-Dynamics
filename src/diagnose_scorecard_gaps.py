@@ -51,6 +51,10 @@ def diagnose(unitid: str, start_year: int = 2013, end_year: int = 2024) -> None:
         except Exception as e:
             print(f"  {year}: REAL API ERROR -- {type(e).__name__}: {e}")
             continue
+        if not isinstance(result, dict):
+            print(f"  {year}: UNEXPECTED SHAPE -- fetch_scorecard_fields returned "
+                  f"{type(result).__name__} instead of dict. Raw value: {result!r}")
+            continue
         row = []
         for key, label in FIELDS.items():
             full_key = f"{year}.{key}"
