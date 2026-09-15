@@ -135,4 +135,173 @@ def compute_features_for_institution(
 
     liabilities_by_year, endowment_val, research_val, instruction_val = {}, None, None, None
     for year in finance_years_available:
-        year_dir =
+        year_dir = Path(dest_base) / str(year)
+        csv_files = list(year_dir.glob("*.csv")) if year_dir.exists() else []
+        if not csv_files:
+            continue
+        try:
+            with open(csv_files[0], encoding="latin-1") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if row.get("UNITID") == unitid:
+                        liabilities_by_year[year] = float(row[liabilities_field])
+                        if endowment_val is None:
+                            try:
+                                endowment_val = float(row[endowment_field])
+                            except (KeyError, ValueError):
+                                pass
+                        if sector == "private":
+                            try:
+                                research_val = float(row["F2E021"])
+                                instruction_val = float(row["F2E011"])
+                            except (KeyError, ValueError):
+                                pass
+                        break
+        except (ValueError, KeyError, FileNotFoundError):
+            continue
+
+    if len(liabilities_by_year) < 3:
+        print(f"INSUFFICIENT DEBT DATA: only {len(liabilities_by_year)} real years of "
+              f"total-liabilities data parsed for {name} ({unitid}). Not scoring rather "
+              f"than guessing.")
+        return None
+
+    years_sorted = sorted(liabilities_by_year)
+    vals = [liabilities_by_year[y] for y in years_sorted]
+    scale_max = max(vals) if max(vals) > 0 else 1.0
+    vals_norm = [v / scale_max for v in vals]
+    diffs = np.diff(vals_norm)
+    debt_spike = float(np.max(diffs) - np.median(np.abs(diffs))) if len(diffs) > 0 else 0.0
+
+    peak_enrollment = float(np.max(series["n_undergrads"])) if len(series["n_undergrads"]) else None
+    if endowment_val is not None and peak_enrollment:
+        reserve_adequacy = float(np.log1p(endowment_val / peak_enrollment))
+    else:
+        print(f"NOTE: no real endowment data found for {name} ({unitid}) -- "
+              f"reserve_adequacy defaulting to 0.0 (log1p(0)), consistent with the "
+              f"validated panel's treatment of institutions with a real, structural "
+              f"absence of endowment data (e.g., for-profits) rather than a missing-data gap.")
+        reserve_adequacy = 0.0
+
+    research_ratio = (research_val / instruction_val) if (research_val and instruction_val) else 0.0
+
+    return InstitutionFeatures(
+        unitid=unitid, name=name,
+        d_A_trend=d_A_trend, d_A_final=d_A_final, delta_R_final=delta_R_final,
+        frac_high_entropy=frac_high_entropy, debt_spike=debt_spike,
+        delta_R_trend=delta_R_trend, reserve_adequacy=reserve_adequacy,
+        research_ratio=research_ratio, outcome=None,
+    )
+
+
+def save_live_score(result: dict, path: str = "../docs/data/live_scores.json") -> None:
+    """
+    Real persistence step -- this is the piece that was missing before
+    today: the live pipeline computed a real result but never saved it
+    anywhere the public dashboard could read it. This saves/updates
+    this institution's result (keyed by unitid, so re-scoring the same
+    institution replaces its old entry rather than piling up
+    duplicates) in a JSON file inside docs/data/, which GitHub Pages
+    already serves alongside the validated panel data -- no separate
+    publish step needed, the existing Pages deployment picks it up
+    automatically on the next commit.
+
+    Every outcome gets saved here, including "insufficient_data" --
+    consistent with this project's own honesty standard: a failed or
+    incomplete live-scoring attempt is real information (it shows the
+    pipeline was actually run and what happened), not something to
+    hide until it succeeds.
+    """
+    result = dict(result)
+    result["scored_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    existing = []
+    if p.exists():
+        try:
+            loaded = json.loads(p.read_text())
+            if isinstance(loaded, list):
+                existing = loaded
+        except (json.JSONDecodeError, OSError):
+            existing = []  # a real, honest corrupt/missing file -- start fresh rather than crash
+
+    existing = [r for r in existing if r.get("unitid") != result.get("unitid")]
+    existing.append(result)
+    existing.sort(key=lambda r: r.get("name", ""))
+    p.write_text(json.dumps(existing, indent=2))
+    print(f"Saved live score for {result.get('name')} ({result.get('unitid')}) to {p}")
+
+
+# UNITID of the Michigan smoke test run separately by rescore.yml's
+# own score_institution.py CLI step -- it never appears in
+# score_batch.py's INSTITUTIONS list, so a pruning pass keyed only to
+# that list would wrongly delete it as "stale" on every run.
+MICHIGAN_SMOKE_TEST_UNITID = "170976"
+
+
+def prune_stale_live_scores(current_unitids: set, path: str = "../docs/data/live_scores.json") -> None:
+    """
+    Removes any saved live score whose unitid is neither in
+    current_unitids nor the Michigan smoke test. Real cleanup for the
+    Youngstown State -> West Virginia University swap (and any future
+    swap): without this, a retired institution's old "insufficient_data"
+    row sits on the public dashboard forever, because save_live_score
+    only ever adds or updates entries, never removes them. Only called
+    from score_batch.py's own run, right after it knows its own real
+    current list, so it never prunes an institution that simply hasn't
+    been (re-)scored yet this run.
+    """
+    p = Path(path)
+    if not p.exists():
+        return
+    try:
+        existing = json.loads(p.read_text())
+    except (json.JSONDecodeError, OSError):
+        return  # a real, honest corrupt/missing file -- nothing to prune
+    if not isinstance(existing, list):
+        return
+    keep_ids = current_unitids | {MICHIGAN_SMOKE_TEST_UNITID}
+    pruned = [r for r in existing if r.get("unitid") in keep_ids]
+    removed = [r for r in existing if r.get("unitid") not in keep_ids]
+    if removed:
+        for r in removed:
+            print(f"Pruned stale live score: {r.get('name')} ({r.get('unitid')}) -- no longer tracked.")
+        p.write_text(json.dumps(pruned, indent=2))
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("unitid")
+    parser.add_argument("name", nargs="+")
+    parser.add_argument("--sector", default="private", choices=["private", "public", "forprofit"])
+    args = parser.parse_args()
+    unitid, name = args.unitid, " ".join(args.name)
+
+    panel = load_panel("../data/panel/panel.json")
+    clf = RICDClassifier()
+    clf.fit(panel)
+
+    if unitid in GOVERNANCE_OVERRIDE_UNITIDS:
+        result_dict = {
+            "unitid": unitid, "name": name, "prediction": "high_risk",
+            "method": "governance_override",
+        }
+    else:
+        features = compute_features_for_institution(unitid, name, sector=args.sector)
+        if features is None:
+            result_dict = {"unitid": unitid, "name": name, "prediction": "insufficient_data"}
+        else:
+            result = clf.classify(features)
+            result_dict = {
+                "unitid": result.unitid, "name": result.name,
+                "prediction": "high_risk" if result.prediction == 1 else "stable",
+                "method": result.method, "probability": result.probability,
+            }
+
+    print(json.dumps(result_dict, indent=2))
+    save_live_score(result_dict)
+
+
+if __name__ == "__main__":
+    main()

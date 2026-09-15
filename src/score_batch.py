@@ -42,12 +42,12 @@ others, and a real, honest "insufficient_data" result is itself
 useful information, not a reason to stop.
 """
 
-from score_institution import compute_features_for_institution, save_live_score, prune_stale_live_scores
+from __future__ import annotations
 
 import json
 
 from classifier import RICDClassifier, load_panel, GOVERNANCE_OVERRIDE_UNITIDS
-from score_institution import compute_features_for_institution, save_live_score
+from score_institution import compute_features_for_institution, save_live_score, prune_stale_live_scores
 
 INSTITUTIONS = [
     ("233718", "Sweet Briar College", "private"),
@@ -91,7 +91,14 @@ def main():
         save_live_score(result_dict)
         results.append(result_dict)
 
-        prune_stale_live_scores({unitid for unitid, _, _ in INSTITUTIONS})print(f"\n{'=' * 70}\nBATCH DONE -- {len(results)} institutions attempted\n{'=' * 70}")
+    # Real cleanup, run once after the whole batch: removes any saved
+    # live score for an institution no longer in INSTITUTIONS above
+    # (e.g. Youngstown State after the West Virginia University swap),
+    # so a retired institution doesn't sit on the public dashboard
+    # forever as a stale "insufficient_data" row.
+    prune_stale_live_scores({unitid for unitid, _, _ in INSTITUTIONS})
+
+    print(f"\n{'=' * 70}\nBATCH DONE -- {len(results)} institutions attempted\n{'=' * 70}")
 
 
 if __name__ == "__main__":
