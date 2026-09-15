@@ -48,6 +48,33 @@ Continues to the next institution if one fails or comes back
 "insufficient_data" -- one hard institution should never block the
 others, and a real, honest "insufficient_data" result is itself
 useful information, not a reason to stop.
+
+Added 2026-09-15, to correct a real selection-bias problem: the three
+institutions above were all chosen for reasons connected to their real
+or suspected financial condition (a documented near-closure, a
+documented enrollment collapse, a documented 2023 financial crisis),
+so the live dashboard had drifted to 3 high_risk results against only
+1 stable one (the Michigan smoke test) -- not because the model is
+biased, but because every institution fed into it so far was picked
+*because* it was already publicly known to be distressed. None of
+those three results are a novel prediction; all three are public
+knowledge already.
+
+The three below were chosen by an explicit, disclosed, neutral rule
+applied BEFORE looking at any institution's financial condition, to
+avoid cherry-picking "safe" schools just as much as cherry-picking
+distressed ones: positions #20, #35, and #48 on CollegeXpress's public
+"50 Largest US Colleges and Universities by Enrollment" list
+(https://www.collegexpress.com/lists/list/the-50-largest-us-colleges-and-universities/361/),
+an ordering by enrollment size that has nothing to do with financial
+risk. UNITIDs were then looked up for real from each institution's own
+NCES IPEDS profile, not guessed:
+- University of Houston (225511, public) -- rank #20.
+- California State University-Long Beach (110583, public) -- rank #35.
+- Clemson University (217882, public) -- rank #48.
+All three are public institutions, so they exercise the
+already-validated PUBLIC_FINANCE_FIELDS path, not a new or
+recently-patched one.
 """
 
 from __future__ import annotations
@@ -61,6 +88,9 @@ INSTITUTIONS = [
     ("233718", "Sweet Briar College", "private", 2013),
     ("484613", "University of Phoenix-Arizona", "forprofit", 2014),
     ("238032", "West Virginia University", "public", 2013),
+    ("225511", "University of Houston", "public", 2013),
+    ("110583", "California State University-Long Beach", "public", 2013),
+    ("217882", "Clemson University", "public", 2013),
 ]
 
 
