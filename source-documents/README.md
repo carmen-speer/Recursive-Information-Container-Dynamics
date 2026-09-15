@@ -57,7 +57,7 @@ documents above and the current manuscript:
   predecessor to RICD's own Part 4 (information geometry) and Part 8
   (network dynamics).
 - [`RICD 1.2 or 1.3 early version.pdf`](<intermediate-development/RICD 1.2 or 1.3 early version.pdf>),
-  [`RICD 5.0.docx`](<intermediate-development/RICD 5.0.docx>),
+  [`RICD 5.0.pdf`](<intermediate-development/RICD 5.0.pdf>),
   [`RICD 5.3.pdf`](<intermediate-development/RICD 5.3.pdf>),
   [`RICD 5.4.pdf`](<intermediate-development/RICD 5.4.pdf>),
   [`RICD 5.5.pdf`](<intermediate-development/RICD 5.5.pdf>),
