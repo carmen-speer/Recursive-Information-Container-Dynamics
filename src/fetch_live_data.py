@@ -64,6 +64,50 @@ PUBLIC_FINANCE_FIELDS = {
     "instruction": "F1C011",
 }
 
+# Real field codes for FOR-PROFIT institutions (the F3 form), confirmed
+# directly against a real, live-downloaded F3 file for University of
+# Phoenix-Arizona (UNITID 484613, FY2022) via a one-off diagnostic run
+# on 2026-09-15 -- not guessed from documentation, because the current
+# F3 form's published survey materials could not be pinned down (it's
+# been revised more than once, and the specific package covering
+# degree-granting for-profit institutions couldn't be located through
+# NCES's own published materials).
+#
+# total_liabilities, revenue, and expenses are arithmetically PROVEN
+# from that real row, not just plausible:
+#   F3A01 (618,567,995) == F3A02 (378,890,323) + F3A03 (239,677,672)
+#     -- the balance-sheet identity assets = equity + liabilities,
+#     exact to the dollar, which is what confirms F3A03 as total
+#     liabilities and F3A01/F3A02 as total assets/equity.
+#   F3D01 (832,032,699) + F3D05 (8,651,564) + F3D08 (9,441,821)
+#     == F3D09 (850,126,084) exactly -- confirms F3D09 as total revenue.
+#   F3D09 (850,126,084) - F3B02 (761,327,216) == F3G01 (88,798,868)
+#     exactly, and F3G01 is a real, standalone "net income" line --
+#     confirms F3B02 as total expenses.
+#
+# institutional_support and instruction are NOT arithmetically proven
+# the same way -- they're a strong but unverified structural inference:
+# F3 and F2 are both FASB-standard forms (unlike the GASB-based F1),
+# and F2's confirmed codes for these same two categories sit at the
+# identical line positions (F2E061 = institutional support, F2E011 =
+# instruction). If a future re-check finds these wrong, the pipeline
+# fails safe either way -- see parse_live_finance()'s per-field
+# try/except, which yields an honest "insufficient_data" on a bad
+# field code rather than a silently wrong number, exactly like it did
+# before this fix.
+FORPROFIT_FINANCE_FIELDS = {
+    "total_liabilities": "F3A03",
+    "revenue": "F3D09",
+    "expenses": "F3B02",
+    "institutional_support": "F3E061",
+    "instruction": "F3E011",
+    # Deliberately no "endowment" key: for-profit institutions do not
+    # report an endowment field on the F3 form at all -- a real,
+    # structural fact (already documented in the README's Known Gaps),
+    # not a missing-data gap. score_institution.py's endowment lookup
+    # already tolerates a missing key gracefully.
+}
+
 
 def fetch_scorecard_fields(unitid: str, fields: list[str], api_key: str | None = None) -> dict:
     """
@@ -163,7 +207,12 @@ def parse_live_finance(unitid: str, window_years: list[str], dest_base: str | Pa
     import csv
     import numpy as np
 
-    fields = PRIVATE_FINANCE_FIELDS if sector == "private" else PUBLIC_FINANCE_FIELDS
+    if sector == "private":
+        fields = PRIVATE_FINANCE_FIELDS
+    elif sector == "forprofit":
+        fields = FORPROFIT_FINANCE_FIELDS
+    else:
+        fields = PUBLIC_FINANCE_FIELDS
     n = len(window_years)
     E_exch = np.full(n, np.nan)
     M_maint = np.full(n, np.nan)
