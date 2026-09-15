@@ -22,7 +22,7 @@ was done, not just the code that does it.
   higher-education sector as a whole, distinct from the validation result
   itself.
 - [`Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf`](<Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf>)
-  and [`ChatGPT's Account of Its own Role in Building FDFM, RICS, and RICD 1.0.pdf`](<ChatGPT's Account of Its own Role in Building FDFM, RICS, and RICD 1.0.pdf>) —
+  and [`ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, and RICD.pdf`](<ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, and RICD.pdf>) —
   each AI collaborator's own account of working with Carmen on the
   framework and the tracker, so the real division of labor is checkable
   rather than asserted.
