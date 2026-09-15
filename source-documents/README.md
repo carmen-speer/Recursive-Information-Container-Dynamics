@@ -2,24 +2,24 @@
 
 These documents are the original and intermediate material RICD was built
 from, before it reached the version in
-[`docs/RICD_15_6_master.docx`](../docs/RICD_15_6_master.docx). All original
+[`docs/RICD 15.6 master.docx`](<../docs/RICD 15.6 master.docx>). All original
 creative and theoretical writing here is Carmen Speer's own, predating any
 AI-assisted formalization.
 
 ## The lineage
 
-1. [`Quartet_of_poems.pdf`](Quartet_of_poems.pdf) — four original poems.
+1. [`Quartet of poems.pdf`](<Quartet of poems.pdf>) — four original poems.
    Carmen first noticed a set of recurring mathematical patterns in how she
    was structuring this work here, before any formal theory existed.
-2. [`The_Pentagonal_Theorem_of_the_Mathematical_Nature_of_Evil_-2.pdf`](The_Pentagonal_Theorem_of_the_Mathematical_Nature_of_Evil_-2.pdf) —
+2. [`The Pentagonal Theorem of the Mathematical Nature of Evil.pdf`](<The Pentagonal Theorem of the Mathematical Nature of Evil.pdf>) —
    an original theoretical document, written by Carmen alone, growing
    directly out of the patterns noticed in the poems. Working with ChatGPT,
    this became Feedback Divergence Field Mechanics (FDFM).
-3. [`Shaking_Bowls_Thought_Experiment-1.pdf`](Shaking_Bowls_Thought_Experiment-1.pdf) —
+3. [`Shaking Bowls Thought Experiment.pdf`](<Shaking Bowls Thought Experiment.pdf>) —
    a second original thought experiment, also written by Carmen alone.
    Working with ChatGPT, this became RICS.
 
-An interlinear **[Source Translation Ledger](<Source_Translation_Ledger_ RICD source poems explained mathematically.pdf>)**
+An interlinear **[Source Translation Ledger](<Source Translation Ledger: source poems explained mathematically.pdf>)**
 sets RICD's own mathematics directly alongside the four original poems it
 was built from, line by line, so the connection between the source material
 and the formal framework is checkable rather than asserted.
@@ -38,7 +38,7 @@ informing that revision.
 The real, surviving intermediate milestones between the original source
 documents above and the current manuscript:
 
-- [`Feedback_Divergence_Field_Model__FDFM____U_S__justice_system_application_and_research_proposal.docx`](<intermediate-development/Feedback_Divergence_Field_Model__FDFM____U_S__justice_system_application_and_research_proposal.docx>) —
+- [`Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx`](<intermediate-development/Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx>) —
   an early, substantial application of FDFM: a proposed Bayesian
   state-space tracker for the U.S. federal justice system, including a
   full empirical model, a proposed data schema, and cited real data
@@ -46,7 +46,7 @@ documents above and the current manuscript:
   document RICD 5.0 itself cites as already having informed its own
   development. Real and substantial, not a lost or abandoned draft — a
   real future project, not yet rebuilt.
-- [`RICS_FDFM_Multiscale_Information_Geometric_Model.pdf`](intermediate-development/RICS_FDFM_Multiscale_Information_Geometric_Model.pdf) —
+- [`RICS FDFM Multiscale Information Geometric Model.pdf`](<intermediate-development/RICS FDFM Multiscale Information Geometric Model.pdf>) —
   the "Expanded Mathematical Edition" of nested RICS-FDFM (dated July
   2026), formalizing the framework as a recursive, multiscale,
   information-geometric stochastic hybrid system: Jensen-Shannon and
@@ -56,19 +56,19 @@ documents above and the current manuscript:
   generator and stability analysis. This is the direct mathematical
   predecessor to RICD's own Part 4 (information geometry) and Part 8
   (network dynamics).
-- [`RICD_1_2_or_1_3_early_version.pdf`](intermediate-development/RICD_1_2_or_1_3_early_version.pdf),
-  [`RICD_5_0.docx`](intermediate-development/RICD_5_0.docx),
-  [`RICD_5_3.pdf`](intermediate-development/RICD_5_3.pdf),
-  [`RICD_5_4.pdf`](intermediate-development/RICD_5_4.pdf),
-  [`RICD_5_5.docx`](intermediate-development/RICD_5_5.docx),
-  [`RICD_5_6.pdf`](intermediate-development/RICD_5_6.pdf) — six real,
+- [`RICD 1.2 or 1.3 early version.pdf`](<intermediate-development/RICD 1.2 or 1.3 early version.pdf>),
+  [`RICD 5.0.docx`](<intermediate-development/RICD 5.0.docx>),
+  [`RICD 5.3.pdf`](<intermediate-development/RICD 5.3.pdf>),
+  [`RICD 5.4.pdf`](<intermediate-development/RICD 5.4.pdf>),
+  [`RICD 5.5.pdf`](<intermediate-development/RICD 5.5.pdf>),
+  [`RICD 5.6.pdf`](<intermediate-development/RICD 5.6.pdf>) — six real,
   sequential earlier versions of RICD itself, predating the 9.7-through-10.7
   revision sequence built and adversarially reviewed during the higher-ed
   tracker project this repository documents. The earliest, from right when
   this collaboration began, is real and substantially shorter than RICD
   5.0 (roughly two-thirds the length), ending before the adapter contract
   (§15.2-15.3) was fully built out — consistent with Carmen's own account
-  of it as an early draft. `RICD_5_5.docx` was used directly as the
+  of it as an early draft. `RICD 5.5.pdf` was used directly as the
   formatting reference template for every later manuscript revision
   produced during that project.
 
@@ -78,7 +78,7 @@ revisions to reach the version in this repository.
 ## A known gap
 
 Carmen has indicated there is at least one more RICS-FDFM model document
-beyond `RICS_FDFM_Multiscale_Information_Geometric_Model.pdf` above, which
+beyond `RICS FDFM Multiscale Information Geometric Model.pdf` above, which
 could not be uploaded because the document was too long. It is not
 included here yet. If a way to split or otherwise transfer it becomes
 available, it belongs in this folder alongside the version above.
