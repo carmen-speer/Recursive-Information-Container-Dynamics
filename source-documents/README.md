@@ -19,6 +19,11 @@ AI-assisted formalization.
    a second original thought experiment, also written by Carmen alone.
    Working with ChatGPT, this became RICS.
 
+An interlinear **[Source Translation Ledger](<Source_Translation_Ledger_ RICD source poems explained mathematically.pdf>)**
+sets RICD's own mathematics directly alongside the four original poems it
+was built from, line by line, so the connection between the source material
+and the formal framework is checkable rather than asserted.
+
 FDFM and RICS were then combined into a single, nested framework,
 RICS-FDFM. Dozens of further iterations of FDFM, RICS, and RICS-FDFM
 followed. This lineage is not only reported on Carmen's own account — it is
