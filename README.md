@@ -170,3 +170,54 @@ everything below is complete:
   chaotic collapse left no single clean container to test against.
 
 ## Repository structure
+
+````
+src/
+  model.py               Bayesian state-space model (PyMC)
+  jump_diffusion.py       Shock-type latent process for debt
+  common_cause.py         Shared-external-shock detector
+  real_adapter.py          Real IPEDS/Scorecard data loading (historical, local files)
+  fetch_live_data.py       Live data fetching (College Scorecard API + IPEDS bulk files)
+  classifier.py             The 8-feature + governance-override classifier
+  score_institution.py       End-to-end scoring entry point (see Known Gaps)
+  dynamics.py                 Core RICD dynamical-system equations used by the model
+  legacy_peer_density_reference.py   Retained reference implementation from an earlier peer-density approach
+data/
+  panel/panel.json           The real, validated 54-institution panel
+docs/
+  RICD 15.6 master.docx, .tex    The full, domain-independent RICD theory
+  index.html                      Public results dashboard (GitHub Pages)
+  data/panel.json                  Validated 54-institution panel data
+  data/live_scores.json            Real institutions scored live by score_institution.py
+source-documents/
+  Quartet of poems.pdf                                                 Original poems
+  The Pentagonal Theorem of the Mathematical Nature of Evil.pdf       Became FDFM
+  Shaking Bowls Thought Experiment.pdf                                 Became RICS
+  Source Translation Ledger source poems explained mathematically.pdf   Poems set line-by-line alongside RICD's math
+  README.md                                                               Full lineage
+  intermediate-development/
+    Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx               Early FDFM justice-tracker proposal
+    RICS FDFM Multiscale Information Geometric Model.pdf                    Expanded nested RICS-FDFM
+    RICD 5.0.pdf, RICD 5.3.pdf, RICD 5.4.pdf,                              Earlier RICD versions
+    RICD 5.5.pdf, RICD 5.6.pdf, RICD 1.2 or 1.3 early version.pdf
+reports/
+  RICD Tracker Findings Final.pdf        Final findings document
+  RICD Tracker Narrative Final.pdf       Narrative account of how results were reached
+  RICD Tracker Process Log Final.pdf     Consolidated process record
+  Higher Ed Sector Findings.pdf           What the results imply about the sector
+  Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf   Claude's own account of the collaboration
+  ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, and RICD.pdf   ChatGPT's own account of the collaboration
+  Actor Tracker Seed Note.pdf             Seed note for a mechanism-layer (actor) tracker, planned for later
+  RICD Adapter Instructional Manual.pdf  Adapter-contract implementation guide, for engineers
+  RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
+.github/workflows/
+  rescore.yml                 Scheduled re-scoring workflow
+````
+
+## Re-scoring cadence
+
+IPEDS is not live data — it releases on a fixed institutional schedule
+(provisional data a few times a year, final data annually). The scheduled
+workflow in `.github/workflows/rescore.yml` runs periodically and checks
+for new data rather than assuming a fixed release date; a run that finds
+nothing new is a normal, expected outcome, not a failure.
