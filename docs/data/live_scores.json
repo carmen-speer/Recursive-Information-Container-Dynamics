@@ -28,11 +28,5 @@
     "method": "statistical_classifier",
     "probability": 0.7457853587106917,
     "scored_at": "2026-09-15T04:43:43.713180+00:00"
-  },
-  {
-    "unitid": "206695",
-    "name": "Youngstown State University",
-    "prediction": "insufficient_data",
-    "scored_at": "2026-09-15T02:33:52.500028+00:00"
   }
 ]
