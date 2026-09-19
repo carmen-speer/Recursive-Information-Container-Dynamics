@@ -58,14 +58,19 @@ application, prepared for grant application documentation),
 (the broader roadmap of further RICD-based trackers planned beyond the four
 adapters and the higher-ed tracker in this repository),
 [`Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf`](<future-projects/Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf>)
-(a seed note for a genuinely different kind of tracker: an actor tracker,
-investigating the specific real decisions and actors behind a collapse --
+(a seed note for a genuinely different kind of tracker: an agent tracker,
+investigating the specific real decisions and agents behind a collapse --
 board minutes, depositions, investigative findings -- rather than the
 aggregate financial and enrollment effects the higher-ed tracker measures),
 [`Plurimo Vision Document.pdf`](<future-projects/Plurimo Vision Document.pdf>)
-(a separate teaching-optimization software platform for private tutors and
-independent educators, not built on RICD itself but planned to be funded by
-revenue from the four adapters above), and
+(a teaching-optimization software platform for private tutors and
+independent educators that uses RICD directly in its own algorithm -- for
+site-health monitoring and its anti-capture/anti-trolling detection system
+-- which is exactly why RICD needs to be pressure-tested and refined
+against real, adversarial data across new domains, via the four adapters
+above, before it's trusted to run Plurimo's systems; Plurimo is planned to
+be funded by revenue from those same four adapters rather than sought
+directly), and
 [`Web–Field Model of Cognitive Trait Distributions and Social Evolution.pdf`](<future-projects/Web–Field Model of Cognitive Trait Distributions and Social Evolution.pdf>)
 (RICD's mathematics applied to a second, unrelated domain: modeling human
 cognitive traits as regions on a continuous manifold rather than discrete
@@ -75,11 +80,11 @@ anything else in this repository, included so its actual state is checkable
 rather than asserted after the fact once, or if, it's validated).
 
 The planned future tracker mentioned above is an
-**actor tracker**, which would investigate the specific real decisions and
-actors behind a collapse (board minutes, depositions, investigative
+**agent tracker**, which would investigate the specific real decisions and
+agents behind a collapse (board minutes, depositions, investigative
 findings), rather than the aggregate financial and enrollment effects this
 higher-ed tracker measures. The two are complementary, not competing —
-see the seed note itself for why an actor tracker needs a different kind of
+see the seed note itself for why an agent tracker needs a different kind of
 evidence entirely, and why it wasn't attempted here.
 
 ## What this is
@@ -330,14 +335,14 @@ reports/
   Higher Ed Sector Findings.pdf           What the results imply about the sector
   Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf   Claude's own account of the collaboration
   ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, and RICD.pdf   ChatGPT's own account of the collaboration
-  Collapse-Causal Tracker (C-CT) Description Document.pdf   What a collapse-causal tracker is as a category, distinct from C-CAT
+  Collapse-Causal Tracker (C-CT) Description Document.pdf   [description not yet written here -- see file itself]
   RICD Adapter Instructional Manual.pdf  Adapter-contract implementation guide, for engineers
   RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
   readme.md                                Guide to this folder's contents
 future-projects/
-  Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf         Seed note for a mechanism-layer (actor) tracker, planned for later
+  Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf         Seed note for a mechanism-layer (agent) tracker, planned for later
   Next Project for RICD - Four Adapter Build Roadmap.pdf      One-year build plan for four new tracker adapters (banking, hospitals, public schools, nursing homes/long-term care)
-  Plurimo Vision Document.pdf                                  Vision document for Plurimo, a teaching-optimization platform
+  Plurimo Vision Document.pdf                                  Vision document for Plurimo, a teaching-optimization platform that uses RICD in its own algorithm
   RICD Ongoing Projects Roadmap.pdf                            Broader roadmap of further planned RICD-based trackers
   Web–Field Model of Cognitive Trait Distributions and Social Evolution.pdf   CMTR working theory (see above)
 .github/workflows/
