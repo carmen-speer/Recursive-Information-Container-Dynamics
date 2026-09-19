@@ -45,10 +45,34 @@ and [`ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, 
 (each AI collaborator's own account of working with Carmen on the framework and
 the tracker, asked for and included so the actual division of labor is checkable
 rather than asserted), [`RICD Adapter Instructional Manual.pdf`](<reports/RICD Adapter Instructional Manual.pdf>) (an instructional manual for
-engineers working with the RICD adapter contract directly),
-[`Actor Tracker Seed Note.pdf`](<reports/Actor Tracker Seed Note.pdf>) (a seed
-note for a genuinely different kind of tracker planned for later), and the
+engineers working with the RICD adapter contract directly), and the
 complete [`RICD Integration Manifest Complete.pdf`](<reports/RICD Integration Manifest Complete.pdf>) described above.
+
+**Not-yet-built or not-yet-funded work lives in [`future-projects/`](future-projects/):**
+[`Next Project for RICD - Four Adapter Build Roadmap.pdf`](<future-projects/Next Project for RICD - Four Adapter Build Roadmap.pdf>)
+(a proposed one-year build plan for four new RICD tracker adapters --
+banking, hospitals, public schools, and nursing homes/long-term care --
+chosen for having both large public datasets and realistic commercial
+application, prepared for grant application documentation),
+[`RICD Ongoing Projects Roadmap.pdf`](<future-projects/RICD Ongoing Projects Roadmap.pdf>)
+(the broader roadmap of further RICD-based trackers planned beyond the four
+adapters and the higher-ed tracker in this repository),
+[`Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf`](<future-projects/Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf>)
+(a seed note for a genuinely different kind of tracker: an actor tracker,
+investigating the specific real decisions and actors behind a collapse --
+board minutes, depositions, investigative findings -- rather than the
+aggregate financial and enrollment effects the higher-ed tracker measures),
+[`Plurimo Vision Document.pdf`](<future-projects/Plurimo Vision Document.pdf>)
+(a separate teaching-optimization software platform for private tutors and
+independent educators, not built on RICD itself but planned to be funded by
+revenue from the four adapters above), and
+[`Web–Field Model of Cognitive Trait Distributions and Social Evolution.pdf`](<future-projects/Web–Field Model of Cognitive Trait Distributions and Social Evolution.pdf>)
+(RICD's mathematics applied to a second, unrelated domain: modeling human
+cognitive traits as regions on a continuous manifold rather than discrete
+types, and deriving from it a proposed learning-style metric, the Cognitive
+Trait Manifold Ratio, or CMTR -- a working theory, at an earlier stage than
+anything else in this repository, included so its actual state is checkable
+rather than asserted after the fact once, or if, it's validated).
 
 The planned future tracker mentioned above is an
 **actor tracker**, which would investigate the specific real decisions and
@@ -261,3 +285,75 @@ everything below is complete:
   correctly, is the concrete next experiment, not a hypothetical one.
 
 ## Repository structure
+
+````
+src/
+  model.py               Bayesian state-space model (PyMC)
+  jump_diffusion.py       Shock-type latent process for debt
+  common_cause.py         Shared-external-shock detector
+  real_adapter.py          Real IPEDS/Scorecard data loading (historical, local files)
+  fetch_live_data.py       Live data fetching (College Scorecard API + IPEDS bulk files)
+  classifier.py             The 8-feature + governance-override classifier
+  score_institution.py       End-to-end scoring entry point for one institution (see Known Gaps)
+  score_batch.py              Scores a fixed, disclosed list of real institutions in one run (see Known Gaps)
+  render_dashboard.py          Bakes docs/data/live_scores.json into docs/index.html as static HTML
+  dynamics.py                   Core RICD dynamical-system equations used by the model
+  legacy_peer_density_reference.py   Retained reference implementation from an earlier peer-density approach
+  diagnose_scorecard_gaps.py    One-off diagnostic: real per-year, per-field College Scorecard completeness for a given institution
+  diagnose_feature_values.py    One-off diagnostic: real 8-feature vectors for given institutions vs. real validated-panel reference values (see Known Gaps)
+  diagnose_f3_fields.py         One-off diagnostic: confirmed the real F3 (for-profit) finance form's column codes against a live filing
+  diagnose_ipeds_access.py      One-off diagnostic: found NCES's real, current bulk-file URL pattern for the newest 1-2 years, after the old one went dead
+  diagnose_ipeds_access2.py     One-off diagnostic: found NCES's real, current bulk-file URL pattern for older years (FY2013-FY2021), served from a different location than the newest years
+  diagnose_panel_pipeline_consistency.py   One-off diagnostic: checks the panel-loading pipeline's path resolution and data consistency
+data/
+  panel/panel.json           The real, validated 54-institution panel
+docs/
+  RICD 15.6 master.docx, .tex    The full, domain-independent RICD theory
+  index.html                      Public results dashboard (GitHub Pages)
+  data/panel.json                  Validated 54-institution panel data
+  data/live_scores.json            Real institutions scored live by score_institution.py / score_batch.py
+source-documents/
+  Quartet of poems.pdf                                                 Original poems
+  The Pentagonal Theorem of the Mathematical Nature of Evil.pdf       Became FDFM
+  Shaking Bowls Thought Experiment.pdf                                 Became RICS
+  Source Translation Ledger source poems explained mathematically.pdf   Poems set line-by-line alongside RICD's math
+  README.md                                                               Full lineage
+  intermediate-development/
+    Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx               Early FDFM justice-tracker proposal
+    RICS FDFM Multiscale Information Geometric Model.pdf                    Expanded nested RICS-FDFM
+    RICD 5.0.pdf, RICD 5.3.pdf, RICD 5.4.pdf,                              Earlier RICD versions
+    RICD 5.5.pdf, RICD 5.6.pdf, RICD 1.2 or 1.3 early version.pdf
+reports/
+  RICD Tracker Findings Final.pdf        Final findings document
+  RICD Tracker Narrative Final.pdf       Narrative account of how results were reached
+  RICD Tracker Process Log Final.pdf     Consolidated process record
+  Higher Ed Sector Findings.pdf           What the results imply about the sector
+  Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf   Claude's own account of the collaboration
+  ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, and RICD.pdf   ChatGPT's own account of the collaboration
+  Collapse-Causal Tracker (C-CT) Description Document.pdf   What a collapse-causal tracker is as a category, distinct from C-CAT
+  RICD Adapter Instructional Manual.pdf  Adapter-contract implementation guide, for engineers
+  RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
+  readme.md                                Guide to this folder's contents
+future-projects/
+  Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf         Seed note for a mechanism-layer (actor) tracker, planned for later
+  Next Project for RICD - Four Adapter Build Roadmap.pdf      One-year build plan for four new tracker adapters (banking, hospitals, public schools, nursing homes/long-term care)
+  Plurimo Vision Document.pdf                                  Vision document for Plurimo, a teaching-optimization platform
+  RICD Ongoing Projects Roadmap.pdf                            Broader roadmap of further planned RICD-based trackers
+  Web–Field Model of Cognitive Trait Distributions and Social Evolution.pdf   CMTR working theory (see above)
+.github/workflows/
+  rescore.yml                     Scheduled re-scoring workflow (score_batch.py + score_institution.py + render_dashboard.py)
+  claude.yml                       Claude Code GitHub Action (handles @claude-triggered edits made directly on GitHub)
+  diagnose_scorecard_gaps.yml      Manual-only: runs diagnose_scorecard_gaps.py
+  diagnose_feature_values.yml      Manual-only: runs diagnose_feature_values.py
+  diagnose_f3_fields.yml            Manual-only: runs diagnose_f3_fields.py
+  diagnose_ipeds.yml                Manual-only: runs the IPEDS-access diagnostics
+  diagnose_panel_pipeline_consistency.yml   Manual-only: runs diagnose_panel_pipeline_consistency.py
+````
+
+## Re-scoring cadence
+
+IPEDS is not live data — it releases on a fixed institutional schedule
+(provisional data a few times a year, final data annually). The scheduled
+workflow in `.github/workflows/rescore.yml` runs periodically and checks
+for new data rather than assuming a fixed release date; a run that finds
+nothing new is a normal, expected outcome, not a failure.
