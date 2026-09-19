@@ -18,17 +18,22 @@ than asserted.
   the broader roadmap of further RICD-based trackers planned beyond the
   four adapters above and the higher-ed tracker in this repository.
 - [`Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf`](<Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf>) —
-  a seed note for a genuinely different kind of tracker: an actor tracker,
-  investigating the specific real decisions and actors behind a collapse
+  a seed note for a genuinely different kind of tracker: an agent tracker,
+  investigating the specific real decisions and agents behind a collapse
   (board minutes, depositions, investigative findings) rather than the
   aggregate financial and enrollment effects the higher-ed tracker
   measures. The higher-ed tracker measures the direct causes of collapse
   (stress and resource debt); this planned tracker would look one level
-  further upstream, at the actors whose decisions produced those causes.
+  further upstream, at the agents whose decisions produced those causes.
 - [`Plurimo Vision Document.pdf`](<Plurimo Vision Document.pdf>) — a
-  separate teaching-optimization software platform for private tutors and
-  independent educators, distinct from RICD itself. Planned to be funded
-  by revenue from the four adapters above rather than sought directly.
+  teaching-optimization software platform for private tutors and
+  independent educators that uses RICD directly in its own algorithm, for
+  site-health monitoring and its anti-capture/anti-trolling detection
+  system. This is precisely why RICD needs to be pressure-tested and
+  refined against real, adversarial data across new domains -- via the
+  four adapters above -- before it's trusted to run Plurimo's systems.
+  Plurimo itself is planned to be funded by revenue from those same four
+  adapters rather than sought directly.
 - [`Web–Field Model of Cognitive Trait Distributions and Social Evolution.pdf`](<Web–Field Model of Cognitive Trait Distributions and Social Evolution.pdf>) —
   RICD's mathematics applied to a second, unrelated domain: modeling human
   cognitive traits as regions on a continuous manifold rather than
