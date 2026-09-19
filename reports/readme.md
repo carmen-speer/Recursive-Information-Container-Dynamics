@@ -46,8 +46,8 @@ was done, not just the code that does it.
   shown for each, kept specifically to be checked against the manuscript
   rather than trusted on its own.
 
-The seed note for a genuinely different kind of tracker — an actor tracker
-(C-CAT), investigating the specific real decisions and actors behind a
+The seed note for a genuinely different kind of tracker — an agent tracker
+(C-CAT), investigating the specific real decisions and agents behind a
 collapse (board minutes, depositions, investigative findings) rather than
 the aggregate financial and enrollment effects this folder's reports
 measure — now lives in [`future-projects/`](../future-projects/), alongside
