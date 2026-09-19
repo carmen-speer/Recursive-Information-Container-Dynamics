@@ -1,0 +1,38 @@
+# Future Projects
+
+This folder holds work that is proposed, seeded, or theorized but not yet
+built, funded, or validated — kept visible here rather than folded into the
+validated tracker above, so the real state of each idea is checkable rather
+than asserted.
+
+## Contents
+
+- [`Next Project for RICD - Four Adapter Build Roadmap.pdf`](<Next Project for RICD - Four Adapter Build Roadmap.pdf>) —
+  a proposed one-year build plan for four new RICD tracker adapters —
+  banking, hospitals, public schools, and nursing homes/long-term care —
+  chosen for having both large public datasets and realistic commercial
+  application, prepared for grant application documentation. The revenue
+  from these four adapters is intended to fund Plurimo (below) without
+  seeking Plurimo's own, much larger, funding directly.
+- [`RICD Ongoing Projects Roadmap.pdf`](<RICD Ongoing Projects Roadmap.pdf>) —
+  the broader roadmap of further RICD-based trackers planned beyond the
+  four adapters above and the higher-ed tracker in this repository.
+- [`Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf`](<Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf>) —
+  a seed note for a genuinely different kind of tracker: an actor tracker,
+  investigating the specific real decisions and actors behind a collapse
+  (board minutes, depositions, investigative findings) rather than the
+  aggregate financial and enrollment effects the higher-ed tracker
+  measures. The higher-ed tracker measures the direct causes of collapse
+  (stress and resource debt); this planned tracker would look one level
+  further upstream, at the actors whose decisions produced those causes.
+- [`Plurimo Vision Document.pdf`](<Plurimo Vision Document.pdf>) — a
+  separate teaching-optimization software platform for private tutors and
+  independent educators, distinct from RICD itself. Planned to be funded
+  by revenue from the four adapters above rather than sought directly.
+- [`Web–Field Model of Cognitive Trait Distributions and Social Evolution.pdf`](<Web–Field Model of Cognitive Trait Distributions and Social Evolution.pdf>) —
+  RICD's mathematics applied to a second, unrelated domain: modeling human
+  cognitive traits as regions on a continuous manifold rather than
+  discrete types, and deriving from it a proposed learning-style metric,
+  the Cognitive Trait Manifold Ratio (CMTR). Stated plainly by its own
+  title: this is a working theory, at an earlier stage than anything else
+  in this repository.
