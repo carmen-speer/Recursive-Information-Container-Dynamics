@@ -72,12 +72,41 @@
     panel above). "Insufficient data" means the pipeline ran but real data
     for that institution was genuinely incomplete -- not a fabricated result.
   </div>
+
+  <div class="scope-note" id="live-interpretation-note" style="border-left-color:#666;">
+    <strong>What the score means, and what it doesn't.</strong>
+    This number is the classifier's posterior estimate that an institution's
+    <em>current observed dynamics</em> sit inside the modeled collapse regime --
+    not a calibrated probability that the institution will actually close.
+    Those are different claims, and the live pipeline has already surfaced a
+    concrete reason they diverge: <code>frac_high_entropy</code> measures the
+    <em>size</em> of a resource swing, not its <em>direction</em>, so a large
+    positive shock and a large destabilizing one currently look alike to it.
+    University of Houston (87.3% here) received a real $1.3B infusion from the
+    Texas University Fund in the same period this score is drawn from --
+    financially the opposite of distress -- while University of Phoenix-Arizona
+    (100.0%) is mid-restructuring after a real, large contraction, which this
+    model has no separate "completed reset" state to distinguish from ongoing
+    collapse. Sweet Briar College (52.4%) is the cleanest test case for that
+    same gap: it underwent a real near-closure and recovery in 2015, so its
+    score today is a live check of whether the model can tell "still
+    collapsing" apart from "recovered from a collapse." None of these three
+    numbers should be read as "this institution is 52-100% likely to close" --
+    they're evidence for exactly the model limitation described in the
+    repository's <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#known-gaps--stated-honestly-not-smoothed-over">Known Gaps</a>
+    section, not embarrassing exceptions being explained away. A fix (giving
+    the regime classifier the signed direction of a shock, and a distinct
+    state for a completed institutional reset) is scoped but not yet built or
+    re-validated against the 54-institution panel -- stated here as open,
+    unfixed work, the same way it's stated in the README.
+  </div>
+
   <table id="live-table" style="display:table;">
     <thead>
       <tr>
         <th>Institution</th>
         <th>Prediction</th>
-        <th>Probability</th>
+        <th>Collapse-regime score</th>
         <th>Method</th>
         <th>Last scored (UTC)</th>
       </tr>
