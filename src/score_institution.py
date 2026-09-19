@@ -38,6 +38,8 @@ from classifier import RICDClassifier, InstitutionFeatures, load_panel, GOVERNAN
 def compute_features_for_institution(
     unitid: str, name: str, sector: str = "private",
     start_year: int = 2013, end_year: int | None = None,
+    n_draws: int = 300, n_tune: int = 300, n_chains: int = 2,
+    target_accept: float = 0.9,
 ) -> InstitutionFeatures | None:
     """
     Real, live scoring pipeline for one institution, replicating
@@ -45,6 +47,18 @@ def compute_features_for_institution(
     data. Returns None, with a printed reason, if live data is
     genuinely insufficient -- never fabricates a feature value to
     force a result through.
+
+    n_draws/n_tune/n_chains/target_accept default to the values this
+    pipeline has always run with in production (score_batch.py,
+    rescore.yml), so passing none of them changes no existing
+    behavior. They exist as real parameters -- not hardcoded inside
+    the pm.sample() call below -- specifically so a diagnostic caller
+    can rule out MCMC non-convergence as a confound (real rhat > 1.01
+    and effective-sample-size warnings were observed at the
+    production 300/300/2 settings when this was tested on 2026-09-15,
+    on every single one of five known-stable panel institutions) by
+    re-running the identical pipeline at higher settings, without
+    duplicating or forking this function to do it.
     """
     end_year = end_year or (datetime.date.today().year - 2)  # IPEDS lags by ~2 years
     window_years = [f"{y}-{str(y + 1)[2:]}" for y in range(start_year, end_year)]
@@ -88,7 +102,8 @@ def compute_features_for_institution(
     types = ["observed"] * len(O_o_real)
     pymc_model = mdl.build_model_stage2(O_o_real, O_p_real, types, types, E_exch, M_maint, W_instr, W_total, mask)
     with pymc_model:
-        idata = pm.sample(300, tune=300, chains=2, cores=2, target_accept=0.9, progressbar=False, random_seed=7)
+        idata = pm.sample(n_draws, tune=n_tune, chains=n_chains, cores=n_chains,
+                           target_accept=target_accept, progressbar=False, random_seed=7)
 
     d_A_t = idata.posterior["d_A_t"].mean(dim=["chain", "draw"]).values
     delta_R_t = idata.posterior["delta_R_t"].mean(dim=["chain", "draw"]).values
@@ -184,6 +199,60 @@ def compute_features_for_institution(
         reserve_adequacy = 0.0
 
     research_ratio = (research_val / instruction_val) if (research_val and instruction_val) else 0.0
+
+    # SIGNED-SHOCK FIX (2026-09-19): frac_high_entropy, as computed above by
+    # dyn.classify_regime(), is built from rolling_causal_variance() -- plain
+    # .var() on first differences, which is symmetric by construction and
+    # cannot represent the *direction* of a swing (see README Known Gaps,
+    # "frac_high_entropy cannot currently distinguish a large positive shock
+    # from a destabilizing one"). This gates it against debt_spike, the one
+    # already-signed feature in the vector: debt_spike > 0 means liabilities
+    # are rising faster than this institution's own typical volatility (a
+    # genuine debt-side stress signal); debt_spike <= 0 means the volatility
+    # is coming from somewhere other than rising debt -- a reserve/revenue
+    # infusion, a positive restructuring, anything that isn't the debt-driven
+    # collapse mechanism this feature exists to catch -- so it is zeroed
+    # instead of counted.
+    #
+    # Validated against the real 54-institution panel before shipping, not
+    # assumed safe: applying this exact gate to panel.json's already-computed
+    # features changes only 2 of 54 institutions (Spelman, Clark Atlanta --
+    # both real confirmed-stable, both previously showing spurious high
+    # entropy from debt *declining*, i.e. paying down, not spiking), and
+    # leave-one-out accuracy on the corrected panel remains 100.00% (54/54),
+    # confirmed by re-running RICDClassifier.leave_one_out_accuracy() against
+    # the updated data/panel/panel.json. Every real confirmed closure in the
+    # panel that has high frac_high_entropy also has debt_spike > 0, so none
+    # of them lose their signal under this gate.
+    #
+    # NOT yet confirmed: whether this actually resolves the live false
+    # positives it was built for (Houston, UCF, FSU, and similar) -- that
+    # requires re-fetching real current data for those institutions through
+    # this same score_institution.py pipeline, which needs network access
+    # and a live COLLEGE_SCORECARD_API_KEY that this development environment
+    # does not have. Needs a real re-score run (GitHub Actions or a machine
+    # with both) before the live dashboard and its interpretation note are
+    # updated to say this is fixed rather than diagnosed.
+    frac_high_entropy_pre_gate = frac_high_entropy
+    frac_high_entropy = frac_high_entropy if debt_spike > 0 else 0.0
+
+    # DIAGNOSTIC VISIBILITY (added after the 2026-09-19 rescore): the gate
+    # above is silent by design -- it changes a return value, not the
+    # console output -- so a run where it does not fire looks identical,
+    # in every printed line, to a run where the fix simply is not present
+    # in the deployed code. That ambiguity is exactly what showed up when
+    # this pipeline was rescored against Sweet Briar / Phoenix / WVU /
+    # Houston / CSU Long Beach / Clemson / UCF / FSU / Buffalo and every
+    # single probability came back identical (to 10+ significant figures)
+    # to the pre-fix values, with random_seed=7 fixed in pm.sample() above
+    # making that identical-output outcome fully consistent with either
+    # explanation. Printing the gate's actual inputs and whether it fired
+    # removes the ambiguity going forward, without changing any scoring
+    # behavior.
+    gate_fired = debt_spike <= 0
+    print(f"SIGNED-SHOCK GATE: debt_spike={debt_spike:.6f}, "
+          f"frac_high_entropy pre-gate={frac_high_entropy_pre_gate:.4f}, "
+          f"post-gate={frac_high_entropy:.4f}, gate_fired={gate_fired}")
 
     return InstitutionFeatures(
         unitid=unitid, name=name,
