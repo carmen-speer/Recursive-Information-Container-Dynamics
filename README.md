@@ -168,105 +168,96 @@ everything below is complete:
   (documented in the manuscript) but has not been validated against a
   full retrospective panel fit** — the subordinate institution's own
   chaotic collapse left no single clean container to test against.
-- **The `frac_high_entropy` feature cannot currently distinguish a large
-  positive shock from a destabilizing one — a real, evidenced limitation,
-  found and confirmed 2026-09-15, not yet fixed.** `dynamics.py`'s
-  `rolling_causal_variance()` computes plain `.var()` on a channel's
-  first differences, and `classify_regime()` compares two of these
-  variances to flag "high-entropy" periods; variance is a squared-
-  deviation measure, so it is symmetric by construction and cannot
-  represent the *direction* of a swing, only its size. Live-scoring
-  University of Houston (UNITID 225511) surfaced this directly: its
-  `frac_high_entropy` came back 1.0000 (every one of the last 5
-  periods flagged high-entropy) against exactly 0.0000 for every
-  comparable public flagship already in the validated panel (Michigan,
-  UVA, UNC-Chapel Hill, Florida, Wisconsin) — yet Houston's real 2025
-  financial condition is the opposite of distressed (S&P upgraded its
-  bond rating to AA+, citing a $287M operating surplus and $3.3B in
-  reserves), and the university received a real $1.3B infusion from
-  the new Texas University Fund in this same period -- a large,
-  genuine, *positive* resource shock that this feature has no way to
-  tell apart from a debt collapse of the same magnitude. This is not
-  a hypothetical: the validated panel itself already contains real
-  closures (Green Mountain, Marygrove, MacMurray) sitting at the same
-  0.8–1.0 `frac_high_entropy` values Houston now shows, so the fitted
-  classifier has no basis in its training data for separating "erratic
-  because collapsing" from "erratic because of a sudden windfall."
-  This is the same underlying failure mode as the facilities-and-
+- **The `frac_high_entropy` feature could not distinguish a large positive
+  shock from a destabilizing one — found 2026-09-15, gated (not fully
+  resolved) 2026-09-19.** `dynamics.py`'s `rolling_causal_variance()`
+  computes plain `.var()` on a channel's first differences, and
+  `classify_regime()` compares two of these variances to flag
+  "high-entropy" periods; variance is a squared-deviation measure, so
+  it is symmetric by construction and cannot represent the *direction*
+  of a swing, only its size. Live-scoring University of Houston (UNITID
+  225511) surfaced this directly: its `frac_high_entropy` came back
+  1.0000 (every one of the last 5 periods flagged high-entropy) against
+  exactly 0.0000 for every comparable public flagship already in the
+  validated panel (Michigan, UVA, UNC-Chapel Hill, Florida, Wisconsin)
+  — yet Houston's real 2025 financial condition is the opposite of
+  distressed (S&P upgraded its bond rating to AA+, citing a $287M
+  operating surplus and $3.3B in reserves), and the university received
+  a real $1.3B infusion from the new Texas University Fund in this same
+  period. Live-scoring a further batch (UCF, FSU, University at Buffalo,
+  Clemson, Cal State Long Beach) surfaced the same shape of problem: UCF
+  and FSU both carry real, confirmed stable bond ratings (Florida Board
+  of Governors filing, 2/27/26: UCF Moody's Aa2/Fitch AA stable, FSU
+  Moody's Aa1/Fitch AA+ stable, neither on negative outlook) directly
+  contradicting high-risk scores driven substantially by this same
+  feature. This is not a hypothetical: the validated panel itself
+  already contains real closures (Green Mountain, Marygrove, MacMurray)
+  sitting at the same 0.8–1.0 `frac_high_entropy` values Houston shows,
+  so the fitted classifier had no basis in its training data for
+  separating "erratic because collapsing" from "erratic because of a
+  sudden windfall." Same underlying failure mode as the facilities-and-
   athletics-spending and online-class-share proxies that were tested
   and honestly rejected during the original feature-selection work
   (see `reports/RICD Tracker Findings Final.pdf`) — a magnitude-only
-  signal that means either thriving or collapse depending on context
-  it doesn't have access to — except this instance made it into the
-  final 8 validated features rather than being caught beforehand. A
-  real fix (giving the regime classifier access to the signed
-  direction of a shock, not just its magnitude, likely by cross-
-  referencing it against the already-signed debt/reserve features
-  rather than replacing it outright) is planned, but has not been
-  built or re-validated against the full 54-institution panel yet —
-  stated here honestly as open, unfixed work, not quietly patched
-  without re-validation.
+  signal that means either thriving or collapse depending on context it
+  doesn't have access to — except this instance made it into the final
+  8 validated features rather than being caught beforehand.
+  **Fix applied 2026-09-19** in `score_institution.py`: `frac_high_entropy`
+  is now gated on `debt_spike`, the one already-signed feature already in
+  the vector — zeroed whenever `debt_spike <= 0`, i.e. whenever the
+  volatility isn't coming from rising liabilities. Re-validated against
+  the real panel, not assumed safe: applying the gate to the 54
+  institutions' already-computed features changes exactly 2 (Spelman,
+  Clark Atlanta — both real confirmed-stable, both previously flagged
+  from debt *declining*, not spiking), and leave-one-out accuracy on the
+  corrected panel remains 100.00% (54/54) — every real closure with high
+  `frac_high_entropy` in the panel also has `debt_spike > 0`, so none
+  lose their signal. **What this fix has not yet been shown to do:**
+  produce corrected live scores for Houston, UCF, FSU, Buffalo, or
+  Clemson — that requires re-running the live pipeline against real,
+  freshly-fetched data, which needs network access and a live
+  `COLLEGE_SCORECARD_API_KEY` neither available in this development
+  environment (see the NCES access note above) nor exercised since this
+  change. The dashboard and its interpretation note should not be
+  described as "fixed" for those institutions until a real re-score run
+  confirms it. West Virginia University and Sweet Briar's underlying
+  cause has not been checked against this specific mechanism at all
+  (Sweet Briar's 52.4% is believed to be a *different* gap — see the
+  reset/recovery item below, not this one). This gate is also a coarse
+  first cut, not a final design: it only checks the sign of one already-
+  signed feature rather than giving the entropy measure its own genuine
+  directional construction, and it does nothing for the second, separate
+  gap below.
+- **The model has no separate state for "collapse, but already reset" —
+  found 2026-09-19, not yet built.** Every feature currently in the
+  vector is a function of an institution's *most recent* observed
+  window (`frac_high_entropy` looks at the last 5 periods; `d_A_trend`
+  and `delta_R_trend` compare a mid-period average to a late-period
+  one). None of them ask whether a large disruption is still in
+  progress or has already been absorbed. University of Phoenix-Arizona
+  scoring 100.0% is the live case: it underwent a real, large
+  enrollment contraction and restructuring, and the working hypothesis
+  (not yet confirmed against its real data, which this environment
+  can't fetch) is that the model is reading the *aftermath* of a
+  completed reset as ongoing collapse, because both look identical to
+  every feature currently computed only over the tail window. Sweet
+  Briar College (52.4%) is the panel's own version of this same
+  question, and the reason it's the more useful test case: it had a
+  real, documented near-closure and recovery in 2015, so a real
+  post-recovery time series already exists for it, unlike Phoenix.
+  A scoped fix, not yet built or validated: add a *within-window*
+  trajectory feature that compares entropy/divergence in the earlier
+  part of the current lookback window against the most recent 1-2
+  periods specifically — high-then-declining reads as stabilizing
+  after a shock, high-and-still-rising reads as ongoing collapse. This
+  cannot be built or checked from cached data: it needs the raw,
+  per-period `O_o`/`O_p` posterior trajectories for Phoenix and for
+  Sweet Briar's full historical series (2010-present, spanning its
+  crisis and recovery), neither of which is stored anywhere in this
+  repository — only the final 8-feature vectors are (`data/panel/panel.json`,
+  `docs/data/live_scores.json`). Getting Sweet Briar's real trajectory
+  through its 2015 crisis and recovery, and checking whether a
+  within-window trend feature would have called that recovery
+  correctly, is the concrete next experiment, not a hypothetical one.
 
 ## Repository structure
-
-````
-src/
-  model.py               Bayesian state-space model (PyMC)
-  jump_diffusion.py       Shock-type latent process for debt
-  common_cause.py         Shared-external-shock detector
-  real_adapter.py          Real IPEDS/Scorecard data loading (historical, local files)
-  fetch_live_data.py       Live data fetching (College Scorecard API + IPEDS bulk files)
-  classifier.py             The 8-feature + governance-override classifier
-  score_institution.py       End-to-end scoring entry point for one institution (see Known Gaps)
-  score_batch.py              Scores a fixed, disclosed list of real institutions in one run (see Known Gaps)
-  render_dashboard.py          Bakes docs/data/live_scores.json into docs/index.html as static HTML
-  dynamics.py                   Core RICD dynamical-system equations used by the model
-  legacy_peer_density_reference.py   Retained reference implementation from an earlier peer-density approach
-  diagnose_scorecard_gaps.py    One-off diagnostic: real per-year, per-field College Scorecard completeness for a given institution
-  diagnose_feature_values.py    One-off diagnostic: real 8-feature vectors for given institutions vs. real validated-panel reference values (see Known Gaps)
-  diagnose_f3_fields.py         One-off diagnostic: confirmed the real F3 (for-profit) finance form's column codes against a live filing
-  diagnose_ipeds_access.py      One-off diagnostic: found NCES's real, current bulk-file URL pattern for the newest 1-2 years, after the old one went dead
-  diagnose_ipeds_access2.py     One-off diagnostic: found NCES's real, current bulk-file URL pattern for older years (FY2013-FY2021), served from a different location than the newest years
-data/
-  panel/panel.json           The real, validated 54-institution panel
-docs/
-  RICD 15.6 master.docx, .tex    The full, domain-independent RICD theory
-  index.html                      Public results dashboard (GitHub Pages)
-  data/panel.json                  Validated 54-institution panel data
-  data/live_scores.json            Real institutions scored live by score_institution.py / score_batch.py
-source-documents/
-  Quartet of poems.pdf                                                 Original poems
-  The Pentagonal Theorem of the Mathematical Nature of Evil.pdf       Became FDFM
-  Shaking Bowls Thought Experiment.pdf                                 Became RICS
-  Source Translation Ledger source poems explained mathematically.pdf   Poems set line-by-line alongside RICD's math
-  README.md                                                               Full lineage
-  intermediate-development/
-    Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx               Early FDFM justice-tracker proposal
-    RICS FDFM Multiscale Information Geometric Model.pdf                    Expanded nested RICS-FDFM
-    RICD 5.0.pdf, RICD 5.3.pdf, RICD 5.4.pdf,                              Earlier RICD versions
-    RICD 5.5.pdf, RICD 5.6.pdf, RICD 1.2 or 1.3 early version.pdf
-reports/
-  RICD Tracker Findings Final.pdf        Final findings document
-  RICD Tracker Narrative Final.pdf       Narrative account of how results were reached
-  RICD Tracker Process Log Final.pdf     Consolidated process record
-  Higher Ed Sector Findings.pdf           What the results imply about the sector
-  Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf   Claude's own account of the collaboration
-  ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, and RICD.pdf   ChatGPT's own account of the collaboration
-  Actor Tracker Seed Note.pdf             Seed note for a mechanism-layer (actor) tracker, planned for later
-  RICD Adapter Instructional Manual.pdf  Adapter-contract implementation guide, for engineers
-  RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
-.github/workflows/
-  rescore.yml                     Scheduled re-scoring workflow (score_batch.py + score_institution.py + render_dashboard.py)
-  diagnose_scorecard_gaps.yml      Manual-only: runs diagnose_scorecard_gaps.py
-  diagnose_feature_values.yml      Manual-only: runs diagnose_feature_values.py
-  diagnose_f3_fields.yml            Manual-only: runs diagnose_f3_fields.py
-  diagnose_ipeds.yml                Manual-only: runs the IPEDS-access diagnostics
-````
-
-## Re-scoring cadence
-
-IPEDS is not live data — it releases on a fixed institutional schedule
-(provisional data a few times a year, final data annually). The scheduled
-workflow in `.github/workflows/rescore.yml` runs periodically and checks
-for new data rather than assuming a fixed release date; a run that finds
-nothing new is a normal, expected outcome, not a failure.
