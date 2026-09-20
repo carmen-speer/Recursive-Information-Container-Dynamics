@@ -263,6 +263,64 @@ def rolling_causal_variance(series, window):
     return out
 
 
+def rolling_causal_downside_variance(series, window):
+    """
+    Trailing-window (causal) DOWNSIDE variance of the first differences of
+    `series`: only negative differences (declines) contribute; a positive
+    difference (an improvement) counts as exactly zero rather than
+    inflating the result the way plain variance does.
+
+    Direct follow-up to rolling_causal_variance() above. Ordinary variance
+    is symmetric by construction and cannot represent the *direction* of a
+    swing (see that function's own docstring, and README Known Gaps,
+    "frac_high_entropy cannot currently distinguish a large positive shock
+    from a destabilizing one"). That symmetry is what caused real,
+    financially healthy institutions -- University of Houston, UCF, FSU,
+    University at Buffalo, Clemson, Cal State Long Beach -- to be flagged
+    high-entropy from genuinely POSITIVE events (a bond-rating upgrade, a
+    real $1.3B state infusion, ordinary capital-project borrowing), not
+    distress. A first attempt at fixing this (score_institution.py,
+    2026-09-19) gated frac_high_entropy on debt_spike's sign instead of
+    fixing the entropy measure itself: zeroed whenever debt_spike <= 0.
+    That gate was proven insufficient by a real, live re-score run
+    (2026-09-19/20, after the gate was already deployed): Houston, UCF,
+    FSU, Buffalo, Clemson, and Cal State Long Beach all still scored
+    high_risk at essentially unchanged probabilities, meaning the gate
+    did not fire for them -- most likely because these institutions'
+    debt_spike itself came back positive (ordinary capital borrowing is
+    not the same signal as debt-driven distress, so gating on its sign
+    alone cannot separate the two). This function fixes the real problem
+    at its source instead of gating a downstream feature on a different,
+    imperfectly-correlated feature's sign: the entropy measure itself now
+    has genuine directional construction, independent of debt_spike
+    entirely.
+
+    Uses the standard downside-deviation construction -- the same idea
+    behind the Sortino ratio's fix to the symmetric Sharpe ratio in
+    finance -- target zero (no change): mean of the squared negative
+    differences over the trailing window, with every non-negative
+    difference contributing exactly zero. Deliberately a fixed-size
+    window average (not renormalized by the count of negative entries),
+    so a window with no declines at all degrades cleanly to zero rather
+    than to an undefined or noisy small-sample average.
+
+    Intended to replace the OPERATIONAL channel's (sigma_p) variance in
+    the classify_regime() call that produces frac_high_entropy. sigma_o
+    (the official channel) is left as ordinary symmetric variance -- its
+    role there is to be a baseline comparison magnitude, not itself the
+    signal needing direction correction.
+    """
+    series = np.asarray(series, dtype=float)
+    diffs = np.diff(series, prepend=series[0])
+    downside = np.minimum(diffs, 0.0)
+    out = np.zeros_like(series)
+    for t in range(len(series)):
+        lo = max(0, t - window + 1)
+        chunk = downside[lo : t + 1]
+        out[t] = float(np.mean(chunk ** 2)) if len(chunk) > 0 else 0.0
+    return out
+
+
 def classify_regime(sigma_o, sigma_p, ratio_threshold=2.0, floor_fraction=0.02):
     """
     Minimal regime classification (spec Sec 4): compares causal variance
