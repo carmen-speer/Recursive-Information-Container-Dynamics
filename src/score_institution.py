@@ -111,8 +111,24 @@ def compute_features_for_institution(
     Op_post = idata.posterior["O_p_true"].mean(dim=["chain", "draw"]).values
     D_op_proxy = np.abs(Oo_post - Op_post)
     sigma_o = dyn.rolling_causal_variance(Oo_post, window=6)
-    sigma_p = dyn.rolling_causal_variance(Op_post, window=6)
+    # DIRECTIONAL ENTROPY FIX (2026-09-20, follow-up to the 2026-09-19
+    # debt_spike-sign gate below in this same file's history): the
+    # operational channel's variance is now downside-only
+    # (dynamics.rolling_causal_downside_variance -- see its own
+    # docstring for the full reasoning and the real evidence that made
+    # the sign-gate approach insufficient). sigma_o is left as ordinary
+    # symmetric variance -- it's a baseline comparison magnitude here,
+    # not the signal needing direction correction.
+    sigma_p = dyn.rolling_causal_downside_variance(Op_post, window=6)
     regime = dyn.classify_regime(sigma_o, sigma_p)
+    # Diagnostic-only comparison against the OLD symmetric construction,
+    # so a rescore run's log shows exactly what this fix changed for
+    # this institution, rather than a silent, unverifiable delta the
+    # way the debt_spike gate's console output originally was (see
+    # "DIAGNOSTIC VISIBILITY" below, and the gap it closes).
+    sigma_p_symmetric_old = dyn.rolling_causal_variance(Op_post, window=6)
+    regime_old = dyn.classify_regime(sigma_o, sigma_p_symmetric_old)
+    frac_high_entropy_old_symmetric = float(np.mean(regime_old[-5:] == "high-entropy"))
 
     n = len(window_years)
     mid = slice(max(0, n // 2 - 3), max(1, n // 2))
@@ -200,59 +216,40 @@ def compute_features_for_institution(
 
     research_ratio = (research_val / instruction_val) if (research_val and instruction_val) else 0.0
 
-    # SIGNED-SHOCK FIX (2026-09-19): frac_high_entropy, as computed above by
-    # dyn.classify_regime(), is built from rolling_causal_variance() -- plain
-    # .var() on first differences, which is symmetric by construction and
-    # cannot represent the *direction* of a swing (see README Known Gaps,
-    # "frac_high_entropy cannot currently distinguish a large positive shock
-    # from a destabilizing one"). This gates it against debt_spike, the one
-    # already-signed feature in the vector: debt_spike > 0 means liabilities
-    # are rising faster than this institution's own typical volatility (a
-    # genuine debt-side stress signal); debt_spike <= 0 means the volatility
-    # is coming from somewhere other than rising debt -- a reserve/revenue
-    # infusion, a positive restructuring, anything that isn't the debt-driven
-    # collapse mechanism this feature exists to catch -- so it is zeroed
-    # instead of counted.
+    # SUPERSEDED (2026-09-20): a debt_spike-sign gate previously lived here
+    # (applied 2026-09-19), zeroing frac_high_entropy whenever
+    # debt_spike <= 0. It is removed in favor of the fix now applied
+    # upstream, at sigma_p's construction above
+    # (dynamics.rolling_causal_downside_variance) -- see that function's
+    # own docstring for the full reasoning. The gate is not merely
+    # theoretically weaker: a real, live re-score run on 2026-09-19/20,
+    # AFTER the gate was deployed, showed it never fired for Houston,
+    # UCF, FSU, Buffalo, Clemson, or Cal State Long Beach -- every one of
+    # them still scored high_risk at essentially the same probability as
+    # before the gate existed. debt_spike and operational-entropy
+    # direction are not the same signal for these institutions (most
+    # likely because their own debt_spike came back positive, from
+    # ordinary capital borrowing rather than distress), so gating one on
+    # the other's sign could not separate a genuine positive shock from a
+    # destabilizing one. debt_spike itself is untouched and still stored
+    # below as its own independent feature.
     #
-    # Validated against the real 54-institution panel before shipping, not
-    # assumed safe: applying this exact gate to panel.json's already-computed
-    # features changes only 2 of 54 institutions (Spelman, Clark Atlanta --
-    # both real confirmed-stable, both previously showing spurious high
-    # entropy from debt *declining*, i.e. paying down, not spiking), and
-    # leave-one-out accuracy on the corrected panel remains 100.00% (54/54),
-    # confirmed by re-running RICDClassifier.leave_one_out_accuracy() against
-    # the updated data/panel/panel.json. Every real confirmed closure in the
-    # panel that has high frac_high_entropy also has debt_spike > 0, so none
-    # of them lose their signal under this gate.
-    #
-    # NOT yet confirmed: whether this actually resolves the live false
-    # positives it was built for (Houston, UCF, FSU, and similar) -- that
-    # requires re-fetching real current data for those institutions through
-    # this same score_institution.py pipeline, which needs network access
-    # and a live COLLEGE_SCORECARD_API_KEY that this development environment
-    # does not have. Needs a real re-score run (GitHub Actions or a machine
-    # with both) before the live dashboard and its interpretation note are
-    # updated to say this is fixed rather than diagnosed.
-    frac_high_entropy_pre_gate = frac_high_entropy
-    frac_high_entropy = frac_high_entropy if debt_spike > 0 else 0.0
-
-    # DIAGNOSTIC VISIBILITY (added after the 2026-09-19 rescore): the gate
-    # above is silent by design -- it changes a return value, not the
-    # console output -- so a run where it does not fire looks identical,
-    # in every printed line, to a run where the fix simply is not present
-    # in the deployed code. That ambiguity is exactly what showed up when
-    # this pipeline was rescored against Sweet Briar / Phoenix / WVU /
-    # Houston / CSU Long Beach / Clemson / UCF / FSU / Buffalo and every
-    # single probability came back identical (to 10+ significant figures)
-    # to the pre-fix values, with random_seed=7 fixed in pm.sample() above
-    # making that identical-output outcome fully consistent with either
-    # explanation. Printing the gate's actual inputs and whether it fired
-    # removes the ambiguity going forward, without changing any scoring
-    # behavior.
-    gate_fired = debt_spike <= 0
-    print(f"SIGNED-SHOCK GATE: debt_spike={debt_spike:.6f}, "
-          f"frac_high_entropy pre-gate={frac_high_entropy_pre_gate:.4f}, "
-          f"post-gate={frac_high_entropy:.4f}, gate_fired={gate_fired}")
+    # NOT yet validated against the real 54-institution panel: unlike the
+    # debt_spike gate (which could be checked directly against panel.json's
+    # already-computed features with no network access), this fix changes
+    # sigma_p's construction itself, which requires re-running the full
+    # live pipeline per institution to get new frac_high_entropy values --
+    # something this development environment cannot do (no network access
+    # to NCES/College Scorecard; see fetch_live_data.py's own module
+    # docstring). src/recompute_panel_entropy.py and its matching workflow
+    # do this real validation on GitHub Actions, the one environment on
+    # this project that can actually reach that data -- run that workflow
+    # and check its leave-one-out accuracy comparison before treating this
+    # fix as confirmed safe, not just plausible.
+    print(f"DIRECTIONAL ENTROPY: debt_spike={debt_spike:.6f} (stored, no longer gates "
+          f"anything), frac_high_entropy (new, downside-only)={frac_high_entropy:.4f}, "
+          f"frac_high_entropy (old, symmetric, for comparison only)="
+          f"{frac_high_entropy_old_symmetric:.4f}")
 
     return InstitutionFeatures(
         unitid=unitid, name=name,
