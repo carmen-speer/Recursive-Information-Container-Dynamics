@@ -5,7 +5,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.9577935680764275,
-    "scored_at": "2026-09-20T02:22:25.378732+00:00"
+    "scored_at": "2026-09-20T02:56:58.688733+00:00"
   },
   {
     "unitid": "217882",
@@ -13,7 +13,7 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.39027491076062415,
-    "scored_at": "2026-09-20T02:23:26.250292+00:00"
+    "scored_at": "2026-09-20T02:58:25.676846+00:00"
   },
   {
     "unitid": "134097",
@@ -21,7 +21,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.5709864858295153,
-    "scored_at": "2026-09-20T02:25:27.472610+00:00"
+    "scored_at": "2026-09-20T03:01:02.161366+00:00"
   },
   {
     "unitid": "233718",
@@ -29,15 +29,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.8012216250604414,
-    "scored_at": "2026-09-20T02:18:05.486679+00:00"
-  },
-  {
-    "unitid": "196088",
-    "name": "University at Buffalo",
-    "prediction": "stable",
-    "method": "statistical_classifier",
-    "probability": 0.48841332465459225,
-    "scored_at": "2026-09-20T02:26:27.262565+00:00"
+    "scored_at": "2026-09-20T02:51:39.950122+00:00"
   },
   {
     "unitid": "132903",
@@ -45,7 +37,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.8335014664070663,
-    "scored_at": "2026-09-20T02:24:27.269365+00:00"
+    "scored_at": "2026-09-20T02:59:44.755499+00:00"
   },
   {
     "unitid": "225511",
@@ -53,7 +45,7 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.4064293154695227,
-    "scored_at": "2026-09-20T02:21:27.007904+00:00"
+    "scored_at": "2026-09-20T02:55:45.832420+00:00"
   },
   {
     "unitid": "170976",
@@ -61,7 +53,7 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.05823025789496935,
-    "scored_at": "2026-09-20T02:17:08.628741+00:00"
+    "scored_at": "2026-09-20T02:50:23.531546+00:00"
   },
   {
     "unitid": "484613",
@@ -69,7 +61,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.9999672557908077,
-    "scored_at": "2026-09-20T02:19:24.284028+00:00"
+    "scored_at": "2026-09-20T02:53:07.356726+00:00"
   },
   {
     "unitid": "238032",
@@ -77,6 +69,6 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.44159202484587945,
-    "scored_at": "2026-09-20T02:20:25.927835+00:00"
+    "scored_at": "2026-09-20T02:54:26.498857+00:00"
   }
 ]
