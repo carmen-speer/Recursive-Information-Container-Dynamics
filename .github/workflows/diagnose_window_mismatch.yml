@@ -1,0 +1,62 @@
+name: Diagnose window mismatch vs. MCMC non-convergence
+
+# Manual-only follow-up to "Diagnose panel vs. live pipeline
+# consistency". That first diagnostic found all five panel-frozen
+# stable public flagships (Michigan/UVA/UNC/Florida/Wisconsin) come
+# back with a nonzero frac_high_entropy live, but every one of those
+# runs also had real rhat/ESS convergence warnings at production's
+# 300-draw/300-tune/2-chain settings -- so the result was ambiguous
+# between a genuine live-vs-panel data-window mismatch and ordinary
+# sampling noise. This workflow re-runs the same five institutions at
+# much higher sampling settings (1000/1000/4) AND sweeps end_year
+# across 2023/2024/2025, to tell those two explanations apart. See
+# src/diagnose_window_mismatch.py's module docstring for the full
+# reasoning and how to read the result -- read that before drawing any
+# conclusion from this run's output.
+#
+# This is real work, not the ~1-minute first diagnostic: expect this
+# run to take a while (5 institutions x 3 end_year candidates, each at
+# 4x the chains and ~3x the draws/tune of production). That is the
+# deliberate cost of removing non-convergence as a confound, not a
+# hang -- let it finish.
+#
+# Does not touch docs/data/live_scores.json or the public dashboard --
+# diagnostic only.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Optional: a single UNITID to check (default: all five -- Michigan, UVA, UNC, Florida, Wisconsin)"
+        required: false
+        default: ""
+      end_years:
+        description: "Optional: comma-separated end_year candidates to sweep (default: 2023,2024,2025)"
+        required: false
+        default: ""
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Sweep end_year at high-convergence sampling settings
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          ARGS=""
+          if [ -n "${{ github.event.inputs.only }}" ]; then
+            ARGS="$ARGS --only ${{ github.event.inputs.only }}"
+          fi
+          if [ -n "${{ github.event.inputs.end_years }}" ]; then
+            ARGS="$ARGS --end-years ${{ github.event.inputs.end_years }}"
+          fi
+          python diagnose_window_mismatch.py $ARGS
