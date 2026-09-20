@@ -92,16 +92,31 @@
     resource swing, not its <em>direction</em>, so a large positive shock and
     a destabilizing one looked alike; the fix (see repository Known Gaps)
     resolved this case correctly.</p>
-    <p style="margin:12px 0 4px;"><strong>New, unexplained since the fix -- not smoothed over:</strong>
+    <p style="margin:12px 0 4px;"><strong>New since the fix, and a fix for it is planned -- not left unresolved:</strong>
     Clemson University (39.0%) and West Virginia University (44.2%) both
     flipped to <code>stable</code> under this fix, despite each carrying
     real, independently documented financial distress -- Clemson's
     long-term liabilities are up $231.9M year-over-year to $2.65B with
     expenses outpacing revenue; West Virginia underwent a real, widely
     reported financial crisis and program/faculty cuts starting in 2023.
-    Whether the new downside-only entropy measure has swung too far the
-    other direction for these two -- suppressing a real signal it used to
-    (over)detect -- is an open question, not yet resolved either way.</p>
+    <u>Leading candidate reason:</u> the new downside-only entropy measure
+    may have swung too far the other direction for these two, suppressing
+    a real signal it used to (over)detect -- but this hasn't been confirmed
+    yet, so it isn't stated as fact. <u>Diagnostic plan, not yet executed:</u>
+    first, rule out ordinary MCMC non-convergence as a confound -- these
+    runs show real elevated rhat and low-ESS warnings at production
+    sampling settings, and <code>diagnose_window_mismatch.py</code> already
+    exists to re-run both institutions at higher sampling precision and
+    check whether <code>frac_high_entropy</code> holds or moves. Second, if
+    convergence isn't the cause, <code>diagnose_feature_values.py</code>
+    compares their full 8-feature vectors against the validated panel's
+    real closures, to check whether their documented distress shows up in
+    any of the other seven features even though this one no longer flags
+    it. If it does, the downside-only construction needs a further
+    correction; if it doesn't, that itself is the answer -- their distress
+    isn't legible to any of these eight features -- and gets documented as
+    such. Full detail in the repository's
+    <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#known-gaps--stated-honestly-not-smoothed-over">Known Gaps</a> section.</p>
     <p style="margin:12px 0 4px;"><strong>Still high_risk, but the driver is identified and real -- not the classifier misreading a stable institution:</strong>
     Florida State University's (57.1%) signal traces to a real, separate
     financial strain from its core institutional finances: its athletics
