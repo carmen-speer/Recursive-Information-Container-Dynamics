@@ -133,6 +133,8 @@ print(f'Misclassified: {misclassified}')
 "
 ````
 
+**What that 100% figure is actually a statement about, checked directly rather than left implicit:** of the panel's 23 confirmed closures, only 2 (Northland College, King's College NY) are classified via the direct External Governance Attestation override described above — the other 21 are correctly classified by the fitted statistical model itself, not exempted from it. So the 100% accuracy claim is overwhelmingly a statement about the classifier, not about the override rule doing the real work. Separately, `reserve_adequacy`'s coefficient — the largest-magnitude one in the model — is stable across all 52 real leave-one-out refits that actually pass through the fitted model (the 2 override folds never do): it stays in a tight -1.79 to -1.93 band around its full-panel value of -1.88, and none of the eight features flip sign in any of the 52 folds. No single institution's removal is quietly driving the result. This is a real answer to "is the panel too small/one feature too dominant for this to be trustworthy," not a claim that it resolves the separate, still-open gap below: coefficient stability says the fit isn't fragile to which institution gets held out; it says nothing about whether `reserve_adequacy` is well-calibrated against real public-sector distress, which it structurally is not (see Known Gaps).
+
 **A live public dashboard is at
 [carmen-speer.github.io/Recursive-Information-Container-Dynamics](https://carmen-speer.github.io/Recursive-Information-Container-Dynamics/)**
 (built from [`docs/index.html`](docs/index.html) via GitHub Pages), showing
@@ -292,28 +294,37 @@ everything below is complete:
   real 2023 financial crisis and program/faculty cuts) — whether the
   new downside-only entropy measure has swung too far the other
   direction for these two, suppressing a real signal it used to
-  (over)detect, is now the open question, not yet resolved either way.
-  **Plan to resolve Clemson and West Virginia (not yet executed):**
-  two checks, in order, using diagnostics already in this repo rather
-  than new tooling. First, rule out MCMC non-convergence as a confound
-  — every run at the production 300-draw/300-tune settings has shown
-  real rhat > 1.01 and low-ESS warnings, and `diagnose_window_mismatch.py`
-  already exists for exactly this: re-run Clemson and West Virginia
-  through `compute_features_for_institution()` at higher precision
-  (more draws/tune, higher `target_accept`) and check whether their
-  `frac_high_entropy` value holds or moves — if it moves substantially,
-  the `stable` calls were a convergence artifact, not a fix outcome.
-  Second, if convergence isn't the cause, use `diagnose_feature_values.py`
-  to compare their full 8-feature vectors against the validated panel's
-  real closures with a similar profile, to see whether their documented
-  distress (Clemson's rising liabilities, West Virginia's 2023 crisis)
-  shows up in any of the other seven features even though
-  `frac_high_entropy` no longer flags it. If it does, the downside-only
-  construction itself needs a further correction. If it doesn't — if
-  their real distress simply isn't legible to any of these eight
-  features, the way Buffalo's isn't (see below) — that is itself the
-  answer, and gets documented as such rather than forced into a fix
-  that doesn't exist yet.
+  (over)detect, was the open question at the time -- **executed
+  2026-09-20 via `src/diagnose_clemson_wvu.py` (GitHub Actions), and the
+  two institutions resolved differently, not identically.** Step 1
+  ruled out MCMC non-convergence as a confound for BOTH: re-run at 4x
+  sampling precision (1000 draws/1000 tune/4 chains/target_accept=0.95,
+  the same settings `diagnose_window_mismatch.py` uses), `frac_high_entropy`
+  held at exactly 0.0000 for each institution at both settings — neither
+  `stable` call is a sampling artifact. Step 2, comparing each
+  institution's full 8-feature vector against the entire validated panel
+  via `RICDClassifier.peer_density()`, is where they split. **Clemson is
+  resolved:** its 4 nearest real panel neighbors (Florida, Michigan, UVA,
+  UNC-Chapel Hill, distance 1.23–1.41) are all confirmed-stable, with the
+  nearest real closure (Northland) meaningfully farther away (1.57) — a
+  clean, overwhelmingly-stable pattern. Clemson's distress is real and
+  financial (in-domain for these features, unlike Buffalo below), but on
+  this evidence it is genuinely not legible to any of the eight as
+  currently constructed, and the `stable` call is real, not suppressed
+  signal — the same status as Buffalo's gap, reached by a different
+  mechanism (feature-space evidence here, domain mismatch there).
+  **West Virginia is narrowed but not resolved:** convergence is ruled
+  out the same way, but its peer comparison is genuinely mixed — its
+  nearest neighbor is Wisconsin (stable, 0.86), but its second-nearest is
+  Trinity Christian, a real confirmed closure, at 1.10 (closer than three
+  of Clemson's four stable comparisons), with a second real closure
+  (Lourdes University) also nearby (1.30). That does not clear the bar
+  for "overwhelmingly stable" the way Clemson's does, so it is not being
+  closed out the same way. **Next step for West Virginia, not yet run:**
+  a feature-by-feature comparison against the panel (the same kind of
+  check `diagnose_feature_values.py` already runs for Houston/UCF/FSU)
+  to see whether its real distress shows up in any of the other seven
+  features even though `frac_high_entropy` no longer flags it.
   UCF (83.4%, down from 95.4%) and FSU (57.1%, down from 87.1%) are
   still `high_risk` but meaningfully lower than before the fix — partial
   movement that hasn't been explained yet. Cal State Long Beach (95.8%)
@@ -357,20 +368,39 @@ everything below is complete:
   question, and the reason it's the more useful test case: it had a
   real, documented near-closure and recovery in 2015, so a real
   post-recovery time series already exists for it, unlike Phoenix.
-  A scoped fix, not yet built or validated: add a *within-window*
-  trajectory feature that compares entropy/divergence in the earlier
-  part of the current lookback window against the most recent 1-2
-  periods specifically — high-then-declining reads as stabilizing
-  after a shock, high-and-still-rising reads as ongoing collapse. This
-  cannot be built or checked from cached data: it needs the raw,
-  per-period `O_o`/`O_p` posterior trajectories for Phoenix and for
-  Sweet Briar's full historical series (2010-present, spanning its
-  crisis and recovery), neither of which is stored anywhere in this
-  repository — only the final 8-feature vectors are (`data/panel/panel.json`,
-  `docs/data/live_scores.json`). Getting Sweet Briar's real trajectory
-  through its 2015 crisis and recovery, and checking whether a
-  within-window trend feature would have called that recovery
-  correctly, is the concrete next experiment, not a hypothetical one.
+  A scoped candidate, **tested 2026-09-20 via `src/diagnose_reset_recovery.py`
+  (GitHub Actions), with a real but thin result — not yet good enough
+  evidence to promote, and not left unstated either.** The candidate: a
+  *within-window* trajectory feature (`within_window_trend`) comparing
+  `frac_high_entropy` in the mid-window slice against the most recent 5
+  periods — high-then-declining reads as stabilizing after a shock,
+  high-and-still-rising reads as ongoing collapse. Sweet Briar's real,
+  full 2010-2023 trajectory (fetched live specifically to span its 2015
+  crisis and 2016+ recovery) came back at `within_window_trend = -0.20`,
+  the predicted direction — and a convergence recheck at 4x sampling
+  precision reproduced the identical value and identical last-period
+  regime, confirming this is a real result, not sampling noise.
+  **But the evidence is thin, and this project's own standard requires
+  saying so plainly:** that -0.20 is driven almost entirely by a single
+  most-recent period (2023) flipping from high-entropy to baseline —
+  the entire 2014-2022 span, which contains virtually all of Sweet
+  Briar's real, documented recovery, stays classified high-entropy
+  throughout under this construction. A feature that only distinguishes
+  the single latest period, not a genuine multi-year decline through a
+  known recovery, is not yet a validated detector of "already reset."
+  University of Phoenix-Arizona's result was flat (`within_window_trend
+  = 0.00`, also confirmed real and not noise at both sampling
+  precisions) — no signal either way, consistent with its restructuring
+  outcome not being independently confirmed as complete. **Plan, not yet
+  executed:** refine the candidate to use a real multi-point trend
+  across the full window rather than a two-segment average, since the
+  current construction is too sensitive to one endpoint; only if a
+  refined version shows a cleaner signal against Sweet Briar's real
+  recovery would this be worth the full 54-institution panel refit and
+  leave-one-out re-validation (the `recompute_panel_entropy.py`-scale
+  step) that adding a genuine 9th feature requires. Not shipped, not
+  abandoned — a real, partially-supportive experiment with a specific,
+  named next step.
 - **`reserve_adequacy` — confirmed the classifier's single strongest
   feature (largest-magnitude fitted coefficient, -1.88 on the
   standardized panel, next closest -1.38 for `d_A_trend`) — has no
@@ -417,43 +447,46 @@ everything below is complete:
   — and that would be a real change to what "confirmed outcome" means
   in this project, not a quiet patch, so it should be made openly and
   argued for on its own, not slipped in to make an inconvenient gap
-  disappear.
-  **One real future candidate, not yet usable: Penn State York.**
-  Checked against three other candidates an AI search surfaced
-  (2026-09-20) — IUPUI's 2024 split into IU Indianapolis and Purdue
-  Indianapolis, and UT Brownsville's 2015 dissolution into UT Rio
-  Grande Valley, were both ruled out on the merits: IUPUI's own
-  announcement frames the split as strategic expansion, not distress
-  ("dramatically growing needs of our state," new investment
-  pledged by both universities, no financial or enrollment rationale
-  at all); UT Brownsville was a real financial-distress case but
-  resolved the same way East Georgia State College did above — a
-  rescue-by-merger with the campus, students, and faculty carried
-  into the new institution, plus an affirmative strategic upside
-  (Permanent University Fund access, a new medical school) — not a
-  termination. Penn State York is different in kind: real, cited
-  financial losses, 61% enrollment decline from its peak (703
-  students, Fall 2024), $29.9M in deferred maintenance, explicitly
+  disappear. **The most concrete real path to actually closing this
+  gap is tracked as its own item, next.**
+- **Penn State York is the first real, tracked candidate for the one
+  thing that would actually fix `reserve_adequacy`'s public-sector
+  calibration gap above: a genuine, confirmed public four-year
+  closure driven by financial distress — not yet usable, but this is
+  the concrete path being watched, not a hypothetical one.** Checked
+  against three other candidates an AI search surfaced (2026-09-20) —
+  IUPUI's 2024 split into IU Indianapolis and Purdue Indianapolis, and
+  UT Brownsville's 2015 dissolution into UT Rio Grande Valley, were
+  both ruled out on the merits: IUPUI's own announcement frames the
+  split as strategic expansion, not distress ("dramatically growing
+  needs of our state," new investment pledged by both universities, no
+  financial or enrollment rationale at all); UT Brownsville was a real
+  financial-distress case but resolved the same way East Georgia State
+  College did above — a rescue-by-merger with the campus, students,
+  and faculty carried into the new institution, plus an affirmative
+  strategic upside (Permanent University Fund access, a new medical
+  school) — not a termination. Penn State York is different in kind:
+  real, cited financial losses, 61% enrollment decline from its peak
+  (703 students, Fall 2024), $29.9M in deferred maintenance, explicitly
   announced (May 2025) as closing for exactly those reasons, not a
   merger. It is not yet usable for two independent reasons, not one:
   first, it hasn't happened yet — Penn State York is set to close
-  after the Spring 2027 semester, and this project's outcome
-  standard is a completed, confirmed event, not a scheduled one;
-  second, and unresolved as of this writing, Penn State York is a
-  commonwealth campus operating under Pennsylvania State University's
-  single overall accreditation, not a separately accredited
-  institution, and it is not yet confirmed whether IPEDS carries
-  separate institution-level Finance data for it or whether its
-  finances are consolidated into Penn State's university-wide filing
-  — the latter would leave nothing for this project's per-institution
-  pipeline to extract, since Penn State as a whole is a stable,
-  thriving R1 university, not a closing one. Confirming the IPEDS
-  finance-reporting question needs live network access this
-  development environment doesn't have (same limitation noted
-  throughout this section); revisiting Penn State York after Spring
-  2027, once its closure is a completed fact rather than an
-  announced plan, is the concrete next check, not something to
-  chase down early.
+  after the Spring 2027 semester, and this project's outcome standard
+  is a completed, confirmed event, not a scheduled one; second, and
+  unresolved as of this writing, Penn State York is a commonwealth
+  campus operating under Pennsylvania State University's single
+  overall accreditation, not a separately accredited institution, and
+  it is not yet confirmed whether IPEDS carries separate
+  institution-level Finance data for it or whether its finances are
+  consolidated into Penn State's university-wide filing — the latter
+  would leave nothing for this project's per-institution pipeline to
+  extract, since Penn State as a whole is a stable, thriving R1
+  university, not a closing one. Confirming the IPEDS finance-reporting
+  question needs live network access this development environment
+  doesn't have (same limitation noted throughout this section);
+  revisiting Penn State York after Spring 2027, once its closure is a
+  completed fact rather than an announced plan, is the concrete next
+  check, not something to chase down early.
 
 ## Repository structure
 
@@ -478,6 +511,8 @@ src/
   diagnose_panel_pipeline_consistency.py   One-off diagnostic: checks the panel-loading pipeline's path resolution and data consistency
   diagnose_window_mismatch.py    One-off diagnostic: separates a real live-vs-panel data-window mismatch from ordinary MCMC non-convergence
   recompute_panel_entropy.py     Real validation for the directional-entropy fix: re-fits all 54 panel institutions live and compares leave-one-out accuracy (see Known Gaps)
+  diagnose_clemson_wvu.py        Two-step diagnostic (convergence check + panel peer-density comparison) that resolved Clemson and narrowed West Virginia (see Known Gaps)
+  diagnose_reset_recovery.py     Tests the candidate within-window trend feature for the reset/recovery gap against Sweet Briar and Phoenix, with a convergence recheck (see Known Gaps)
 data/
   panel/panel.json           The real, validated 54-institution panel
 docs/
@@ -523,6 +558,8 @@ future-projects/
   diagnose_panel_pipeline_consistency.yml   Manual-only: runs diagnose_panel_pipeline_consistency.py
   diagnose_window_mismatch.yml      Manual-only: runs diagnose_window_mismatch.py
   recompute_panel_entropy.yml        Manual-only: runs recompute_panel_entropy.py (see Known Gaps)
+  diagnose_clemson_wvu.yml            Manual-only: runs diagnose_clemson_wvu.py (see Known Gaps)
+  diagnose_reset_recovery.yml         Manual-only: runs diagnose_reset_recovery.py (see Known Gaps)
 ````
 
 ## Re-scoring cadence
