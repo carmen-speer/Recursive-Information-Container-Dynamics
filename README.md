@@ -335,7 +335,7 @@ reports/
   Higher Ed Sector Findings.pdf           What the results imply about the sector
   Claude's Account of Carmen's Role in Building RICD and the higher-ed tracker.pdf   Claude's own account of the collaboration
   ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, and RICD.pdf   ChatGPT's own account of the collaboration
-  Collapse-Causal Tracker (C-CT) Description Document.pdf   [description not yet written here -- see file itself]
+  Collapse-Causal Tracker (C-CT) Description Document.pdf   What a collapse-causal tracker is as a category, and how it differs from C-CAT
   RICD Adapter Instructional Manual.pdf  Adapter-contract implementation guide, for engineers
   RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
   readme.md                                Guide to this folder's contents
