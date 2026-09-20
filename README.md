@@ -151,6 +151,18 @@ at risk. It supports a narrower, real claim: these specific mechanisms and
 relationships showed up clearly enough in independently-verified data to
 resolve a hard classification problem.
 
+## Documentation standard for this section (and the live dashboard)
+
+Adopted 2026-09-20, as a standing rule for every entry below and for
+`docs/index.html`'s live-interpretation notes: no result is ever left as a
+bare "we don't know why." Every open or anomalous result documented in this
+project states three things together, not just one or two — (1) whether it
+is actively being investigated right now or deliberately deferred, and why;
+(2) the specific next diagnostic or fix step(s), not just "needs more
+investigation"; and (3) the known or plausible cause, labeled as confirmed
+or unconfirmed. A gap that genuinely can't be investigated with current data
+gets that limitation stated as its own answer, not silence.
+
 ## Known gaps — stated honestly, not smoothed over
 
 This is a live, ongoing project, not a finished product, and it's more
