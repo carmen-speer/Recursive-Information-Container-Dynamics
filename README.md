@@ -304,6 +304,89 @@ everything below is complete:
   through its 2015 crisis and recovery, and checking whether a
   within-window trend feature would have called that recovery
   correctly, is the concrete next experiment, not a hypothetical one.
+- **`reserve_adequacy` — confirmed the classifier's single strongest
+  feature (largest-magnitude fitted coefficient, -1.88 on the
+  standardized panel, next closest -1.38 for `d_A_trend`) — has no
+  real distress example to calibrate against anywhere in the public
+  sector, and this is a structural gap in the data that exists, not a
+  data-collection failure in this project's pipeline.** The validated
+  panel's five public institutions (Michigan, UVA, UNC-Chapel Hill,
+  Florida, Wisconsin) are all real, confirmed-stable outcomes, sitting
+  at `reserve_adequacy` 10.89–12.93 against a panel-wide median of
+  11.62 — not extreme outliers within this panel, but all five were
+  selected into the original research specifically for being large,
+  wealthy, well-documented flagships, not as a representative sample
+  of the roughly 600 public four-year institutions nationally, most of
+  which carry far less endowment per student than any of the five.
+  There is no confirmed-closure public institution in the panel to set
+  against them, and this is not something this project failed to find:
+  Kelchen, Ritter & Webber, "Predicting College Closures and Financial
+  Distress" (Federal Reserve Bank of Philadelphia, WP 24-20, Dec.
+  2024) — a national study covering 2002-2023 — found only two
+  four-year public closures in that entire 21-year period nationally
+  (one tribal college, one graduate health-sciences-focused
+  institution, neither a broad-based comprehensive or flagship public
+  university), and excluded public institutions from its own
+  closure-prediction model for exactly this reason: too rare a base
+  rate to fit against. The paper's own explanation is direct: "Closing
+  a public college is a deeply political decision, similar to closing
+  a military base," so states use mergers and consolidations instead
+  of closure when a public institution is in real distress (a live,
+  current example: East Georgia State College's 2026 merger into
+  Georgia Southern University, not a closure by this project's outcome
+  definition). **Practical consequence: `reserve_adequacy`-driven
+  scores for any public institution that is not itself an unusually
+  well-endowed flagship — Houston, UCF, FSU, Buffalo, Clemson, Cal
+  State Long Beach, and any future one like them — are extrapolating
+  outside the range of outcomes this feature was ever validated
+  against for that sector, on both sides: no distress example, and no
+  ordinary-wealth stable example either.** This is not expected to
+  resolve on its own. Fixing it for real needs either a genuine new
+  confirmed public four-year closure to add to the panel (rare by the
+  numbers above, not something to wait on) or a deliberate, disclosed
+  decision to widen this project's own outcome definition for the
+  public sector specifically — e.g., treating a distress-driven merger
+  or consolidation as the public-sector analogue of a private closure
+  — and that would be a real change to what "confirmed outcome" means
+  in this project, not a quiet patch, so it should be made openly and
+  argued for on its own, not slipped in to make an inconvenient gap
+  disappear.
+  **One real future candidate, not yet usable: Penn State York.**
+  Checked against three other candidates an AI search surfaced
+  (2026-09-20) — IUPUI's 2024 split into IU Indianapolis and Purdue
+  Indianapolis, and UT Brownsville's 2015 dissolution into UT Rio
+  Grande Valley, were both ruled out on the merits: IUPUI's own
+  announcement frames the split as strategic expansion, not distress
+  ("dramatically growing needs of our state," new investment
+  pledged by both universities, no financial or enrollment rationale
+  at all); UT Brownsville was a real financial-distress case but
+  resolved the same way East Georgia State College did above — a
+  rescue-by-merger with the campus, students, and faculty carried
+  into the new institution, plus an affirmative strategic upside
+  (Permanent University Fund access, a new medical school) — not a
+  termination. Penn State York is different in kind: real, cited
+  financial losses, 61% enrollment decline from its peak (703
+  students, Fall 2024), $29.9M in deferred maintenance, explicitly
+  announced (May 2025) as closing for exactly those reasons, not a
+  merger. It is not yet usable for two independent reasons, not one:
+  first, it hasn't happened yet — Penn State York is set to close
+  after the Spring 2027 semester, and this project's outcome
+  standard is a completed, confirmed event, not a scheduled one;
+  second, and unresolved as of this writing, Penn State York is a
+  commonwealth campus operating under Pennsylvania State University's
+  single overall accreditation, not a separately accredited
+  institution, and it is not yet confirmed whether IPEDS carries
+  separate institution-level Finance data for it or whether its
+  finances are consolidated into Penn State's university-wide filing
+  — the latter would leave nothing for this project's per-institution
+  pipeline to extract, since Penn State as a whole is a stable,
+  thriving R1 university, not a closing one. Confirming the IPEDS
+  finance-reporting question needs live network access this
+  development environment doesn't have (same limitation noted
+  throughout this section); revisiting Penn State York after Spring
+  2027, once its closure is a completed fact rather than an
+  announced plan, is the concrete next check, not something to
+  chase down early.
 
 ## Repository structure
 
