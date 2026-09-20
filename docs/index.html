@@ -78,51 +78,57 @@
     This number is the classifier's posterior estimate that an institution's
     <em>current observed dynamics</em> sit inside the modeled collapse regime --
     not a calibrated probability that the institution will actually close.
-    Below is what's currently known about each score below, institution by
+    These scores reflect the directional-entropy fix (2026-09-20) -- the
+    prior gating fix has been superseded and fully re-run, not just written.
+    Below is what's currently known about each score, institution by
     institution, not just a general caveat.
-    <p style="margin:12px 0 4px;"><strong>Likely classifier artifacts (fix written, not yet re-run against live data):</strong>
-    University of Houston (87.3%), University of Central Florida (95.4%), and
-    Florida State University (87.1%) are the clearest cases.
-    <code>frac_high_entropy</code> measures the <em>size</em> of a resource
-    swing, not its <em>direction</em>, so a large positive shock and a large
-    destabilizing one look alike to it. Houston received a real $1.3B
-    infusion from the Texas University Fund in this same period -- S&amp;P
-    upgraded its bond rating to AA+, citing a $287M operating surplus and
-    $3.3B in reserves -- the opposite of distress. UCF and FSU both carry
-    real, confirmed stable bond ratings, neither on negative outlook (Florida
-    Board of Governors filing, 2/27/26), directly contradicting these
-    high-risk scores. A fix -- gating <code>frac_high_entropy</code> on the
-    already-signed <code>debt_spike</code> feature -- was written and
-    re-validated against the 54-institution panel on 2026-09-19, but has not
-    yet been re-run against these three institutions' live data; that
-    requires a fresh run of the automated re-scoring pipeline.</p>
-    <p style="margin:12px 0 4px;"><strong>Same suspected mechanism, not yet checked against real-world evidence:</strong>
-    University at Buffalo (80.7%) shows the same high-<code>frac_high_entropy</code>
-    pattern as the three above, but no bond rating or other independent
-    financial evidence has been checked against it yet -- its status is
-    genuinely unresolved, not confirmed either way.</p>
-    <p style="margin:12px 0 4px;"><strong>Likely genuine signals:</strong>
-    Clemson University (72.3%) and California State University-Long Beach
-    (98.6%) have real, independently documented problems behind their
-    scores -- Clemson's long-term liabilities are up $231.9M year-over-year
-    to $2.65B with expenses outpacing revenue; Long Beach has a real,
-    documented enrollment collapse (38,000 to 36,000 students, projected
-    toward 33,000) alongside a real $42M budget cut. Nothing here
-    contradicts either score.</p>
+    <p style="margin:12px 0 4px;"><strong>Fix confirmed working:</strong>
+    University of Houston is now <code>stable</code> (40.6%), down from 87.3%
+    before this fix. This is the case that motivated the fix: Houston
+    received a real $1.3B infusion from the Texas University Fund in this
+    same period -- S&amp;P upgraded its bond rating to AA+, citing a $287M
+    operating surplus and $3.3B in reserves -- the opposite of distress.
+    <code>frac_high_entropy</code> used to measure the <em>size</em> of a
+    resource swing, not its <em>direction</em>, so a large positive shock and
+    a destabilizing one looked alike; the fix (see repository Known Gaps)
+    resolved this case correctly.</p>
+    <p style="margin:12px 0 4px;"><strong>New, unexplained since the fix -- not smoothed over:</strong>
+    Clemson University (39.0%) and West Virginia University (44.2%) both
+    flipped to <code>stable</code> under this fix, despite each carrying
+    real, independently documented financial distress -- Clemson's
+    long-term liabilities are up $231.9M year-over-year to $2.65B with
+    expenses outpacing revenue; West Virginia underwent a real, widely
+    reported financial crisis and program/faculty cuts starting in 2023.
+    Whether the new downside-only entropy measure has swung too far the
+    other direction for these two -- suppressing a real signal it used to
+    (over)detect -- is an open question, not yet resolved either way.</p>
+    <p style="margin:12px 0 4px;"><strong>Still high_risk, partially improved, not yet explained:</strong>
+    University of Central Florida (83.4%, down from 95.4%) and Florida
+    State University (57.1%, down from 87.1%) both carry real, confirmed
+    stable bond ratings, neither on negative outlook (Florida Board of
+    Governors filing, 2/27/26) -- directly in tension with a high-risk
+    score, though less so than before the fix. Why the fix moved these two
+    partway rather than fully, unlike Houston, has not been investigated.</p>
+    <p style="margin:12px 0 4px;"><strong>Likely genuine signal:</strong>
+    California State University-Long Beach (95.8%) has a real, documented
+    enrollment collapse (38,000 to 36,000 students, projected toward
+    33,000) alongside a real $42M budget cut. Nothing here contradicts
+    this score.</p>
     <p style="margin:12px 0 4px;"><strong>A different, still-unbuilt gap:</strong>
-    University of Phoenix-Arizona (100.0%) and Sweet Briar College (52.4%)
-    sit on a separate problem from the one above: the model has no state for
-    "collapse, but already reset." Phoenix is mid-restructuring after a
+    University of Phoenix-Arizona (100.0%) and Sweet Briar College (80.1%)
+    sit on a separate problem from the ones above: the model has no state
+    for "collapse, but already reset." Phoenix is mid-restructuring after a
     real, large enrollment contraction; Sweet Briar underwent a real
     near-closure and recovery in 2015. Both scores may be reading the
     aftermath of a completed disruption as ongoing collapse -- unlike the
     <code>frac_high_entropy</code> fix above, this fix has not yet been
     designed or built.</p>
-    <p style="margin:12px 0 4px;"><strong>Unexamined against either gap:</strong>
-    West Virginia University (68.0%) underwent a real, widely-reported
-    financial crisis and program/faculty cuts starting in 2023 -- plausibly
-    a genuine signal -- but has not been specifically checked against either
-    gap described above.</p>
+    <p style="margin:12px 0 4px;"><strong>No longer live-scored:</strong>
+    University at Buffalo was removed from this batch on 2026-09-20 after
+    its score sat at a near-50/50 that didn't map to any mechanism this
+    model's eight features are built to detect -- its real financial strain
+    is a $47M federal research-funding cut, not debt, reserves, or
+    enrollment. See <code>score_batch.py</code>'s own docstring.</p>
     None of this should be read as "this institution is X% likely to
     close." Full detail is in the repository's
     <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#known-gaps--stated-honestly-not-smoothed-over">Known Gaps</a>
