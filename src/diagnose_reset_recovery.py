@@ -62,6 +62,21 @@ precedent this would have to follow if this candidate holds up). This
 script's only job is to produce the real numbers needed to decide
 whether that further step is worth taking at all.
 
+ADDED after the first real run (2026-09-20): that first run's own
+console output flagged the standard rhat > 1.01 / low-ESS convergence
+warnings at production settings, and Sweet Briar's within_window_trend
+turned out to be driven almost entirely by a single terminal period
+flipping from high-entropy to baseline, not a genuine multi-year
+decline through its real, documented 2016-2022 recovery years -- the
+same kind of convergence-vs-real-signal ambiguity
+diagnose_window_mismatch.py and diagnose_clemson_wvu.py already exist
+to resolve elsewhere in this project. This script now re-runs both
+institutions a second time at the same higher-precision settings those
+scripts use (1000 draws, 1000 tune, 4 chains, target_accept=0.95) and
+reports whether each institution's LAST period's regime label, and its
+overall within_window_trend, hold or change -- so a result resting on
+one data point isn't reported as confirmed without that check.
+
 Requires COLLEGE_SCORECARD_API_KEY in the environment (same as every
 other live-data script in this project) -- run via GitHub Actions, not
 locally: this project's sandboxed development environments cannot
@@ -102,7 +117,12 @@ TARGETS = [
 # this validates what would actually run in production, not a
 # different, more expensive configuration nothing else in this
 # pipeline runs with.
-N_DRAWS, N_TUNE, N_CHAINS, TARGET_ACCEPT = 300, 300, 2, 0.9
+PRODUCTION_SETTINGS = dict(n_draws=300, n_tune=300, n_chains=2, target_accept=0.9)
+
+# Same higher-precision settings diagnose_window_mismatch.py and
+# diagnose_clemson_wvu.py already use to rule out ordinary MCMC
+# non-convergence as a confound.
+HIGH_PRECISION_SETTINGS = dict(n_draws=1000, n_tune=1000, n_chains=4, target_accept=0.95)
 
 # Within-window_trend magnitude below this (in absolute value) is read
 # as "no real within-window movement either way", not as a false
@@ -111,7 +131,9 @@ FLAT_THRESHOLD = 0.05
 
 
 def compute_within_window_trend(unitid: str, name: str, sector: str, start_year: int,
-                                 end_year: int | None = None) -> dict | None:
+                                 end_year: int | None = None,
+                                 n_draws: int = 300, n_tune: int = 300, n_chains: int = 2,
+                                 target_accept: float = 0.9, label: str = "PRODUCTION") -> dict | None:
     end_year = end_year or (datetime.date.today().year - 2)
 
     series = fld.build_live_series(unitid, start_year, end_year, sector=sector)
@@ -144,8 +166,8 @@ def compute_within_window_trend(unitid: str, name: str, sector: str, start_year:
 
     pymc_model = mdl.build_model_stage2(O_o_real, O_p_real, types, types, E_exch, M_maint, W_instr, W_total, mask)
     with pymc_model:
-        idata = pm.sample(N_DRAWS, tune=N_TUNE, chains=N_CHAINS, cores=N_CHAINS,
-                           target_accept=TARGET_ACCEPT, progressbar=False, random_seed=7)
+        idata = pm.sample(n_draws, tune=n_tune, chains=n_chains, cores=n_chains,
+                           target_accept=target_accept, progressbar=False, random_seed=7)
 
     Oo_post = idata.posterior["O_o_true"].mean(dim=["chain", "draw"]).values
     Op_post = idata.posterior["O_p_true"].mean(dim=["chain", "draw"]).values
@@ -166,9 +188,13 @@ def compute_within_window_trend(unitid: str, name: str, sector: str, start_year:
     frac_early = float(np.mean(regime[early] == "high-entropy"))
     frac_late = float(np.mean(regime[late] == "high-entropy"))
     within_window_trend = frac_late - frac_early
+    last_period_regime = str(regime[-1])
 
-    print(f"\n{name} ({unitid}): real window {start_year}-{end_year - 1} ({n} periods)")
+    print(f"\n{name} ({unitid}), {label} settings (n_draws={n_draws}, n_tune={n_tune}, "
+          f"n_chains={n_chains}, target_accept={target_accept}): "
+          f"real window {start_year}-{end_year - 1} ({n} periods)")
     print(f"  full regime series (period-by-period): {list(regime)}")
+    print(f"  LAST period regime = {last_period_regime}")
     print(f"  frac_high_entropy, EARLY segment (periods {early.start}:{early.stop}) = {frac_early:.4f}")
     print(f"  frac_high_entropy, LATE segment (periods {late.start}:{late.stop}, "
           f"matches the production feature's own window) = {frac_late:.4f}")
@@ -178,41 +204,82 @@ def compute_within_window_trend(unitid: str, name: str, sector: str, start_year:
         "unitid": unitid, "name": name, "n_periods": n,
         "frac_early": frac_early, "frac_late": frac_late,
         "within_window_trend": within_window_trend,
+        "last_period_regime": last_period_regime,
     }
 
 
 def main():
-    results = []
+    production_results = {}
+    high_precision_results = {}
+
     for unitid, name, sector, start_year in TARGETS:
-        print(f"\n{'=' * 90}\nComputing within_window_trend: {name} ({unitid})\n{'=' * 90}")
+        print(f"\n{'=' * 90}\nPRODUCTION settings: {name} ({unitid})\n{'=' * 90}")
         try:
-            r = compute_within_window_trend(unitid, name, sector, start_year)
+            r = compute_within_window_trend(unitid, name, sector, start_year,
+                                             label="PRODUCTION", **PRODUCTION_SETTINGS)
             if r:
-                results.append(r)
+                production_results[unitid] = r
         except Exception as e:
-            print(f"REAL ERROR computing within_window_trend for {name} ({unitid}): "
-                  f"{type(e).__name__}: {e}")
+            print(f"REAL ERROR (production) for {name} ({unitid}): {type(e).__name__}: {e}")
+            traceback.print_exc()
+
+    for unitid, name, sector, start_year in TARGETS:
+        print(f"\n{'=' * 90}\nHIGH-PRECISION settings (convergence recheck): {name} ({unitid})\n{'=' * 90}")
+        try:
+            r = compute_within_window_trend(unitid, name, sector, start_year,
+                                             label="HIGH-PRECISION", **HIGH_PRECISION_SETTINGS)
+            if r:
+                high_precision_results[unitid] = r
+        except Exception as e:
+            print(f"REAL ERROR (high-precision) for {name} ({unitid}): {type(e).__name__}: {e}")
             traceback.print_exc()
 
     print(f"\n{'=' * 90}\nSUMMARY\n{'=' * 90}")
-    for r in results:
-        wwt = r["within_window_trend"]
-        if wwt < -FLAT_THRESHOLD:
-            verdict = "NEGATIVE -- consistent with entropy declining within the window (stabilizing-after-shock read)"
-        elif wwt > FLAT_THRESHOLD:
-            verdict = "POSITIVE -- entropy still rising within the window (does not support a stabilizing read)"
+    for unitid, name, sector, start_year in TARGETS:
+        prod = production_results.get(unitid)
+        hi = high_precision_results.get(unitid)
+        if not prod:
+            print(f"  {name}: no production-settings result (see real error/insufficient-data above).")
+            continue
+
+        def verdict_for(wwt):
+            if wwt < -FLAT_THRESHOLD:
+                return "NEGATIVE (stabilizing-after-shock read)"
+            elif wwt > FLAT_THRESHOLD:
+                return "POSITIVE (entropy still rising)"
+            return f"FLAT (|trend| <= {FLAT_THRESHOLD})"
+
+        print(f"\n  {name}:")
+        print(f"    PRODUCTION     within_window_trend = {prod['within_window_trend']:+.4f} "
+              f"[{verdict_for(prod['within_window_trend'])}], last period = {prod['last_period_regime']}")
+        if hi:
+            print(f"    HIGH-PRECISION within_window_trend = {hi['within_window_trend']:+.4f} "
+                  f"[{verdict_for(hi['within_window_trend'])}], last period = {hi['last_period_regime']}")
+            delta = hi["within_window_trend"] - prod["within_window_trend"]
+            same_last_period = hi["last_period_regime"] == prod["last_period_regime"]
+            if not same_last_period or abs(delta) > FLAT_THRESHOLD:
+                print(f"    CONVERGENCE CHECK: DID NOT HOLD -- last-period regime "
+                      f"{'changed' if not same_last_period else 'held'}, trend moved by {delta:+.4f}. "
+                      f"The production result is likely at least partly a sampling artifact, not a "
+                      f"confirmed real signal.")
+            else:
+                print(f"    CONVERGENCE CHECK: HELD -- same last-period regime, trend moved only "
+                      f"{delta:+.4f}. The production result is not a convergence artifact.")
         else:
-            verdict = f"FLAT (|trend| <= {FLAT_THRESHOLD}) -- no meaningful within-window movement either way"
-        print(f"  {r['name']:35s} within_window_trend = {wwt:+.4f}  [{verdict}]")
+            print(f"    HIGH-PRECISION: no result (see real error/insufficient-data above) -- "
+                  f"convergence could not be checked.")
 
     print(f"\n{'=' * 90}")
     print("READING THIS RESULT:")
     print("Sweet Briar's real, confirmed 2015-16 crisis-and-recovery is the actual test of")
-    print("this candidate feature. If Sweet Briar's within_window_trend does NOT come back")
-    print("meaningfully negative here, that is real evidence against this specific")
-    print("construction -- document it as such, do not force it into the classifier anyway.")
-    print("Phoenix's result is exploratory only (see module docstring) -- read alongside")
-    print("Sweet Briar's, not as independent confirmation of the same kind.")
+    print("this candidate feature. Its first production-settings run showed within_window_trend")
+    print("driven almost entirely by its single LAST period flipping regime, not a multi-year")
+    print("decline through its real 2016-2022 recovery -- the CONVERGENCE CHECK above exists")
+    print("specifically to tell whether that one flip is real or sampling noise.")
+    print("If the check DID NOT HOLD for an institution, treat its production result as")
+    print("unconfirmed -- do not report it as validated evidence either way.")
+    print("If it HELD, the production number is a real, if still thin, empirical result --")
+    print("document it exactly as it came out, including how much of it rests on one period.")
     print("This script does not update panel.json, dynamics.py, classifier.py, or")
     print("score_institution.py. Promoting this as a real 9th feature is a separate, later")
     print("step requiring a full live re-fit and leave-one-out re-validation of all 54 panel")
