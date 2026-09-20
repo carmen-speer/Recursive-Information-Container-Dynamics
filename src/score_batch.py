@@ -114,6 +114,19 @@ real from each institution's own NCES IPEDS profile page, not guessed:
 - University at Buffalo (196088, public) -- rank #45 (not to be
   confused with SUNY Buffalo State, UNITID 196130, a separate
   institution with a similar name).
+
+Removed 2026-09-20: University at Buffalo (196088), taken back out of
+this list. After the directional-entropy fix, its live classification
+sat right at the decision boundary (48.8% stable, essentially a coin
+flip), and feature-level scrutiny found that its real, documented
+financial strain -- a $47M federal research-funding cut -- is not a
+mechanism this model's eight features are built to detect at all (not
+debt, not reserves, not enrollment). Neither its earlier high_risk call
+nor this new near-50/50 one can be read as the model having actually
+evaluated that real risk, so it's removed rather than left showing an
+uninformative number. It was chosen by the same neutral, disclosed rule
+as UCF and FSU above and is not being pulled to hide an inconvenient
+result -- see the README's Known Gaps section for the full reasoning.
 """
 
 from __future__ import annotations
@@ -132,7 +145,6 @@ INSTITUTIONS = [
     ("217882", "Clemson University", "public", 2013),
     ("132903", "University of Central Florida", "public", 2013),
     ("134097", "Florida State University", "public", 2013),
-    ("196088", "University at Buffalo", "public", 2013),
 ]
 
 
@@ -173,9 +185,10 @@ def main():
 
     # Real cleanup, run once after the whole batch: removes any saved
     # live score for an institution no longer in INSTITUTIONS above
-    # (e.g. Youngstown State after the West Virginia University swap),
-    # so a retired institution doesn't sit on the public dashboard
-    # forever as a stale "insufficient_data" row.
+    # (e.g. Youngstown State after the West Virginia University swap,
+    # University at Buffalo after its 2026-09-20 removal), so a retired
+    # institution doesn't sit on the public dashboard forever as a
+    # stale row.
     prune_stale_live_scores({unitid for unitid, _, _, _ in INSTITUTIONS})
 
     print(f"\n{'=' * 70}\nBATCH DONE -- {len(results)} institutions attempted\n{'=' * 70}")
