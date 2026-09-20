@@ -1,0 +1,39 @@
+name: Diagnose reset/recovery within-window trend
+
+# Manual-only diagnostic for the "collapse, but already reset" gap
+# (README Known Gaps, found 2026-09-19, not yet built): computes a
+# candidate within-window trajectory feature for Sweet Briar College
+# (real, confirmed 2015 crisis and recovery -- the actual test case)
+# and University of Phoenix-Arizona (exploratory only), and prints
+# whether entropy is declining or still rising within each
+# institution's own live lookback window. See
+# src/diagnose_reset_recovery.py's own module docstring for the full
+# reasoning and how to read the result -- read that before drawing any
+# conclusion from this run's output.
+#
+# Does not touch panel.json, dynamics.py, classifier.py,
+# score_institution.py, docs/data/live_scores.json, or the public
+# dashboard. Diagnostic only -- promoting this into a real, validated
+# 9th feature is a separate, later step.
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compute within-window trend for Sweet Briar and Phoenix
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_reset_recovery.py
