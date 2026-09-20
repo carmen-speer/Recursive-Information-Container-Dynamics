@@ -231,32 +231,48 @@ everything below is complete:
   signal that means either thriving or collapse depending on context it
   doesn't have access to — except this instance made it into the final
   8 validated features rather than being caught beforehand.
-  **Fix applied 2026-09-19** in `score_institution.py`: `frac_high_entropy`
-  is now gated on `debt_spike`, the one already-signed feature already in
-  the vector — zeroed whenever `debt_spike <= 0`, i.e. whenever the
-  volatility isn't coming from rising liabilities. Re-validated against
-  the real panel, not assumed safe: applying the gate to the 54
-  institutions' already-computed features changes exactly 2 (Spelman,
-  Clark Atlanta — both real confirmed-stable, both previously flagged
-  from debt *declining*, not spiking), and leave-one-out accuracy on the
-  corrected panel remains 100.00% (54/54) — every real closure with high
-  `frac_high_entropy` in the panel also has `debt_spike > 0`, so none
-  lose their signal. **What this fix has not yet been shown to do:**
-  produce corrected live scores for Houston, UCF, FSU, Buffalo, or
-  Clemson — that requires re-running the live pipeline against real,
-  freshly-fetched data, which needs network access and a live
-  `COLLEGE_SCORECARD_API_KEY` neither available in this development
-  environment (see the NCES access note above) nor exercised since this
-  change. The dashboard and its interpretation note should not be
-  described as "fixed" for those institutions until a real re-score run
-  confirms it. West Virginia University and Sweet Briar's underlying
-  cause has not been checked against this specific mechanism at all
+  **First fix (2026-09-19, since superseded): gated `frac_high_entropy`
+  on `debt_spike`'s sign** — zeroed whenever `debt_spike <= 0`. Checked
+  against the panel's already-computed features (no live re-fit needed
+  for that check) and looked safe: changed exactly 2 of 54 institutions
+  (Spelman, Clark Atlanta — both real confirmed-stable, previously
+  flagged from debt *declining*, not spiking), leave-one-out accuracy
+  held at 100.00%. **Proven insufficient by a real, live re-score run**
+  (2026-09-19/20, after the gate was already deployed): Houston, UCF,
+  FSU, Buffalo, Clemson, and Cal State Long Beach all still scored
+  `high_risk` at essentially the same probabilities as before the gate
+  existed — the gate never fired for them, most likely because their own
+  `debt_spike` came back *positive* (ordinary capital-project borrowing,
+  not distress), which this coarse sign-check cannot distinguish from
+  genuine debt-driven stress.
+  **Second fix, applied 2026-09-20** in `dynamics.py` /
+  `score_institution.py`: the debt_spike gate is removed, and
+  `frac_high_entropy` is now built from a genuinely directional
+  entropy measure at its source — `dynamics.rolling_causal_downside_variance()`
+  replaces plain symmetric variance for the operational channel, so only
+  *declines* (not any large swing) count toward high-entropy
+  classification, independent of `debt_spike` entirely (see that
+  function's own docstring for the full reasoning, including a synthetic
+  sanity check confirming a positive shock now scores zero while an
+  equivalent negative shock does not). `debt_spike` itself is untouched
+  and still stored as its own independent feature — it no longer gates
+  anything. **What this fix has not yet been shown to do:** unlike the
+  first fix, this one changes how `frac_high_entropy` is computed from
+  raw posterior trajectories, which the panel never cached (only the
+  final 8-feature vectors are stored anywhere in this repo) — so it
+  cannot be checked against the panel without a live re-fit of all 54
+  institutions, which needs network access this development environment
+  does not have. `src/recompute_panel_entropy.py` and its matching
+  manual-only workflow do this real validation on GitHub Actions (the
+  one environment on this project confirmed able to reach NCES/College
+  Scorecard); that workflow has not yet been run. Neither has the panel
+  leave-one-out accuracy been reconfirmed under this change, nor has a
+  fresh live re-score of Houston/UCF/FSU/Buffalo/Clemson/Long Beach been
+  run against it — both are the concrete next steps, not assumed
+  outcomes. West Virginia University and Sweet Briar's underlying cause
+  has not been checked against either version of this mechanism at all
   (Sweet Briar's 52.4% is believed to be a *different* gap — see the
-  reset/recovery item below, not this one). This gate is also a coarse
-  first cut, not a final design: it only checks the sign of one already-
-  signed feature rather than giving the entropy measure its own genuine
-  directional construction, and it does nothing for the second, separate
-  gap below.
+  reset/recovery item below, not this one).
 - **The model has no separate state for "collapse, but already reset" —
   found 2026-09-19, not yet built.** Every feature currently in the
   vector is a function of an institution's *most recent* observed
@@ -310,6 +326,8 @@ src/
   diagnose_ipeds_access.py      One-off diagnostic: found NCES's real, current bulk-file URL pattern for the newest 1-2 years, after the old one went dead
   diagnose_ipeds_access2.py     One-off diagnostic: found NCES's real, current bulk-file URL pattern for older years (FY2013-FY2021), served from a different location than the newest years
   diagnose_panel_pipeline_consistency.py   One-off diagnostic: checks the panel-loading pipeline's path resolution and data consistency
+  diagnose_window_mismatch.py    One-off diagnostic: separates a real live-vs-panel data-window mismatch from ordinary MCMC non-convergence
+  recompute_panel_entropy.py     Real validation for the directional-entropy fix: re-fits all 54 panel institutions live and compares leave-one-out accuracy (see Known Gaps)
 data/
   panel/panel.json           The real, validated 54-institution panel
 docs/
@@ -353,6 +371,8 @@ future-projects/
   diagnose_f3_fields.yml            Manual-only: runs diagnose_f3_fields.py
   diagnose_ipeds.yml                Manual-only: runs the IPEDS-access diagnostics
   diagnose_panel_pipeline_consistency.yml   Manual-only: runs diagnose_panel_pipeline_consistency.py
+  diagnose_window_mismatch.yml      Manual-only: runs diagnose_window_mismatch.py
+  recompute_panel_entropy.yml        Manual-only: runs recompute_panel_entropy.py (see Known Gaps)
 ````
 
 ## Re-scoring cadence
