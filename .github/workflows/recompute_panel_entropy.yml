@@ -1,0 +1,48 @@
+name: Recompute panel entropy (directional-entropy fix validation)
+
+# Manual-only. Real validation for the directional-entropy fix
+# (dynamics.rolling_causal_downside_variance), which replaced the
+# 2026-09-19 debt_spike-sign gate after a live re-score run showed
+# that gate never corrected Houston/UCF/FSU/Buffalo/Clemson/Cal State
+# Long Beach. See src/recompute_panel_entropy.py's own module
+# docstring for the full reasoning and why this can only run here (on
+# GitHub Actions), not in any local development environment used on
+# this project.
+#
+# Writes ONLY to data/panel/panel_entropy_recomputed.json, uploaded as
+# a workflow artifact -- never touches the real, trusted
+# data/panel/panel.json or the public dashboard. Promoting the
+# recomputed panel is a separate, deliberate, human step after
+# reviewing this run's leave-one-out accuracy comparison in the
+# Actions log (see the script's own "NEXT STEP" printout at the end).
+#
+# Expect a long run: up to 54 live data fetches plus Bayesian fits,
+# each comparable in time to one score_batch.py institution.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  recompute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Recompute frac_high_entropy for every panel institution (directional fix)
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python recompute_panel_entropy.py
+
+      - name: Upload recomputed panel as a workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: panel_entropy_recomputed
+          path: data/panel/panel_entropy_recomputed.json
