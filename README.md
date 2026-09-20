@@ -200,7 +200,7 @@ everything below is complete:
 - **The `frac_high_entropy` feature could not distinguish a large positive
   shock from a destabilizing one — found 2026-09-15, fixed at the source
   and validated 2026-09-20, with new open questions from that fix's own
-  live re-score (see the end of this item).**
+  live re-score (see the end of this item — not a clean resolution).**
   `dynamics.py`'s `rolling_causal_variance()`
   computes plain `.var()` on a channel's first differences, and
   `classify_regime()` compares two of these variances to flag
@@ -281,6 +281,27 @@ everything below is complete:
   new downside-only entropy measure has swung too far the other
   direction for these two, suppressing a real signal it used to
   (over)detect, is now the open question, not yet resolved either way.
+  **Plan to resolve Clemson and West Virginia (not yet executed):**
+  two checks, in order, using diagnostics already in this repo rather
+  than new tooling. First, rule out MCMC non-convergence as a confound
+  — every run at the production 300-draw/300-tune settings has shown
+  real rhat > 1.01 and low-ESS warnings, and `diagnose_window_mismatch.py`
+  already exists for exactly this: re-run Clemson and West Virginia
+  through `compute_features_for_institution()` at higher precision
+  (more draws/tune, higher `target_accept`) and check whether their
+  `frac_high_entropy` value holds or moves — if it moves substantially,
+  the `stable` calls were a convergence artifact, not a fix outcome.
+  Second, if convergence isn't the cause, use `diagnose_feature_values.py`
+  to compare their full 8-feature vectors against the validated panel's
+  real closures with a similar profile, to see whether their documented
+  distress (Clemson's rising liabilities, West Virginia's 2023 crisis)
+  shows up in any of the other seven features even though
+  `frac_high_entropy` no longer flags it. If it does, the downside-only
+  construction itself needs a further correction. If it doesn't — if
+  their real distress simply isn't legible to any of these eight
+  features, the way Buffalo's isn't (see below) — that is itself the
+  answer, and gets documented as such rather than forced into a fix
+  that doesn't exist yet.
   UCF (83.4%, down from 95.4%) and FSU (57.1%, down from 87.1%) are
   still `high_risk` but meaningfully lower than before the fix — partial
   movement that hasn't been explained yet. Cal State Long Beach (95.8%)
@@ -291,7 +312,22 @@ everything below is complete:
   entirely after this fix — see `score_batch.py`'s own docstring: its
   score sat at a near-50/50 that didn't map to any mechanism this
   model's features are built to detect (its real strain is a $47M
-  federal research-funding cut).
+  federal research-funding cut). **No plan to resolve Buffalo, and this
+  is a real distinction from Clemson/West Virginia above, not the same
+  kind of open question.** Clemson and West Virginia's distress is
+  financial (debt, liabilities, budget cuts) — exactly the domain these
+  eight features were built to measure, so there's a real path to
+  fixing or explaining their scores. Buffalo's isn't: a federal
+  research-funding cut doesn't move debt, reserves, or enrollment, so
+  no version of `frac_high_entropy` — or any of the other seven
+  features — could be expected to detect it. Building a feature for
+  that would need a real, confirmed research-funding-cut closure or
+  near-closure in the training panel to validate against, and none
+  exists there; adding an untested feature with nothing to validate it
+  against would be exactly the kind of unverified change this project
+  doesn't make. Buffalo stays out of the live batch until a case like
+  it actually shows up in real, confirmed outcome data — not something
+  to build toward speculatively.
 - **The model has no separate state for "collapse, but already reset" —
   found 2026-09-19, not yet built.** Every feature currently in the
   vector is a function of an institution's *most recent* observed
