@@ -134,6 +134,36 @@ def fetch_scorecard_fields(unitid: str, fields: list[str], api_key: str | None =
     return data["results"][0]
 
 
+def detect_sector(unitid: str, api_key: str | None = None) -> str | None:
+    """
+    Real, live sector detection via the College Scorecard API's own
+    'school.ownership' field (1 = public, 2 = private nonprofit,
+    3 = private for-profit -- the standard Scorecard/IPEDS control
+    coding), instead of requiring sector to be hand-supplied for every
+    institution ahead of time.
+
+    Added for recompute_panel_entropy.py, which needs to re-run the live
+    pipeline against all 54 real panel institutions and has no other real
+    source for each one's sector -- data/panel/panel.json only stores the
+    final 8 derived features (InstitutionFeatures), never the sector or
+    start_year inputs that produced them.
+
+    Returns None, with no fabricated default, if the field comes back
+    missing or unrecognized -- the caller must treat that as a real,
+    honest gap, not guess "private" and risk parsing finance data through
+    the wrong sector's field codes (PRIVATE_FINANCE_FIELDS vs
+    PUBLIC_FINANCE_FIELDS vs FORPROFIT_FINANCE_FIELDS are not
+    interchangeable -- see their own definitions above).
+    """
+    try:
+        result = fetch_scorecard_fields(unitid, ["school.ownership"], api_key)
+    except Exception as e:
+        print(f"SECTOR DETECTION FAILED for {unitid}: {type(e).__name__}: {e}")
+        return None
+    ownership = result.get("school.ownership")
+    return {1: "public", 2: "private", 3: "forprofit"}.get(ownership)
+
+
 def fetch_enrollment_series(unitid: str, start_year: int, end_year: int, api_key: str | None = None) -> dict:
     """
     Real, live, year-by-year enrollment/completion/admissions series
