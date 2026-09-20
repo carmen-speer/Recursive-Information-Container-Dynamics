@@ -198,8 +198,10 @@ everything below is complete:
   full retrospective panel fit** — the subordinate institution's own
   chaotic collapse left no single clean container to test against.
 - **The `frac_high_entropy` feature could not distinguish a large positive
-  shock from a destabilizing one — found 2026-09-15, gated (not fully
-  resolved) 2026-09-19.** `dynamics.py`'s `rolling_causal_variance()`
+  shock from a destabilizing one — found 2026-09-15, fixed at the source
+  and validated 2026-09-20, with new open questions from that fix's own
+  live re-score (see the end of this item).**
+  `dynamics.py`'s `rolling_causal_variance()`
   computes plain `.var()` on a channel's first differences, and
   `classify_regime()` compares two of these variances to flag
   "high-entropy" periods; variance is a squared-deviation measure, so
