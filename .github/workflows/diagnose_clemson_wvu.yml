@@ -1,0 +1,38 @@
+name: Diagnose Clemson and West Virginia (convergence + peer comparison)
+
+# Manual-only diagnostic. Runs the two-step plan documented in README
+# Known Gaps ("Plan to resolve Clemson and West Virginia (not yet
+# executed)"): Step 1 re-runs both institutions at much higher MCMC
+# sampling precision to rule out non-convergence as the reason they
+# flipped to `stable` under the 2026-09-20 directional-entropy fix;
+# Step 2 compares their full 8-feature vectors against the entire real
+# validated panel (closures included) to check whether their real,
+# documented distress is legible to any of the other seven features.
+# See src/diagnose_clemson_wvu.py's own module docstring for the full
+# reasoning and how to read the result.
+#
+# Does not touch panel.json, dynamics.py, classifier.py,
+# score_institution.py, docs/data/live_scores.json, or the public
+# dashboard. Diagnostic only.
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run convergence check + peer-density comparison for Clemson and WVU
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_clemson_wvu.py
