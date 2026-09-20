@@ -256,23 +256,40 @@ everything below is complete:
   sanity check confirming a positive shock now scores zero while an
   equivalent negative shock does not). `debt_spike` itself is untouched
   and still stored as its own independent feature — it no longer gates
-  anything. **What this fix has not yet been shown to do:** unlike the
-  first fix, this one changes how `frac_high_entropy` is computed from
-  raw posterior trajectories, which the panel never cached (only the
-  final 8-feature vectors are stored anywhere in this repo) — so it
-  cannot be checked against the panel without a live re-fit of all 54
-  institutions, which needs network access this development environment
-  does not have. `src/recompute_panel_entropy.py` and its matching
-  manual-only workflow do this real validation on GitHub Actions (the
-  one environment on this project confirmed able to reach NCES/College
-  Scorecard); that workflow has not yet been run. Neither has the panel
-  leave-one-out accuracy been reconfirmed under this change, nor has a
-  fresh live re-score of Houston/UCF/FSU/Buffalo/Clemson/Long Beach been
-  run against it — both are the concrete next steps, not assumed
-  outcomes. West Virginia University and Sweet Briar's underlying cause
-  has not been checked against either version of this mechanism at all
-  (Sweet Briar's 52.4% is believed to be a *different* gap — see the
-  reset/recovery item below, not this one).
+  anything. **FIXED and validated, 2026-09-20:** unlike the first fix,
+  this one changes how `frac_high_entropy` is computed from raw
+  posterior trajectories, which the panel never cached (only the final
+  8-feature vectors are stored anywhere in this repo), so it needed a
+  live re-fit of all 54 institutions to check — `src/recompute_panel_entropy.py`
+  and its matching manual-only workflow did exactly that on GitHub
+  Actions (the one environment on this project confirmed able to reach
+  NCES/College Scorecard). Result: leave-one-out accuracy holds at
+  100.00% on the refit panel, zero misclassifications — the recomputed
+  panel was promoted to `data/panel/panel.json` the same night. A fresh
+  live re-score of Houston/UCF/FSU/Clemson/Long Beach was also run
+  against the fix. Real result, not fully clean either way: Houston —
+  the case that motivated this whole fix — is resolved, now scoring
+  `stable` (40.6%), consistent with its real AA+ bond rating and $3.3B
+  reserves. But two new, unexplained results surfaced in the same run,
+  not smoothed over: Clemson (39.0%) and West Virginia University
+  (44.2%) both flipped to `stable` under this fix despite each carrying
+  real, independently documented financial distress (Clemson's $2.65B
+  in long-term liabilities, up $231.9M year-over-year; West Virginia's
+  real 2023 financial crisis and program/faculty cuts) — whether the
+  new downside-only entropy measure has swung too far the other
+  direction for these two, suppressing a real signal it used to
+  (over)detect, is now the open question, not yet resolved either way.
+  UCF (83.4%, down from 95.4%) and FSU (57.1%, down from 87.1%) are
+  still `high_risk` but meaningfully lower than before the fix — partial
+  movement that hasn't been explained yet. Cal State Long Beach (95.8%)
+  and Sweet Briar (80.1%) remain `high_risk`; Sweet Briar's case is
+  still believed to be the separate reset/recovery gap below, not this
+  one. University of Phoenix-Arizona remains `high_risk` at effectively
+  100% (99.997%). University at Buffalo was removed from the live batch
+  entirely after this fix — see `score_batch.py`'s own docstring: its
+  score sat at a near-50/50 that didn't map to any mechanism this
+  model's features are built to detect (its real strain is a $47M
+  federal research-funding cut).
 - **The model has no separate state for "collapse, but already reset" —
   found 2026-09-19, not yet built.** Every feature currently in the
   vector is a function of an institution's *most recent* observed
