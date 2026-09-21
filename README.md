@@ -238,18 +238,48 @@ everything below is complete:
   of Governors filing, 2/27/26: UCF Moody's Aa2/Fitch AA stable, FSU
   Moody's Aa1/Fitch AA+ stable, neither on negative outlook) directly
   contradicting high-risk scores driven substantially by this same
-  feature. This is not a hypothetical: the validated panel itself
+  feature.
+  **Carmen identified the shape of this problem before it was formally
+  diagnosed.** She recognized it as the same kind of ambivalent signal
+  the project had already encountered once before, in the
+  facilities-and-athletics-spending and online-enrollment-share proxies
+  tested (and rejected) during original feature selection — a magnitude
+  that can mean either health or sickness depending on what's actually
+  driving it, and that only resolves against corroborating evidence,
+  never read alone. Her own real-time diagnosis, stated directly in the
+  project record before Houston's specific mechanism (the state
+  windfall) was confirmed: "I bet it's that massive grant, that this is
+  just like what happened with sports-and-facilities and
+  online-enrollment share, which can indicate either health or
+  sickness, depending on whether they are justified and making revenue,
+  or indicate divergence between either debt and revenue or between
+  tuition and quality of education (which predicts drop in enrollment);
+  the signal reads that as noise (could go either way) unless you check
+  it against other signs... read alone, it's an ambivalent signal."
+  That hypothesis was confirmed correct, and the two of us formally
+  named the underlying failure mode **sign blindness**: the math
+  correctly detects that a system has been shaken — a real, large
+  disturbance in the data — but, from magnitude alone, has no way to
+  tell which direction the shake is pushing the system in. Carmen
+  proposed the fix concept directly from that diagnosis: grade positive
+  shocks back down toward zero instead of treating every large swing as
+  equally alarming, regardless of which way it points — what became, in
+  the code, the shift from symmetric variance to a genuinely
+  directional, downside-only entropy measure described below. From
+  first noticing Houston's anomaly to identifying sign blindness,
+  proposing that fix, validating it against the full panel, and
+  diagnosing the Clemson/West Virginia fallout it produced, this entire
+  arc ran as one continuous, roughly 12-hour push.
+  This is not a hypothetical: the validated panel itself
   already contains real closures (Green Mountain, Marygrove, MacMurray)
   sitting at the same 0.8–1.0 `frac_high_entropy` values Houston shows,
   so the fitted classifier had no basis in its training data for
   separating "erratic because collapsing" from "erratic because of a
-  sudden windfall." Same underlying failure mode as the facilities-and-
-  athletics-spending and online-class-share proxies that were tested
-  and honestly rejected during the original feature-selection work
-  (see `reports/RICD Tracker Findings Final.pdf`) — a magnitude-only
-  signal that means either thriving or collapse depending on context it
-  doesn't have access to — except this instance made it into the final
-  8 validated features rather than being caught beforehand.
+  sudden windfall." This is the same failure mode already documented
+  for the facilities-and-athletics-spending and online-class-share
+  proxies (see `reports/RICD Tracker Findings Final.pdf`) — except this
+  instance made it into the final 8 validated features rather than
+  being caught beforehand.
   **First fix (2026-09-19, since superseded): gated `frac_high_entropy`
   on `debt_spike`'s sign** — zeroed whenever `debt_spike <= 0`. Checked
   against the panel's already-computed features (no live re-fit needed
@@ -297,8 +327,14 @@ everything below is complete:
   real 2023 financial crisis and program/faculty cuts) — whether the
   new downside-only entropy measure has swung too far the other
   direction for these two, suppressing a real signal it used to
-  (over)detect, was the open question at the time -- **executed
-  2026-09-20 via `src/diagnose_clemson_wvu.py` (GitHub Actions), and the
+  (over)detect, was the open question at the time. Carmen and Claude
+  suspected an overcorrection — a false positive produced by the fix
+  itself rather than a genuine result — so Claude designed and wrote a
+  two-step diagnostic (`src/diagnose_clemson_wvu.py`) to test that
+  directly; Carmen committed it and triggered the GitHub Actions run
+  herself, since this development environment has no push access and
+  no live network reach to NCES/College Scorecard — the same division
+  of labor used throughout this project. **Executed 2026-09-20, and the
   two institutions resolved differently, not identically.** Step 1
   ruled out MCMC non-convergence as a confound for BOTH: re-run at 4x
   sampling precision (1000 draws/1000 tune/4 chains/target_accept=0.95,
@@ -323,11 +359,20 @@ everything below is complete:
   of Clemson's four stable comparisons), with a second real closure
   (Lourdes University) also nearby (1.30). That does not clear the bar
   for "overwhelmingly stable" the way Clemson's does, so it is not being
-  closed out the same way. **Next step for West Virginia, not yet run:**
-  a feature-by-feature comparison against the panel (the same kind of
-  check `diagnose_feature_values.py` already runs for Houston/UCF/FSU)
-  to see whether its real distress shows up in any of the other seven
-  features even though `frac_high_entropy` no longer flags it.
+  closed out the same way. In Carmen's own framing, West Virginia sits
+  between two close cousins — one thriving (Wisconsin), one that
+  actually collapsed (Trinity Christian) — and until that tie breaks
+  further, it doesn't get the same clean resolution Clemson's evidence
+  produced. **Next step for West Virginia, not yet run:** a
+  feature-by-feature comparison against the panel (the same kind of
+  check `diagnose_feature_values.py` already runs for Houston/UCF/FSU),
+  checking West Virginia's other seven numbers — `d_A` trend and
+  endpoint, `δR` and its own trend, `debt_spike`, the
+  regime-classification fraction, `reserve_adequacy`, and the
+  research-to-instruction ratio — individually against both Wisconsin
+  and Trinity Christian, to see which of the eight actually tracks with
+  the real closure rather than the real survivor, now that
+  `frac_high_entropy` itself no longer flags West Virginia at all.
   UCF (83.4%, down from 95.4%) and FSU (57.1%, down from 87.1%) are
   still `high_risk` but meaningfully lower than before the fix — partial
   movement that hasn't been explained yet. Cal State Long Beach (95.8%)
