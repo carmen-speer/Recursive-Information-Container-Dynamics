@@ -21,12 +21,14 @@ specifically to be checked against the manuscript, not trusted on its own.
 Pentagonal Theorem of the Mathematical Nature of Evil, and Shaking Bowls —
 Carmen Speer's own original creative and theoretical writing, which became
 FDFM and RICS respectively, then nested into RICS-FDFM, then RICD, before
-further revisions arrived at the manuscript above. An interlinear
-**[Source Translation Ledger](<source-documents/Source Translation Ledger source poems explained mathematically.pdf>)**
-sets RICD's own mathematics directly alongside the four original poems it
-was built from, line by line, so the connection between the source material
-and the formal framework is checkable rather than asserted. The folder's
-`intermediate-development/` subfolder holds real, surviving milestones from
+further revisions arrived at the manuscript above. The poems and their
+interlinear math live together in
+**[`The Poetry Quartet - Source Poems of RICD.pdf`](<source-documents/The Poetry Quartet - Source Poems of RICD.pdf>)**,
+which sets RICD's own mathematics directly alongside the four original
+poems it was built from, line by line, so the connection between the
+source material and the formal framework is checkable rather than
+asserted. The folder's `intermediate-development/` subfolder holds real,
+surviving milestones from
 that path: an early FDFM application proposing a justice-system tracker
 (directly cited by RICD 5.0's own editorial notes, not a lost document), the
 expanded RICS-FDFM formalization, and earlier RICD versions (5.0
@@ -521,10 +523,9 @@ docs/
   data/panel.json                  Validated 54-institution panel data
   data/live_scores.json            Real institutions scored live by score_institution.py / score_batch.py
 source-documents/
-  Quartet of poems.pdf                                                 Original poems
+  The Poetry Quartet - Source Poems of RICD.pdf                        Original poems, with RICD's math set line-by-line alongside them
   The Pentagonal Theorem of the Mathematical Nature of Evil.pdf       Became FDFM
   Shaking Bowls Thought Experiment.pdf                                 Became RICS
-  Source Translation Ledger source poems explained mathematically.pdf   Poems set line-by-line alongside RICD's math
   README.md                                                               Full lineage
   intermediate-development/
     Feedback Divergence Field Model FDFM U.S. justice system application and research proposal.docx               Early FDFM justice-tracker proposal
