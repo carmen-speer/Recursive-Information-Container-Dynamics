@@ -1,0 +1,49 @@
+name: Diagnose West Virginia feature comparison (vs. Wisconsin and Trinity Christian)
+
+# Manual-only diagnostic. Executes the "Next step for West Virginia,
+# not yet run" step documented in README Known Gaps, immediately after
+# diagnose_clemson_wvu.py's Step 2 found West Virginia's peer
+# comparison genuinely mixed (nearest neighbor Wisconsin, stable,
+# distance 0.86; second-nearest Trinity Christian, a real confirmed
+# closure, distance 1.10). Checks West Virginia's real, live values
+# for the other seven features individually against both reference
+# points, now that frac_high_entropy itself no longer distinguishes
+# them (it reads 0.0000 for West Virginia and both Wisconsin and
+# Trinity Christian alike). See
+# src/diagnose_west_virginia_feature_comparison.py's own module
+# docstring for the full reasoning and how to read the result.
+#
+# Does not touch panel.json, dynamics.py, classifier.py,
+# score_institution.py, docs/data/live_scores.json, or the public
+# dashboard. Diagnostic only.
+on:
+  workflow_dispatch:
+    inputs:
+      high_precision:
+        description: "Run at diagnose_clemson_wvu.py's 1000/1000/4/0.95 settings instead of production 300/300/2/0.9"
+        type: boolean
+        default: false
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run West Virginia feature-by-feature comparison
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          if [ "${{ inputs.high_precision }}" = "true" ]; then
+            python diagnose_west_virginia_feature_comparison.py --high-precision
+          else
+            python diagnose_west_virginia_feature_comparison.py
+          fi
