@@ -25,9 +25,10 @@ further revisions arrived at the manuscript above. The poems and their
 interlinear math live together in
 **[`The Poetry Quartet - Source Poems of RICD.pdf`](<source-documents/The Poetry Quartet - Source Poems of RICD.pdf>)**,
 which sets RICD's own mathematics directly alongside the four original
-poems it was built from, line by line, so the connection between the
-source material and the formal framework is checkable rather than
-asserted. The folder's `intermediate-development/` subfolder holds real,
+poems it was built from, line by line (poems first, for a clean read;
+ledger with mathematical-literary explanation inlaid following), so the
+connection between the source material and the formal framework is
+checkable rather than asserted. The folder's `intermediate-development/` subfolder holds real,
 surviving milestones from
 that path: an early FDFM application proposing a justice-system tracker
 (directly cited by RICD 5.0's own editorial notes, not a lost document), the
