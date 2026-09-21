@@ -8,9 +8,13 @@ AI-assisted formalization.
 
 ## The lineage
 
-1. [`Quartet of poems.pdf`](<Quartet of poems.pdf>) — four original poems.
-   Carmen first noticed a set of recurring mathematical patterns in how she
-   was structuring this work here, before any formal theory existed.
+1. [`The Poetry Quartet - Source Poems of RICD.pdf`](<The Poetry Quartet - Source Poems of RICD.pdf>) —
+   the four original poems, with RICD's own mathematics set directly
+   alongside the lines it describes, line by line, so the connection
+   between the source material and the formal framework is checkable
+   rather than asserted. Carmen first noticed a set of recurring
+   mathematical patterns in how she was structuring this work here,
+   before any formal theory existed.
 2. [`The Pentagonal Theorem of the Mathematical Nature of Evil.pdf`](<The Pentagonal Theorem of the Mathematical Nature of Evil.pdf>) —
    an original theoretical document, written by Carmen alone, growing
    directly out of the patterns noticed in the poems. Working with ChatGPT,
@@ -18,11 +22,6 @@ AI-assisted formalization.
 3. [`Shaking Bowls Thought Experiment.pdf`](<Shaking Bowls Thought Experiment.pdf>) —
    a second original thought experiment, also written by Carmen alone.
    Working with ChatGPT, this became RICS.
-
-An interlinear **[Source Translation Ledger](<Source Translation Ledger source poems explained mathematically.pdf>)**
-sets RICD's own mathematics directly alongside the four original poems it
-was built from, line by line, so the connection between the source material
-and the formal framework is checkable rather than asserted.
 
 FDFM and RICS were then combined into a single, nested framework,
 RICS-FDFM. Dozens of further iterations of FDFM, RICS, and RICS-FDFM
