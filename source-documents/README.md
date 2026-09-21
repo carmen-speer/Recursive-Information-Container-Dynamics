@@ -10,9 +10,11 @@ AI-assisted formalization.
 
 1. [`The Poetry Quartet - Source Poems of RICD.pdf`](<The Poetry Quartet - Source Poems of RICD.pdf>) —
    the four original poems, with RICD's own mathematics set directly
-   alongside the lines it describes, line by line, so the connection
-   between the source material and the formal framework is checkable
-   rather than asserted. Carmen first noticed a set of recurring
+   alongside the lines it describes, line by line (poems first, for a
+   clean read; ledger with mathematical-literary explanation inlaid
+   following), so the connection between the source material and the
+   formal framework is checkable rather than asserted. Carmen first
+   noticed a set of recurring
    mathematical patterns in how she was structuring this work here,
    before any formal theory existed.
 2. [`The Pentagonal Theorem of the Mathematical Nature of Evil.pdf`](<The Pentagonal Theorem of the Mathematical Nature of Evil.pdf>) —
