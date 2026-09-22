@@ -235,7 +235,9 @@ def main():
                     "method": "governance_override",
                 }
             else:
-                features = compute_features_for_institution(unitid, name, sector=sector, start_year=start_year)
+                features = compute_features_for_institution(
+                    unitid, name, sector=sector, start_year=start_year, cores=1,
+                )
                 if features is None:
                     result_dict = {"unitid": unitid, "name": name, "prediction": "insufficient_data"}
                 else:
