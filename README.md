@@ -162,6 +162,26 @@ resolve a hard classification problem.
 
 ## Distress, not collapse: what an elevated score means for a public flagship
 
+**Before reading any score below: this tracker does not output a
+probability of closure.** It outputs a classifier's raw read of an
+institution's internal financial dynamics -- whether they currently
+resemble the panel's real closures. Whether that internal distress
+converts into an actual closure is governed separately, by a documented,
+pre-existing external-anchor mechanism (§10.5b.13), and the classifier
+deliberately does not fold that mechanism into its own number. That is
+not an unfinished integration waiting to happen; merging the two would
+erase the distinction the two-layer design exists to preserve. A
+tire-pressure sensor that reads 0 PSI after a blowout is not wrong, and
+it is not "failing to account for" the car's run-flat tires -- it is
+correctly reporting the tire, while a separate system (the run-flat
+capability) determines whether that failure actually stops the car. The
+classifier is the sensor; the anchor is the run-flat capability. When a
+large public university scores `high_risk` below, read it the same way:
+a correctly identified internal shock, at an institution whose separate,
+real anchor status is a documented fact about that institution (see the
+anchor status shown for each institution on the live dashboard), not a
+property this number was ever built to include.
+
 **Read this first if you're forming a judgment about this project from an
 elevated flagship score.** This is not a flaw in the classifier, not a
 workaround, and not a patch added after the fact to explain away an
@@ -338,6 +358,19 @@ is actively being investigated right now or deliberately deferred, and why;
 investigation"; and (3) the known or plausible cause, labeled as confirmed
 or unconfirmed. A gap that genuinely can't be investigated with current data
 gets that limitation stated as its own answer, not silence.
+
+Adopted 2026-09-22, a second standing rule: a term reserved for a
+*confirmed, real, historical outcome* (e.g. "closure") is never reused as
+the label, CSS class, or variable name for a *predicted* or *flagged*
+state, anywhere in this project's code or markup, even when styled
+identically. The validation panel's `outcome` field and the word
+"Closure" describe real institutions that actually closed; the live
+pipeline's `prediction` field and its `high_risk` flag describe the
+classifier's live output and are rendered with their own distinct label
+(`flagged`, not `closure`) for exactly this reason -- a tool doing
+structured extraction on the page, or a person skimming it, should never
+be able to read a predicted state as an asserted real-world fact from the
+markup alone, independent of the surrounding prose.
 
 ## Known gaps — stated honestly, not smoothed over
 
