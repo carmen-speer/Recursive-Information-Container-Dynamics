@@ -166,7 +166,7 @@ high-entropy systems; the anchoring mechanism was written into RICD's
 core theory prior to the building of this tracker to catch precisely this
 pattern when assessing collapse risk in systems showing divergence.
 
-Florida State (57.1%) and UCF (83.4%) are the live scores this applies to:
+Florida State (65.03%) and UCF (85.11%) are the live scores this applies to:
 real, currently-elevated `high_risk` scores -- elevated relative to a
 stable flagship like Michigan (5.8%), comparable instead to Houston's
 pre-fix reading. In both cases the classifier is working exactly as
@@ -222,7 +222,7 @@ this one, and don't belong under this mechanism.** Both carry real,
 seriously documented financial distress -- Clemson's $2.65B in long-term
 liabilities, up $231.9M year-over-year; West Virginia's real 2023
 financial crisis and program/faculty cuts -- and both are currently scored
-`stable` (39.0% and 44.2%), not elevated: the opposite direction from FSU
+`stable` (37.58% and 41.63%), not elevated: the opposite direction from FSU
 and UCF. That is not the anchor mechanism above at work. An anchor
 explains why a shock the classifier *did* detect doesn't convert to
 collapse; Clemson and West Virginia's distress was never detected as
@@ -250,6 +250,24 @@ an instance of this section's mechanism either: its problem isn't a
 missing anchor, it's a kind of strain -- a federal research-funding cut --
 that none of these eight features were ever built to detect in the first
 place.
+
+What these flagships' real data turned out to show is distress, not
+imminent closure, which is prevented by various forms of external
+anchoring as described above -- state appropriations, state-backed debt,
+political stakes, and diversified revenue among them -- and while that
+anchoring could in principle be traced and measured directly for a given
+institution, that work hasn't been done yet: the anchor eligibility
+criterion accounts for the mechanism, not yet a quantified adjustment to
+what the classifier itself outputs (the various forms of anchors have not
+yet been mathematically calculated, in other words).
+
+Whether this model could double as a potentially highly useful
+stress-calculator for flagships (which would require measuring anchor
+types and cross-referencing those mechanisms with the various causes of
+distress measured by the 8-feature panel in order to make recommendations)
+remains an open question; at present the model is designed to measure
+collapse and as such, its distress rankings for large schools are mainly
+useful in showing the degree rather than the fact of said distress.
 
 ## Documentation standard for this section (and the live dashboard)
 
@@ -504,18 +522,22 @@ everything below is complete:
   and the two numbers agreeing on the call, with only a small,
   explainable difference in margin, is corroboration rather than a
   live discrepancy needing its own fix.
-  UCF (83.4%, down from 95.4%) and FSU (57.1%, down from 87.1%) are
+  UCF (currently 85.11% as of the most recent live batch run; 83.4%
+  immediately after this fix, down from 95.4% pre-fix) and FSU
+  (currently 65.03% as of the most recent live batch run; 57.1%
+  immediately after this fix, down from 87.1% pre-fix) are
   still `high_risk`, meaningfully lower than before the fix and now fully
   explained (see "Distress, not collapse" above): each traces to a real,
   bounded debt problem -- FSU's athletics debt, UCF's housing bond --
   structured and secured as project-specific revenue bonds rather than
   general obligations of the university, alongside an otherwise-stable
   overall institutional bond rating (Florida Board of Governors filing,
-  2/27/26). Cal State Long Beach (95.8%)
-  and Sweet Briar (80.1%) remain `high_risk`; Sweet Briar's case is
+  2/27/26). Cal State Long Beach (currently 95.59%, previously 95.8%)
+  and Sweet Briar (currently 79.55%, previously 80.1%) remain `high_risk`;
+  Sweet Briar's case is
   still believed to be the separate reset/recovery gap below, not this
   one. University of Phoenix-Arizona remains `high_risk` at effectively
-  100% (99.997%). University at Buffalo was removed from the live batch
+  100% (currently 99.9961%, previously 99.997%). University at Buffalo was removed from the live batch
   entirely after this fix — see `score_batch.py`'s own docstring: its
   score sat at a near-50/50 that didn't map to any mechanism this
   model's features are built to detect (its real strain is a $47M
@@ -677,6 +699,121 @@ everything below is complete:
   revisiting Penn State York after Spring 2027, once its closure is a
   completed fact rather than an announced plan, is the concrete next
   check, not something to chase down early.
+- **Seven additional private liberal-arts colleges — Bucknell
+  University, Haverford College, Thomas Aquinas College, Hampden-Sydney
+  College, Augustana College, Holy Cross College, and Wittenberg
+  University — were added to the live batch on 2026-09-22**, selected
+  using the same neutral-selection methodology already documented in
+  `score_batch.py`'s own docstring (no institution added because of an
+  expected outcome; a substitution made only when a first-choice
+  candidate had an unrelated collision with the pipeline). Current live
+  scores as of the most recent batch run: Bucknell 9.45%, Haverford
+  9.22%, Hampden-Sydney 36.16%, Augustana 46.80%, Holy Cross 4.84% —
+  all `stable`, none showing an anomaly requiring individual treatment
+  under this section's documentation standard. Thomas Aquinas and
+  Wittenberg each get their own entry below, for different reasons:
+  Thomas Aquinas because its live score is not currently trustworthy,
+  Wittenberg because of a newly observed, not-yet-investigated
+  convergence anomaly.
+- **Thomas Aquinas College's live score is genuinely non-reproducible
+  across separate GitHub Actions runs, and this is under active,
+  real-time investigation right now (as of 2026-09-22/23) — not yet
+  resolved, and no single percentage for it should be trusted until it
+  is.** First surfaced when `frac_high_entropy` came back a clean
+  0.0000 in one full isolated replication (5/5 agreement, at `cores=2`
+  multiprocessing) and then a clean but opposite 1.0000 in a second,
+  equally clean isolated replication run under the same settings — a
+  direct instance of the same trap already documented earlier in this
+  section: a single clean result isn't evidence of anything on its own
+  if a competing condition can produce an equally clean, opposite
+  result. **Confirmed, not hypothesized:** PyTensor — the numerical
+  backend this project's `model.py` relies on for MCMC sampling via
+  PyMC — cannot link to a BLAS (Basic Linear Algebra Subprograms)
+  installation under this project's current pip-based dependency setup,
+  and prints its own warning to that effect ("PyTensor could not link
+  to a BLAS installation. Operations that might benefit from BLAS will
+  be severely degraded") on every single run across this entire
+  investigation, with no exception. Four specific hypotheses for the
+  non-reproducibility were tested directly and disproven, not just
+  argued against: (1) `cores` (real multiprocessing during MCMC
+  sampling) as the sole cause — disproven when a second isolated
+  replication round at the same `cores=2` setting gave the opposite
+  result of the first; (2) MCMC under-sampling/precision as the cause —
+  disproven when a much higher-precision re-run (4 chains, 800/800
+  draws, target_accept=0.95) still failed PyMC's own rhat convergence
+  threshold (1.1062 against a 1.01 threshold), meaning a clean-looking
+  "0 divergences" result does not by itself mean the run actually
+  converged; (3) within-run chain multimodality (the sampler's own
+  chains disagreeing with each other inside one run) — disproven by a
+  per-chain diagnostic showing all chains agreeing closely with each
+  other in every run checked; (4) batch-position/in-process state
+  leakage (scoring Thomas Aquinas after other institutions in the same
+  batch run somehow affecting its result) — disproven by a direct
+  cold-vs-warm test within a single script run, giving bit-identical
+  results either way. **Current, still-unconfirmed leading
+  explanation:** results appear to be decided once per GitHub Actions
+  runner/job — perfectly reproducible *within* a single job (confirmed
+  repeatedly, including the per-chain and cold/warm checks above) but
+  capable of landing on a different answer entirely in a separate job —
+  consistent with genuine runner-to-runner hardware variability
+  interacting with PyTensor's confirmed-degraded, non-BLAS math, which
+  lacks the numerical robustness across different hardware that a
+  properly linked BLAS implementation would provide. As a first,
+  already-shipped mitigation, `score_institution.py`'s CLI and
+  `score_batch.py`'s batch loop were both switched to `cores=1` (real
+  multiprocessing disabled) on 2026-09-23, after isolated `cores=1`
+  diagnostics ran consistently 7 times in a row; this is a real but so
+  far incompletely validated fix, not a confirmed one — a real
+  production `rescore.yml` batch run under the new `cores=1` setting
+  still landed Thomas Aquinas in the opposite (high-divergence) camp
+  from every one of nine separate isolated `cores=1` diagnostic runs,
+  meaning `cores=1` alone does not yet have confirmed real-world
+  protective value. **Two things are running in parallel right now,
+  both real, not hypothetical:** a second real `rescore.yml` production
+  run, to get a second real data point on whether `cores=1` helps under
+  actual batch conditions; and a new diagnostic workflow,
+  `diagnose_thomas_aquinas_conda_blas.yml`, testing PyTensor installed
+  through conda-forge instead of pip — the standard fix implied
+  directly by PyTensor's own warning text, since conda-forge's build
+  links against a real, optimized BLAS implementation rather than
+  leaving PyTensor to run its severely-degraded fallback path.
+  Depending what these show: if the conda/BLAS environment produces
+  consistent results across separate job dispatches (not yet tested
+  even once as of this writing — a single job's internal consistency
+  was never actually the open question), that will be treated as the
+  real fix and rolled into production; if Thomas Aquinas's live score
+  still cannot be trusted after that, it will be documented here as a
+  genuinely unresolved sampling-instability case, with no single
+  percentage asserted for it on the live dashboard, rather than
+  publishing a number known to be an artifact of which server happened
+  to run it. **Note for anyone checking the live dashboard directly
+  right now:** it currently shows Thomas Aquinas at 95.5081% (153
+  divergences), the result of the one real production run completed so
+  far under `cores=1` — given everything above, that specific figure
+  should be read as provisional, not confirmed, until this
+  investigation resolves.
+- **Wittenberg University's live score (95.34%) came back alongside an
+  elevated max rhat (1.7710) in the most recent real batch run —
+  noticed 2026-09-22, not yet investigated, deliberately deferred
+  rather than silently accepted.** Deferred specifically because the
+  Thomas Aquinas reproducibility investigation (above) is the
+  higher-priority open question right now — it affects confidence in
+  the live pipeline broadly, not just one institution — and Wittenberg's
+  elevated rhat may turn out to be a related symptom of the same
+  underlying cause once that investigation resolves, rather than an
+  independent problem needing its own separate diagnostic path.
+  Substantively, a high score is plausible on independent grounds
+  regardless of the convergence question: Wittenberg is under a real,
+  confirmed Higher Learning Commission financial-distress probation,
+  which is why it was kept scored by the statistical classifier rather
+  than added to `GOVERNANCE_OVERRIDE_UNITIDS` — the override is reserved
+  for a closure-track governance verdict (a show-cause order or
+  withdrawal), and financial probation is a real but different, less
+  severe governance signal than that. Next step, not yet executed:
+  re-run Wittenberg specifically at high-precision settings, the same
+  convergence-isolation check already used for Thomas Aquinas, Clemson,
+  and West Virginia, once the higher-priority investigation above frees
+  up to take it on.
 
 ## Repository structure
 
@@ -703,6 +840,12 @@ src/
   diagnose_clemson_wvu.py        Two-step diagnostic (convergence check + panel peer-density comparison) that resolved Clemson and narrowed West Virginia (see Known Gaps)
   diagnose_west_virginia_feature_comparison.py   Feature-by-feature comparison of West Virginia against Wisconsin and Trinity Christian individually, at production and high-precision settings (see Known Gaps)
   diagnose_reset_recovery.py     Tests the candidate within-window trend feature for the reset/recovery gap against Sweet Briar and Phoenix, with a convergence recheck (see Known Gaps)
+  diagnose_thomas_aquinas_highprecision.py   High-precision MCMC convergence check for Thomas Aquinas's reproducibility instability (see Known Gaps)
+  diagnose_thomas_aquinas_perchain.py        Per-chain diagnostic ruling out within-run chain multimodality for Thomas Aquinas (see Known Gaps)
+  diagnose_clemson_wvu_cores1.py             Re-validates Clemson and West Virginia's live scores under cores=1 (see Known Gaps)
+  diagnose_phoenix_cores1.py                 Re-validates Phoenix's live score under cores=1 (see Known Gaps)
+  diagnose_thomas_aquinas_batch_position.py  Cold-vs-warm test ruling out batch-position/in-process state leakage for Thomas Aquinas (see Known Gaps)
+  diagnose_thomas_aquinas_conda_blas.py      Tests whether a conda-forge (real BLAS-linked) PyTensor install resolves Thomas Aquinas's reproducibility instability (see Known Gaps)
 data/
   panel/panel.json           The real, validated 54-institution panel
 docs/
@@ -750,6 +893,12 @@ future-projects/
   diagnose_clemson_wvu.yml            Manual-only: runs diagnose_clemson_wvu.py (see Known Gaps)
   diagnose_west_virginia_feature_comparison.yml   Manual-only: runs diagnose_west_virginia_feature_comparison.py, with an optional high-precision checkbox (see Known Gaps)
   diagnose_reset_recovery.yml         Manual-only: runs diagnose_reset_recovery.py (see Known Gaps)
+  diagnose_thomas_aquinas_highprecision.yml       Manual-only: runs diagnose_thomas_aquinas_highprecision.py (see Known Gaps)
+  diagnose_thomas_aquinas_perchain.yml            Manual-only: runs diagnose_thomas_aquinas_perchain.py (see Known Gaps)
+  diagnose_clemson_wvu_cores1.yml                 Manual-only: runs diagnose_clemson_wvu_cores1.py (see Known Gaps)
+  diagnose_phoenix_cores1.yml                     Manual-only: runs diagnose_phoenix_cores1.py (see Known Gaps)
+  diagnose_thomas_aquinas_batch_position.yml      Manual-only: runs diagnose_thomas_aquinas_batch_position.py (see Known Gaps)
+  diagnose_thomas_aquinas_conda_blas.yml          Manual-only: runs diagnose_thomas_aquinas_conda_blas.py, installing dependencies via conda-forge instead of pip (see Known Gaps)
 
 ## Re-scoring cadence
 
