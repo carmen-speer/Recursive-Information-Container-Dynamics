@@ -392,7 +392,7 @@ everything below is complete:
   corroborating `peer_density()`'s aggregate nearest-neighbor verdict
   rather than overturning it — the model's most heavily-weighted
   feature still points the other way, which a raw feature tally alone
-  cannot settle. **Resolved, 2026-09-22:** feeding West Virginia's
+  cannot settle. **Resolved, 2026-09-21:** feeding West Virginia's
   real, high-precision feature vector directly through the fitted
   `RICDClassifier` — the properly-weighted model output, not an
   unweighted feature tally — gives 40.6% probability of `high_risk`
@@ -420,21 +420,27 @@ everything below is complete:
   score sat at a near-50/50 that didn't map to any mechanism this
   model's features are built to detect (its real strain is a $47M
   federal research-funding cut). **No plan to resolve Buffalo, and this
-  is a real distinction from Clemson/West Virginia above, not the same
-  kind of open question.** Clemson and West Virginia's distress is
-  financial (debt, liabilities, budget cuts) — exactly the domain these
-  eight features were built to measure, so there's a real path to
-  fixing or explaining their scores. Buffalo's isn't: a federal
-  research-funding cut doesn't move debt, reserves, or enrollment, so
-  no version of `frac_high_entropy` — or any of the other seven
-  features — could be expected to detect it. Building a feature for
-  that would need a real, confirmed research-funding-cut closure or
-  near-closure in the training panel to validate against, and none
-  exists there; adding an untested feature with nothing to validate it
-  against would be exactly the kind of unverified change this project
-  doesn't make. Buffalo stays out of the live batch until a case like
-  it actually shows up in real, confirmed outcome data — not something
-  to build toward speculatively.
+  is a real distinction from Clemson/West Virginia above, now that both
+  of those are actually resolved.** Clemson and West Virginia's distress
+  is financial (debt, liabilities, budget cuts) — exactly the domain
+  these eight features were built to measure, so each reached a real
+  resolution within that same feature space: Clemson's `stable` call is
+  real, not suppressed signal, even though its distress isn't legible to
+  any of the eight as currently constructed (the same status as
+  Buffalo's gap, reached by a different mechanism — see above); West
+  Virginia's `stable` call held up once its real feature vector was run
+  through the fitted classifier's own weighting, resolving the tie a raw
+  feature tally couldn't settle. Buffalo's distress isn't in that domain
+  at all: a federal research-funding cut doesn't move debt, reserves, or
+  enrollment, so no version of `frac_high_entropy` — or any of the other
+  seven features — could be expected to detect it, not even in
+  principle. Building a feature for that would need a real, confirmed
+  research-funding-cut closure or near-closure in the training panel to
+  validate against, and none exists there; adding an untested feature
+  with nothing to validate it against would be exactly the kind of
+  unverified change this project doesn't make. Buffalo stays out of the
+  live batch until a case like it actually shows up in real, confirmed
+  outcome data — not something to build toward speculatively.
 - **The model has no separate state for "collapse, but already reset" —
   found 2026-09-19, not yet built.** Every feature currently in the
   vector is a function of an institution's *most recent* observed
