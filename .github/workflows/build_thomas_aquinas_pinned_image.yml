@@ -1,0 +1,40 @@
+name: Build Thomas Aquinas - Pinned Environment Image
+
+# Builds the exact, version-pinned container used by
+# diagnose_thomas_aquinas_pinned_env.yml to test whether the Thomas
+# Aquinas reproducibility instability (see README.md Known Gaps) comes
+# from environment drift between separate GitHub Actions runners, or
+# from something deeper that a pinned software environment can't
+# control. Run this once to build and publish the image;
+# diagnose_thomas_aquinas_pinned_env.yml then pulls this exact image on
+# every separate dispatch, so multiple runs are guaranteed to use
+# byte-identical software, not just the same requirements.txt ranges
+# re-resolved fresh each time.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push the pinned-environment image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.thomas_aquinas_pinned
+          push: true
+          tags: |
+            ghcr.io/carmen-speer/recursive-information-container-dynamics-thomas-aquinas-pinned:latest
