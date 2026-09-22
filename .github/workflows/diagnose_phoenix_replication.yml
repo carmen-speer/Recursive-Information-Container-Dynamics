@@ -1,0 +1,37 @@
+name: Replicate University of Phoenix-Arizona (reproducibility check)
+
+# Manual-only diagnostic. Checks whether Phoenix's live score
+# reproduces across independent production-settings runs. Run because
+# Phoenix's 2026-09-22 batch log is the only one in the whole live
+# batch besides Thomas Aquinas College's to show real MCMC divergences
+# (20, versus 153 for Thomas Aquinas and zero for every other
+# institution) -- the same symptom that tracked exactly with Thomas
+# Aquinas College's confirmed run-to-run instability. See
+# src/diagnose_phoenix_replication.py's own module docstring for the
+# full reasoning.
+#
+# Does not touch panel.json, dynamics.py, classifier.py,
+# score_institution.py, docs/data/live_scores.json, or the public
+# dashboard. Diagnostic only.
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run replication check for Phoenix
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_phoenix_replication.py
