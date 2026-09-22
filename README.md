@@ -5,13 +5,13 @@ financial collapse risk in U.S. higher education, built on the Recursive
 Information-Container Dynamics (RICD) framework.
 
 **The full RICD manuscript (the complete, domain-independent theory) lives at
-[`docs/RICD 15.6 master.docx`](<docs/RICD 15.6 master.docx>)
-(also available as [`.tex`](<docs/RICD 15.6 master.tex>)).**
+[`docs/RICD 15.8 manuscript.pdf`](<docs/RICD 15.8 manuscript.pdf>)
+(also available as [`.tex`](<docs/RICD 15.8 manuscript.tex>)).**
 Everything in this repository's code implements a real subset of that
 framework (Parts 6, 7, 8, and 10.5b specifically) against U.S. higher-education
 data; the manuscript itself is domain-independent and covers considerably more
 than the tracker uses. The manuscript's own
-[Integration Manifest](<reports/RICD Integration Manifest Complete.pdf>) records
+[Integration Manifest](<reports/RICD Integration Manifest.pdf>) records
 every mechanism confirmed built into the framework, section by section, with
 the exact manuscript text shown for each -- a standing verification record kept
 specifically to be checked against the manuscript, not trusted on its own.
@@ -49,7 +49,7 @@ and [`ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, 
 the tracker, asked for and included so the actual division of labor is checkable
 rather than asserted), [`RICD Adapter Instructional Manual.pdf`](<reports/RICD Adapter Instructional Manual.pdf>) (an instructional manual for
 engineers working with the RICD adapter contract directly), and the
-complete [`RICD Integration Manifest Complete.pdf`](<reports/RICD Integration Manifest Complete.pdf>) described above.
+complete [`RICD Integration Manifest.pdf`](<reports/RICD Integration Manifest.pdf>) described above.
 
 **Not-yet-built or not-yet-funded work lives in [`future-projects/`](future-projects/):**
 [`Next Project for RICD - Four Adapter Build Roadmap.pdf`](<future-projects/Next Project for RICD - Four Adapter Build Roadmap.pdf>)
@@ -123,7 +123,7 @@ panel (23 confirmed closures spanning seven distinct collapse
 mechanisms, 31 confirmed-stable comparisons), with zero misclassifications.
 Reproduce this directly:
 
-````bash
+```bash
 pip install -r requirements.txt
 cd src
 python -c "
@@ -134,7 +134,7 @@ acc, misclassified = clf.leave_one_out_accuracy(panel)
 print(f'Accuracy: {acc:.2%}')
 print(f'Misclassified: {misclassified}')
 "
-````
+```
 
 **What that 100% figure is actually a statement about, checked directly rather than left implicit:** of the panel's 23 confirmed closures, only 2 (Northland College, King's College NY) are classified via the direct External Governance Attestation override described above — the other 21 are correctly classified by the fitted statistical model itself, not exempted from it. So the 100% accuracy claim is overwhelmingly a statement about the classifier, not about the override rule doing the real work. Separately, `reserve_adequacy`'s coefficient — the largest-magnitude one in the model — is stable across all 52 real leave-one-out refits that actually pass through the fitted model (the 2 override folds never do): it stays in a tight -1.79 to -1.93 band around its full-panel value of -1.88, and none of the eight features flip sign in any of the 52 folds. No single institution's removal is quietly driving the result. This is a real answer to "is the panel too small/one feature too dominant for this to be trustworthy," not a claim that it resolves the separate, still-open gap below: coefficient stability says the fit isn't fragile to which institution gets held out; it says nothing about whether `reserve_adequacy` is well-calibrated against real public-sector distress, which it structurally is not (see Known Gaps).
 
@@ -155,6 +155,71 @@ should be read as a claim about what fraction of U.S. higher education is
 at risk. It supports a narrower, real claim: these specific mechanisms and
 relationships showed up clearly enough in independently-verified data to
 resolve a hard classification problem.
+
+## Distress, not collapse: what an elevated score means for a public flagship
+
+Several of the live scores discussed below (Florida State, UCF, Clemson,
+West Virginia) are real signals of real financial distress -- but distress
+is not the outcome this classifier was built and validated to predict. The
+outcome is collapse: a small, tuition-dependent private college's financial
+exigency closing it outright, which is what every confirmed closure in the
+54-institution panel actually is. A large public flagship can carry the
+same kind of real financial strain these eight features are built to
+detect without that strain converting into closure, because it typically
+holds what RICD's own framework formalizes as an external anchor
+(§10.5b.13, Anchor Eligibility): a structurally distinct system that
+absorbs a shock so the anchored container doesn't have to, whether by a
+vigilant neighbor actively maintaining zero extraction flux toward it, a
+structurally inert boundary with nothing to extract, or a purpose-built
+buffering structure sized to its designed capacity.
+
+For a public university flagship, that anchor is rarely one single thing;
+it typically has several concrete, independent parts: direct state
+appropriations able to flex upward in a crisis (a subsidy channel no
+tuition-dependent private college has); state-backed or state-supported
+borrowing, which changes both the cost and the systemic risk of new debt
+relative to an institution borrowing on its own unsupported credit;
+political stakes large enough to make intervention likely rather than
+hypothetical, since a flagship's closure is a state-level event no
+legislature wants attached to its name; revenue diversified well beyond
+tuition (sponsored research, hospital and clinical operations, athletics
+revenue); system-level cross-subsidization across a multi-campus public
+system, which no freestanding private college has access to; and a large,
+stable in-state applicant base insulated -- though not immune, see Cal
+State Long Beach below -- from the demographic pressure driving
+small-college enrollment collapse. None of the panel's real closures had
+access to anchors like these, which is exactly why the eight features were
+built and validated against institutions that didn't have them, not
+flagships that do.
+
+Florida State's and UCF's scores are a further, independently confirmed
+instance of the same structural point, not just an analogy. FSU's $437M
+athletics-related debt and UCF's $144M student-housing bond are each
+structured as project-specific revenue bonds, not general obligations of
+the university: FSU's is secured only by athletics-department revenue and
+Seminole Boosters membership fees and capital gifts, and UCF's only by net
+revenues of its own housing system, with each bond program's own governing
+documentation stating explicitly that "these bonds do not constitute a
+general obligation of the State of Florida or the University, and the full
+faith and credit of the State of Florida is not pledged to payment"
+(Florida State Board of Administration bond-finance program pages for each
+issue). A default on either bond would stress that specific auxiliary
+enterprise -- athletics at FSU, the housing system at UCF -- not the
+university's general credit, alongside each institution's otherwise-stable
+overall bond rating (Florida Board of Governors filing, 2/27/26). This is
+the mechanism behind the "real but bounded problem" framing used throughout
+Known Gaps below, not an assertion; it's checkable against each program's
+own bond documentation.
+
+An elevated or borderline score anywhere in this project, live or in the
+panel, should be read as "this institution's raw financial dynamics
+resemble the ones that produced real closures" -- not as a probability of
+actual collapse. Whether distress converts to collapse depends on an
+anchor this classifier does not measure at all. Buffalo (removed from the
+live batch; see Known Gaps below) is a different case, not an instance of
+this same point: its problem isn't a missing anchor, it's a kind of strain
+-- a federal research-funding cut -- that none of these eight features were
+ever built to detect in the first place.
 
 ## Documentation standard for this section (and the live dashboard)
 
@@ -410,8 +475,13 @@ everything below is complete:
   explainable difference in margin, is corroboration rather than a
   live discrepancy needing its own fix.
   UCF (83.4%, down from 95.4%) and FSU (57.1%, down from 87.1%) are
-  still `high_risk` but meaningfully lower than before the fix — partial
-  movement that hasn't been explained yet. Cal State Long Beach (95.8%)
+  still `high_risk`, meaningfully lower than before the fix and now fully
+  explained (see "Distress, not collapse" above): each traces to a real,
+  bounded debt problem -- FSU's athletics debt, UCF's housing bond --
+  structured and secured as project-specific revenue bonds rather than
+  general obligations of the university, alongside an otherwise-stable
+  overall institutional bond rating (Florida Board of Governors filing,
+  2/27/26). Cal State Long Beach (95.8%)
   and Sweet Briar (80.1%) remain `high_risk`; Sweet Briar's case is
   still believed to be the separate reset/recovery gap below, not this
   one. University of Phoenix-Arizona remains `high_risk` at effectively
@@ -580,7 +650,7 @@ everything below is complete:
 
 ## Repository structure
 
-````
+```
 src/
   model.py               Bayesian state-space model (PyMC)
   jump_diffusion.py       Shock-type latent process for debt
@@ -607,7 +677,7 @@ src/
 data/
   panel/panel.json           The real, validated 54-institution panel
 docs/
-  RICD 15.6 master.docx, .tex    The full, domain-independent RICD theory
+  RICD 15.8 manuscript.pdf, .tex    The full, domain-independent RICD theory
   index.html                      Public results dashboard (GitHub Pages)
   data/panel.json                  Validated 54-institution panel data
   data/live_scores.json            Real institutions scored live by score_institution.py / score_batch.py
@@ -630,7 +700,7 @@ reports/
   ChatGPT's Account of Its Own Role in the Early Development of FDFM, RICS, and RICD.pdf   ChatGPT's own account of the collaboration
   Collapse-Causal Tracker (C-CT) Description Document.pdf   What a collapse-causal tracker is as a category, and how it differs from C-CAT
   RICD Adapter Instructional Manual.pdf  Adapter-contract implementation guide, for engineers
-  RICD Integration Manifest Complete.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
+  RICD Integration Manifest.pdf   Every mechanism confirmed built into RICD, with the manuscript text shown for each
   readme.md                                Guide to this folder's contents
 future-projects/
   Collapse-Causal Agent Tracker (C-CAT) Seed Note.pdf         Seed note for a mechanism-layer (agent) tracker, planned for later
@@ -651,7 +721,7 @@ future-projects/
   diagnose_clemson_wvu.yml            Manual-only: runs diagnose_clemson_wvu.py (see Known Gaps)
   diagnose_west_virginia_feature_comparison.yml   Manual-only: runs diagnose_west_virginia_feature_comparison.py, with an optional high-precision checkbox (see Known Gaps)
   diagnose_reset_recovery.yml         Manual-only: runs diagnose_reset_recovery.py (see Known Gaps)
-````
+```
 
 ## Re-scoring cadence
 
