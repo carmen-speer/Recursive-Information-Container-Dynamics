@@ -82,6 +82,38 @@
     prior gating fix has been superseded and fully re-run, not just written.
     Below is what's currently known about each score, institution by
     institution, not just a general caveat.
+    <p style="margin:12px 0 4px;"><strong>Distress, not collapse, for institutions with an external anchor.</strong>
+    Several of the scores below are real signals of real financial distress --
+    but distress isn't the target this classifier was built to predict.
+    Collapse is: a small, tuition-dependent private college's financial
+    exigency closing it outright, which is what these eight features were
+    built and validated against. A large public flagship can carry the same
+    kind of real financial strain these features are built to detect without
+    it converting to closure, because it holds what RICD's own framework
+    (§10.5b.13, Anchor Eligibility) calls an external anchor -- a
+    structurally distinct system absorbing the shock so the anchored
+    institution doesn't have to. For a public flagship that typically means
+    direct state appropriations able to flex in a crisis, state-backed
+    borrowing, political stakes large enough to make intervention likely
+    rather than hypothetical, revenue diversified well beyond tuition,
+    system-level cross-subsidization across campuses, and a large in-state
+    applicant base insulated (though not immune -- see CSU-Long Beach below)
+    from the demographic pressure driving small-college enrollment collapse
+    -- none of which the training panel's real closures had access to. FSU's
+    athletics debt and UCF's housing bond below are a further, confirmed
+    instance of the same structural point: each is secured only by its own
+    project's revenue (athletics income and Seminole Boosters funds for FSU,
+    housing-system revenue for UCF), and each bond program's own
+    documentation states explicitly that it is not a general obligation of
+    the university and that the state's full faith and credit isn't pledged
+    to it -- a default there would stress that specific auxiliary enterprise,
+    not the institution's general credit. A score below should be read as
+    "this institution's raw financial dynamics resemble the ones that
+    produced real closures," not as a probability of actual collapse;
+    whether distress converts to collapse depends on an anchor this
+    classifier doesn't measure at all. (Buffalo, removed from this batch
+    below, is a different case -- not a missing anchor, but a kind of strain
+    none of these eight features were built to detect at all.)</p>
     <p style="margin:12px 0 4px;"><strong>Fix confirmed working:</strong>
     University of Houston is now <code>stable</code> (40.6%), down from 87.3%
     before this fix. This is the case that motivated the fix: Houston
