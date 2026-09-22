@@ -14,7 +14,7 @@
   table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; }
   th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #eee; }
   th { background: #f5f5f0; cursor: pointer; }
-  .closure { color: #a33; }
+  .closure, .flagged { color: #a33; }
   .stable { color: #2a6; }
   #search { padding: 8px; width: 100%; margin-top: 16px; box-sizing: border-box; }
 </style>
@@ -51,6 +51,28 @@
   </table>
 
   <h2 id="live-section" style="margin-top:40px;">Live-scored institutions</h2>
+  <div class="scope-note" id="live-read-first-note" style="border-left-color:#a33;">
+    <strong>Before reading any score below: this tracker does not output a
+    probability of closure.</strong> It outputs a classifier's raw read of
+    an institution's internal financial dynamics -- whether they currently
+    resemble the panel's real closures. Whether that internal distress
+    converts into an actual closure is governed separately, by a
+    documented, pre-existing external-anchor mechanism (§10.5b.13), and the
+    classifier deliberately does not fold that mechanism into its own
+    number. That is not an unfinished integration waiting to happen;
+    merging the two would erase the distinction the two-layer design
+    exists to preserve. A tire-pressure sensor that reads 0 PSI after a
+    blowout is not wrong, and it is not "failing to account for" the car's
+    run-flat tires -- it is correctly reporting the tire, while a separate
+    system (the run-flat capability) determines whether that failure
+    actually stops the car. The classifier is the sensor; the anchor is
+    the run-flat capability. When a large public university scores
+    <code>high_risk</code> below, read it the same way: a correctly
+    identified internal shock, at an institution whose separate, real
+    anchor status is a documented fact about that institution (see the
+    Anchor column below), not a property this number was ever built to
+    include.
+  </div>
   <!--
     The section below is baked as real, static HTML by
     src/render_dashboard.py every time the automated re-score workflow
@@ -339,8 +361,9 @@
     <thead>
       <tr>
         <th>Institution</th>
-        <th>Prediction</th>
+        <th>Classifier Flag</th>
         <th>Collapse-regime score</th>
+        <th>Anchor (§10.5b.13)</th>
         <th>Method</th>
         <th>Last scored (UTC)</th>
       </tr>
@@ -351,6 +374,7 @@
           <td>Augustana College</td>
           <td class="stable">stable</td>
           <td>41.9%</td>
+          <td>No anchor identified (private, tuition-dependent)</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:50 UTC</td>
         </tr>
@@ -358,13 +382,15 @@
           <td>Bucknell University</td>
           <td class="stable">stable</td>
           <td>10.1%</td>
+          <td>No anchor identified (private, tuition-dependent)</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:45 UTC</td>
         </tr>
         <tr>
           <td>California State University-Long Beach</td>
-          <td class="closure">high_risk</td>
+          <td class="flagged">high_risk</td>
           <td>95.8%</td>
+          <td>Anchor present, not fully absorbing -- see Known Gaps</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:40 UTC</td>
         </tr>
@@ -372,6 +398,7 @@
           <td>Clemson University</td>
           <td class="stable">stable</td>
           <td>39.0%</td>
+          <td>Not applicable -- not flagged</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:41 UTC</td>
         </tr>
@@ -379,13 +406,15 @@
           <td>College of the Holy Cross</td>
           <td class="stable">stable</td>
           <td>5.4%</td>
+          <td>No anchor identified (private, tuition-dependent)</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:51 UTC</td>
         </tr>
         <tr>
           <td>Florida State University</td>
-          <td class="closure">high_risk</td>
+          <td class="flagged">high_risk</td>
           <td>57.1%</td>
+          <td>Anchor absorbs this shock (§10.5b.13)</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:44 UTC</td>
         </tr>
@@ -393,6 +422,7 @@
           <td>Hampden-Sydney College</td>
           <td class="stable">stable</td>
           <td>38.4%</td>
+          <td>No anchor identified (private, tuition-dependent)</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:49 UTC</td>
         </tr>
@@ -400,20 +430,23 @@
           <td>Haverford College</td>
           <td class="stable">stable</td>
           <td>10.3%</td>
+          <td>No anchor identified (private, tuition-dependent)</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:46 UTC</td>
         </tr>
         <tr>
           <td>Sweet Briar College</td>
-          <td class="closure">high_risk</td>
+          <td class="flagged">high_risk</td>
           <td>80.1%</td>
+          <td>No anchor identified (private, tuition-dependent)</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:34 UTC</td>
         </tr>
         <tr>
           <td>University of Central Florida</td>
-          <td class="closure">high_risk</td>
+          <td class="flagged">high_risk</td>
           <td>83.4%</td>
+          <td>Anchor absorbs this shock (§10.5b.13)</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:43 UTC</td>
         </tr>
@@ -421,6 +454,7 @@
           <td>University of Houston</td>
           <td class="stable">stable</td>
           <td>40.6%</td>
+          <td>Not applicable -- not flagged</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:38 UTC</td>
         </tr>
@@ -428,13 +462,15 @@
           <td>University of Michigan-Ann Arbor</td>
           <td class="stable">stable</td>
           <td>5.8%</td>
+          <td>Not applicable -- not flagged</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:33 UTC</td>
         </tr>
         <tr>
           <td>University of Phoenix-Arizona</td>
-          <td class="closure">high_risk</td>
+          <td class="flagged">high_risk</td>
           <td>100.0%</td>
+          <td>No anchor identified (private, tuition-dependent)</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:36 UTC</td>
         </tr>
@@ -442,13 +478,15 @@
           <td>West Virginia University</td>
           <td class="stable">stable</td>
           <td>44.2%</td>
+          <td>Not applicable -- not flagged</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:37 UTC</td>
         </tr>
         <tr>
           <td>Wittenberg University</td>
-          <td class="closure">high_risk</td>
+          <td class="flagged">high_risk</td>
           <td>95.8%</td>
+          <td>No anchor identified (private, tuition-dependent)</td>
           <td>statistical_classifier</td>
           <td>2026-09-22 18:52 UTC</td>
         </tr>
@@ -516,7 +554,12 @@ async function loadLiveScores() {
     document.getElementById('live-scope-note').style.display = 'block';
     document.getElementById('live-table').style.display = 'table';
     document.getElementById('live-body').innerHTML = liveData.map(d => {
-      const predClass = d.prediction === 'high_risk' ? 'closure' : (d.prediction === 'stable' ? 'stable' : '');
+      // "closure" is reserved for the validation panel's real, historical,
+      // confirmed outcomes -- this is a live classifier flag, not a
+      // confirmed real-world outcome, so it gets its own class ("flagged")
+      // sharing the same red styling without asserting the disputed thing
+      // in the markup itself.
+      const predClass = d.prediction === 'high_risk' ? 'flagged' : (d.prediction === 'stable' ? 'stable' : '');
       const prob = (typeof d.probability === 'number') ? (d.probability * 100).toFixed(1) + '%' : '—';
       const scored = d.scored_at ? new Date(d.scored_at).toLocaleString() : '—';
       return `
@@ -524,6 +567,7 @@ async function loadLiveScores() {
           <td>${d.name}</td>
           <td class="${predClass}">${d.prediction}</td>
           <td>${prob}</td>
+          <td>${d.anchor_status || '—'}</td>
           <td>${d.method || '—'}</td>
           <td>${scored}</td>
         </tr>
