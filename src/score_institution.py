@@ -41,7 +41,7 @@ def compute_features_for_institution(
     start_year: int = 2013, end_year: int | None = None,
     n_draws: int = 300, n_tune: int = 300, n_chains: int = 2,
     target_accept: float = 0.9, cores: int | None = None,
-    debug_per_chain: bool = False,
+    debug_per_chain: bool = False, compile_mode: str | None = None,
 ) -> InstitutionFeatures | None:
     """
     Real, live scoring pipeline for one institution, replicating
@@ -84,6 +84,22 @@ def compute_features_for_institution(
     individual chain's own frac_high_entropy value (computed from that
     chain alone, not averaged with the others) right after the
     CONVERGENCE line.
+
+    compile_mode (2026-09-22 addition, Thomas Aquinas pinned-environment
+    follow-up): defaults to None, which preserves the exact original
+    behavior (PyTensor's default C-compiled path) for any existing
+    caller that doesn't pass it -- including every production call.
+    When set (e.g. "NUMBA"), it's forwarded to pm.sample() as
+    compile_kwargs={"mode": compile_mode}, so a diagnostic caller can
+    test an alternate PyTensor backend without duplicating or forking
+    this function to do it. Added after diagnose_thomas_aquinas_pinned_env.py
+    confirmed the Thomas Aquinas reproducibility instability survives a
+    byte-identical, version-pinned software environment across separate
+    job dispatches -- ruling out environment drift and pointing at
+    PyTensor's default non-BLAS-linked fallback path itself (see its own
+    "severely degraded" warning, printed on every run in this entire
+    investigation) as the remaining candidate, not just the BLAS library
+    underneath it.
     """
     end_year = end_year or (datetime.date.today().year - 2)  # IPEDS lags by ~2 years
     window_years = [f"{y}-{str(y + 1)[2:]}" for y in range(start_year, end_year)]
@@ -127,9 +143,14 @@ def compute_features_for_institution(
     types = ["observed"] * len(O_o_real)
     pymc_model = mdl.build_model_stage2(O_o_real, O_p_real, types, types, E_exch, M_maint, W_instr, W_total, mask)
     with pymc_model:
-        idata = pm.sample(n_draws, tune=n_tune, chains=n_chains,
-                           cores=cores if cores is not None else n_chains,
-                           target_accept=target_accept, progressbar=False, random_seed=7)
+        sample_kwargs = dict(
+            tune=n_tune, chains=n_chains,
+            cores=cores if cores is not None else n_chains,
+            target_accept=target_accept, progressbar=False, random_seed=7,
+        )
+        if compile_mode is not None:
+            sample_kwargs["compile_kwargs"] = {"mode": compile_mode}
+        idata = pm.sample(n_draws, **sample_kwargs)
 
     # CONVERGENCE (2026-09-22): real, extracted diagnostics, printed
     # directly from this run's own idata -- see docstring above.
