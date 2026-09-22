@@ -5,3 +5,4 @@ pymc>=5.10
 arviz>=0.16
 pandas>=2.0
 requests>=2.31
+numba>=0.59
