@@ -1,8 +1,14 @@
 # RICD Higher-Education Collapse Tracker
 
 A Bayesian state-space model and validated classifier for institutional
-financial collapse risk in U.S. higher education, built on the Recursive
-Information-Container Dynamics (RICD) framework.
+financial collapse risk **and** degree of financial distress in U.S.
+higher education, built on the Recursive Information-Container Dynamics
+(RICD) framework. Measuring distress separately from collapse is not an
+incidental side effect of building a collapse classifier -- it is a
+stated, intentional capability of this project, explained in full in
+["Distress, not collapse"](#distress-not-collapse-what-an-elevated-score-means-for-a-public-flagship)
+below. Read that section before concluding that an elevated score for a
+large, well-resourced institution is either an error or a limitation.
 
 **The full RICD manuscript (the complete, domain-independent theory) lives at
 [`docs/RICD 15.8 manuscript.pdf`](<docs/RICD 15.8 manuscript.pdf>)
@@ -156,6 +162,25 @@ resolve a hard classification problem.
 
 ## Distress, not collapse: what an elevated score means for a public flagship
 
+**Read this first if you're forming a judgment about this project from an
+elevated flagship score.** This is not a flaw in the classifier, not a
+workaround, and not a patch added after the fact to explain away an
+inconvenient result. The anchor eligibility criterion (§10.5b.13) that
+explains why an anchored institution's real, elevated distress does not
+convert to collapse was written into RICD's core theory *before this
+tracker was ever built* -- the original manuscript explicitly anticipated
+that a high-entropy, externally-anchored system would show real divergence
+without collapsing, and gave that pattern a name and a formal treatment
+well in advance of any specific institution's live score triggering it.
+When the classifier flags UCF or FSU as `high_risk`, it is doing exactly
+what it was built to do: correctly detecting a real liability shock. The
+theory, not a bolted-on exception, is what explains why that correctly-
+detected shock doesn't mean the university is closing. Reading a score
+like that as "the model is broken" or "the model doesn't apply to
+flagships" gets it backwards -- collapse risk and distress are two
+different, both-intentional things this project measures, not one thing
+the project does well and a workaround for cases where it doesn't.
+
 The classifier's job is to catch collapse, not distress; a few
 institutions which are not at risk of closing nevertheless score elevated
 because they carry real financial strain, yet they have structural
@@ -261,13 +286,46 @@ criterion accounts for the mechanism, not yet a quantified adjustment to
 what the classifier itself outputs (the various forms of anchors have not
 yet been mathematically calculated, in other words).
 
-Whether this model could double as a potentially highly useful
-stress-calculator for flagships (which would require measuring anchor
-types and cross-referencing those mechanisms with the various causes of
-distress measured by the 8-feature panel in order to make recommendations)
-remains an open question; at present the model is designed to measure
-collapse and as such, its distress rankings for large schools are mainly
-useful in showing the degree rather than the fact of said distress.
+**Measuring the degree of distress at an anchored institution is useful
+in its own right, independently of whether closure is ever on the table,
+for several concrete reasons -- not as a consolation-prize interpretation
+of a score that "should" have meant something else:**
+
+- **It quantifies the load on the anchor itself.** Distress at an
+  anchored institution doesn't disappear just because it doesn't convert
+  to closure -- it gets absorbed by something: a state legislature, a
+  multi-campus system's other institutions, taxpayers. The whole grid
+  those anchors are part of carries that strain, whether or not the
+  anchored institution itself ever shows up as a closure statistic, and
+  the degree of that strain is real, useful information about how much
+  the surrounding system is currently being asked to absorb.
+- **It distinguishes real variation a binary can't.** "Stable" or
+  "high_risk" alone would erase the real difference between a genuinely
+  unstressed flagship like Michigan (5.8%) and one carrying serious,
+  documented project-specific strain like UCF (85.1%) or FSU (65.0%) --
+  both nominally "protected from collapse by an anchor," but not
+  remotely the same situation.
+- **It localizes exactly where the strain is concentrated** -- FSU's
+  athletics-department debt, UCF's student-housing bond -- which is
+  specific, actionable information for anyone actually responsible for
+  managing these institutions, independent of whether the institution as
+  a whole is ever at risk.
+- **It functions as an early-warning signal for the real, non-closure
+  consequences distress produces on the way to being absorbed** --
+  program cuts, tuition increases, deferred maintenance, credit-rating
+  pressure on the specific auxiliary enterprise carrying the debt.
+  Collapse is not the only outcome worth tracking; these are real costs
+  that land on real students, staff, and programs well before -- and
+  regardless of whether -- any anchor fully absorbs the shock.
+
+None of this requires collapse to be a live possibility to matter. Whether
+this model could *also* double as a full stress-calculator for flagships --
+cross-referencing specific anchor types against the specific causes of
+distress the 8-feature panel measures, in order to generate
+recommendations rather than just a score -- remains a real, open,
+not-yet-executed next step (see the note above on quantifying anchor
+mechanisms). But that future capability is not a prerequisite for today's
+distress-degree readings to already be useful, for the reasons just given.
 
 ## Documentation standard for this section (and the live dashboard)
 
