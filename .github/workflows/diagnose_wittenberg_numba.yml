@@ -1,0 +1,32 @@
+name: Diagnose Wittenberg - High Precision + Numba Backend
+
+# Deferred follow-up from the README's Known Gaps section: re-runs
+# Wittenberg University (UNITID 206525) at high-precision settings
+# under the Numba backend, checking whether its elevated production
+# rhat (1.7710) was a sampling-precision issue, is resolved by the
+# backend switch already adopted for Thomas Aquinas, or persists as a
+# real, honest residual either way. See
+# diagnose_wittenberg_numba.py's own docstring for the full reasoning.
+# 3 replicates within this one job -- unlike the Thomas Aquinas Numba
+# workflow, this does NOT need repeat dispatches, since it's checking
+# within-job convergence stability at high precision, not
+# across-runner reproducibility.
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Wittenberg high-precision Numba diagnostic
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_wittenberg_numba.py
