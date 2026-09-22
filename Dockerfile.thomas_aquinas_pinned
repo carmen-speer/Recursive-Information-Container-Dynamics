@@ -20,6 +20,17 @@
 FROM python:3.11.9-slim-bookworm
 
 WORKDIR /app
+
+# python:*-slim strips out build tools entirely -- PyTensor needs a C++
+# compiler (g++) to compile its computational graph; without one it
+# falls back to a pure-Python linker path, which hit a real bug on this
+# model's fused elemwise graph on the first build of this image.
+# GitHub's own ubuntu-latest runners ship with build-essential already
+# installed, which is why this never came up in any earlier diagnostic.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ ./src/
