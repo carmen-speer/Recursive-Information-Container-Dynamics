@@ -391,9 +391,24 @@ everything below is complete:
   features now favor Wisconsin once sampling noise is removed —
   corroborating `peer_density()`'s aggregate nearest-neighbor verdict
   rather than overturning it — the model's most heavily-weighted
-  feature still points the other way. West Virginia is narrowed
-  further than before (the production-settings tie was partly noise,
-  not a genuine even split) but not resolved the clean way Clemson was.
+  feature still points the other way, which a raw feature tally alone
+  cannot settle. **Resolved, 2026-09-22:** feeding West Virginia's
+  real, high-precision feature vector directly through the fitted
+  `RICDClassifier` — the properly-weighted model output, not an
+  unweighted feature tally — gives 40.6% probability of `high_risk`
+  (down from the production-settings live score of 44.2%), the same
+  standard already used to call Houston resolved. This is what
+  actually settles it: the 5-1 feature tally above undercounts how
+  much `reserve_adequacy`'s closure-leaning value should matter, since
+  it treats all seven features as equally weighted when the fitted
+  model does not — but the model's own coefficients already price
+  that in, and the real output still comes back stable, not a coin
+  flip. `docs/data/live_scores.json` deliberately stays at its
+  production-settings 44.2% (`score_batch.py` runs every institution
+  at the same production settings for consistency, not case-by-case),
+  and the two numbers agreeing on the call, with only a small,
+  explainable difference in margin, is corroboration rather than a
+  live discrepancy needing its own fix.
   UCF (83.4%, down from 95.4%) and FSU (57.1%, down from 87.1%) are
   still `high_risk` but meaningfully lower than before the fix — partial
   movement that hasn't been explained yet. Cal State Long Beach (95.8%)
