@@ -42,6 +42,7 @@ def compute_features_for_institution(
     n_draws: int = 300, n_tune: int = 300, n_chains: int = 2,
     target_accept: float = 0.9, cores: int | None = None,
     debug_per_chain: bool = False, compile_mode: str | None = None,
+    random_seed: int = 7,
 ) -> InstitutionFeatures | None:
     """
     Real, live scoring pipeline for one institution, replicating
@@ -100,6 +101,20 @@ def compute_features_for_institution(
     "severely degraded" warning, printed on every run in this entire
     investigation) as the remaining candidate, not just the BLAS library
     underneath it.
+
+    random_seed (2026-09-22 addition, Thomas Aquinas varied-seed
+    follow-up): defaults to 7, the exact value every caller in this
+    project has always used -- so any existing caller that doesn't pass
+    it, production included, behaves identically to before. Exists as a
+    real parameter, not hardcoded, specifically so
+    diagnose_thomas_aquinas_varied_seed.py can test genuinely different
+    seeds. This matters because every "N replicates" diagnostic run
+    anywhere in this entire investigation, including all ten Numba-
+    backend runs that came back 10/10 stable on frac_high_entropy, reused
+    this same fixed seed -- meaning none of them had actually tested
+    whether the sampler's own random initialization affects the result,
+    only whether the identical deterministic computation repeats itself.
+    Real seed variation had never been tested before this addition.
     """
     end_year = end_year or (datetime.date.today().year - 2)  # IPEDS lags by ~2 years
     window_years = [f"{y}-{str(y + 1)[2:]}" for y in range(start_year, end_year)]
@@ -146,7 +161,7 @@ def compute_features_for_institution(
         sample_kwargs = dict(
             tune=n_tune, chains=n_chains,
             cores=cores if cores is not None else n_chains,
-            target_accept=target_accept, progressbar=False, random_seed=7,
+            target_accept=target_accept, progressbar=False, random_seed=random_seed,
         )
         if compile_mode is not None:
             sample_kwargs["compile_kwargs"] = {"mode": compile_mode}
