@@ -1,0 +1,41 @@
+name: Diagnose Thomas Aquinas College (convergence + peer comparison)
+
+# Manual-only diagnostic. Runs the two-step plan for the one
+# institution among the 2026-09-22 liberal-arts expansion that didn't
+# resolve as a clean stable result or a clean, corroborated high_risk
+# one (see README Known Gaps and src/diagnose_thomas_aquinas.py's own
+# module docstring for the full reasoning). Step 1 re-runs Thomas
+# Aquinas College at much higher MCMC sampling precision to rule out
+# non-convergence as the reason for its 95.5% high_risk score -- its
+# production-settings run threw 153 divergences, far more than any
+# other institution in that batch. Step 2 compares its full 8-feature
+# vector against the entire real validated panel (closures included).
+# Step 3 prints its real debt_spike value to test, not yet confirm,
+# whether growth-driven capital borrowing for its actively expanding
+# second campus (opened 2019) rather than distress is behind the flag.
+#
+# Does not touch panel.json, dynamics.py, classifier.py,
+# score_institution.py, docs/data/live_scores.json, or the public
+# dashboard. Diagnostic only.
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run convergence check + peer-density comparison for Thomas Aquinas College
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_thomas_aquinas.py
