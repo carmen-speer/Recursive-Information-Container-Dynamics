@@ -40,11 +40,11 @@ was done, not just the code that does it.
 - [`RICD Adapter Instructional Manual.pdf`](<RICD Adapter Instructional Manual.pdf>) —
   an instructional manual for engineers working with the RICD adapter
   contract directly.
-- [`RICD Integration Manifest Complete.pdf`](<RICD Integration Manifest Complete.pdf>) —
-  the standing verification record: every mechanism confirmed built into
-  the RICD framework, section by section, with the exact manuscript text
-  shown for each, kept specifically to be checked against the manuscript
-  rather than trusted on its own.
+- [`RICD Integration Manifest.pdf`](<RICD Integration Manifest.pdf>) —
+  the standing verification record, current through RICD 15.8: every
+  mechanism confirmed built into the RICD framework, section by section,
+  with the exact manuscript text shown for each, kept specifically to be
+  checked against the manuscript rather than trusted on its own.
 
 The seed note for a genuinely different kind of tracker — an agent tracker
 (C-CAT), investigating the specific real decisions and agents behind a
