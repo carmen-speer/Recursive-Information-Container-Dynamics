@@ -363,16 +363,37 @@ everything below is complete:
   between two close cousins — one thriving (Wisconsin), one that
   actually collapsed (Trinity Christian) — and until that tie breaks
   further, it doesn't get the same clean resolution Clemson's evidence
-  produced. **Next step for West Virginia, not yet run:** a
-  feature-by-feature comparison against the panel (the same kind of
-  check `diagnose_feature_values.py` already runs for Houston/UCF/FSU),
-  checking West Virginia's other seven numbers — `d_A` trend and
-  endpoint, `δR` and its own trend, `debt_spike`, the
-  regime-classification fraction, `reserve_adequacy`, and the
-  research-to-instruction ratio — individually against both Wisconsin
-  and Trinity Christian, to see which of the eight actually tracks with
-  the real closure rather than the real survivor, now that
-  `frac_high_entropy` itself no longer flags West Virginia at all.
+  produced. **Executed 2026-09-21, in two passes**, via
+  `src/diagnose_west_virginia_feature_comparison.py` (GitHub Actions):
+  the feature-by-feature comparison against Wisconsin and Trinity
+  Christian individually (the same kind of check
+  `diagnose_feature_values.py` already runs for Houston/UCF/FSU). At
+  production settings (300/300/2/0.9), the seven non-entropy features
+  split evenly: three leaned toward Wisconsin (`d_A_trend`, `d_A_final`,
+  `debt_spike`), three toward Trinity Christian (`delta_R_final`,
+  `delta_R_trend`, `reserve_adequacy`), with `research_ratio`
+  uninformative (pinned at 0.0000 for all public institutions by the
+  same structural gap documented elsewhere in this section). But two of
+  the three features leaning toward Trinity Christian —
+  `delta_R_final` and `delta_R_trend` — are posterior-derived, and this
+  run's own log showed the same `rhat > 1.01`/low-ESS warning that
+  motivated `diagnose_window_mismatch.py` and
+  `diagnose_clemson_wvu.py`'s Step 1. Re-run at high-precision settings
+  (1000/1000/4/0.95), both flipped to Wisconsin, moving the tally to 5
+  leaning Wisconsin against 1 leaning Trinity Christian. This is a
+  real, not cosmetic, distinction from Clemson's clean resolution: the
+  one holdout, `reserve_adequacy`, is computed directly from parsed
+  finance data with no MCMC step at all, so its lean toward Trinity
+  Christian (West Virginia at 10.37 — distance 1.11 to Trinity
+  Christian's 9.26 vs. 1.39 to Wisconsin's 11.76) cannot be a
+  convergence artifact, and it is the single largest-magnitude
+  coefficient in the fitted classifier. So while a real majority of
+  features now favor Wisconsin once sampling noise is removed —
+  corroborating `peer_density()`'s aggregate nearest-neighbor verdict
+  rather than overturning it — the model's most heavily-weighted
+  feature still points the other way. West Virginia is narrowed
+  further than before (the production-settings tie was partly noise,
+  not a genuine even split) but not resolved the clean way Clemson was.
   UCF (83.4%, down from 95.4%) and FSU (57.1%, down from 87.1%) are
   still `high_risk` but meaningfully lower than before the fix — partial
   movement that hasn't been explained yet. Cal State Long Beach (95.8%)
@@ -560,6 +581,7 @@ src/
   diagnose_window_mismatch.py    One-off diagnostic: separates a real live-vs-panel data-window mismatch from ordinary MCMC non-convergence
   recompute_panel_entropy.py     Real validation for the directional-entropy fix: re-fits all 54 panel institutions live and compares leave-one-out accuracy (see Known Gaps)
   diagnose_clemson_wvu.py        Two-step diagnostic (convergence check + panel peer-density comparison) that resolved Clemson and narrowed West Virginia (see Known Gaps)
+  diagnose_west_virginia_feature_comparison.py   Feature-by-feature comparison of West Virginia against Wisconsin and Trinity Christian individually, at production and high-precision settings (see Known Gaps)
   diagnose_reset_recovery.py     Tests the candidate within-window trend feature for the reset/recovery gap against Sweet Briar and Phoenix, with a convergence recheck (see Known Gaps)
 data/
   panel/panel.json           The real, validated 54-institution panel
@@ -606,6 +628,7 @@ future-projects/
   diagnose_window_mismatch.yml      Manual-only: runs diagnose_window_mismatch.py
   recompute_panel_entropy.yml        Manual-only: runs recompute_panel_entropy.py (see Known Gaps)
   diagnose_clemson_wvu.yml            Manual-only: runs diagnose_clemson_wvu.py (see Known Gaps)
+  diagnose_west_virginia_feature_comparison.yml   Manual-only: runs diagnose_west_virginia_feature_comparison.py, with an optional high-precision checkbox (see Known Gaps)
   diagnose_reset_recovery.yml         Manual-only: runs diagnose_reset_recovery.py (see Known Gaps)
 ````
 
