@@ -158,20 +158,24 @@ resolve a hard classification problem.
 
 ## Distress, not collapse: what an elevated score means for a public flagship
 
-Several of the live scores discussed below (Florida State, UCF, Clemson,
-West Virginia) are real signals of real financial distress -- but distress
-is not the outcome this classifier was built and validated to predict. The
-outcome is collapse: a small, tuition-dependent private college's financial
-exigency closing it outright, which is what every confirmed closure in the
-54-institution panel actually is. A large public flagship can carry the
-same kind of real financial strain these eight features are built to
-detect without that strain converting into closure, because it typically
-holds what RICD's own framework formalizes as an external anchor
-(§10.5b.13, Anchor Eligibility): a structurally distinct system that
-absorbs a shock so the anchored container doesn't have to, whether by a
-vigilant neighbor actively maintaining zero extraction flux toward it, a
-structurally inert boundary with nothing to extract, or a purpose-built
-buffering structure sized to its designed capacity.
+Florida State (57.1%) and UCF (83.4%) are the live scores this section is
+actually about: real, currently-elevated `high_risk` scores -- elevated
+relative to a stable flagship like Michigan (5.8%), comparable instead to
+Houston's pre-fix reading -- driven by real, specific financial distress.
+But distress is not the outcome this classifier was built and validated to
+predict. The outcome is collapse: a small, tuition-dependent private
+college's financial exigency closing it outright, which is what every
+confirmed closure in the 54-institution panel actually is. In FSU's and
+UCF's case, the classifier is working exactly as intended -- correctly
+detecting a real, sizable jump in reported liabilities -- and the reason
+that correctly-detected distress doesn't mean collapse is external to
+anything the eight features measure: each holds what RICD's own framework
+formalizes as an external anchor (§10.5b.13, Anchor Eligibility): a
+structurally distinct system that absorbs a shock so the anchored
+container doesn't have to, whether by a vigilant neighbor actively
+maintaining zero extraction flux toward it, a structurally inert boundary
+with nothing to extract, or a purpose-built buffering structure sized to
+its designed capacity.
 
 For a public university flagship, that anchor is rarely one single thing;
 it typically has several concrete, independent parts: direct state
@@ -211,15 +215,39 @@ the mechanism behind the "real but bounded problem" framing used throughout
 Known Gaps below, not an assertion; it's checkable against each program's
 own bond documentation.
 
+**Clemson and West Virginia are a different case, not a milder version of
+this one, and don't belong under this mechanism.** Both carry real,
+seriously documented financial distress -- Clemson's $2.65B in long-term
+liabilities, up $231.9M year-over-year; West Virginia's real 2023
+financial crisis and program/faculty cuts -- and both are currently scored
+`stable` (39.0% and 44.2%), not elevated: the opposite direction from FSU
+and UCF. That is not the anchor mechanism above at work. An anchor
+explains why a shock the classifier *did* detect doesn't convert to
+collapse; Clemson and West Virginia's distress was never detected as
+elevated risk in the first place. Clemson's `frac_high_entropy` measured
+0.0000, and its full 8-feature vector sits closest to other confirmed-stable
+flagships in feature space, not near any real closure -- the same scale
+mismatch already documented for `reserve_adequacy` (a liability increase
+that would be extreme for a small private college is ordinary at flagship
+scale), extending here across the feature vector as a whole rather than
+one feature alone. West Virginia's `stable` call rests on a different
+mechanism again -- the fitted classifier's own feature weighting settling
+a genuinely mixed peer comparison -- detailed in full in Known Gaps below.
+Both are real, checked resolutions, not smoothed-over gaps, but they answer
+"why didn't the classifier flag this at all," not "why doesn't this
+flagged score mean collapse" -- a different question from the one this
+section is about.
+
 An elevated or borderline score anywhere in this project, live or in the
 panel, should be read as "this institution's raw financial dynamics
 resemble the ones that produced real closures" -- not as a probability of
 actual collapse. Whether distress converts to collapse depends on an
 anchor this classifier does not measure at all. Buffalo (removed from the
-live batch; see Known Gaps below) is a different case, not an instance of
-this same point: its problem isn't a missing anchor, it's a kind of strain
--- a federal research-funding cut -- that none of these eight features were
-ever built to detect in the first place.
+live batch; see Known Gaps below) is a third, further-distinct case, not
+an instance of this section's mechanism either: its problem isn't a
+missing anchor, it's a kind of strain -- a federal research-funding cut --
+that none of these eight features were ever built to detect in the first
+place.
 
 ## Documentation standard for this section (and the live dashboard)
 
