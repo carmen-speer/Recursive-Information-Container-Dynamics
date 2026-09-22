@@ -1,0 +1,33 @@
+name: Diagnose Thomas Aquinas - Varied Seed
+
+# Tests whether Thomas Aquinas College's posterior is stable across
+# genuinely different random seeds, independent of backend or runner
+# hardware -- the one variable no diagnostic in this investigation has
+# actually tested, since random_seed was hardcoded to 7 everywhere
+# until this addition. See diagnose_thomas_aquinas_varied_seed.py's own
+# docstring for the full reasoning. Runs 10 real evaluations at 10
+# different seeds inside a single job (cheap under the Numba backend,
+# based on already-gathered results), so ONE dispatch of this workflow
+# is the complete test -- unlike the pinned-environment and Numba
+# diagnostics, this one does not need to be run several separate times.
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies (including numba, for this diagnostic only)
+        run: |
+          pip install -r requirements.txt
+          pip install numba
+      - name: Run Thomas Aquinas varied-seed diagnostic
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_thomas_aquinas_varied_seed.py
