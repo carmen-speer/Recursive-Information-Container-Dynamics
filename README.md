@@ -156,16 +156,15 @@ resolve a hard classification problem.
 
 ## Distress, not collapse: what an elevated score means for a public flagship
 
-This section exists because a handful of live scores read as elevated
-without meaning the institution is at risk of closing, and the reason is
-structural, not a caveat added after the fact. This classifier's job is to
-catch collapse -- a small, tuition-dependent private college's financial
-exigency closing it outright, which is what every confirmed closure in the
-54-institution panel actually is -- not distress in general; where the two
-come apart for a public flagship, the explanation is a criterion RICD's
-own framework already formalized before this tracker was built (§10.5b.13,
-Anchor Eligibility), not a label invented afterward to explain away FSU's
-and UCF's scores specifically.
+The classifier's job is to catch collapse, not distress; a few
+institutions which are not at risk of closing nevertheless score elevated
+because they carry real financial strain, yet they have structural
+support preventing their collapse (read on for further detail). The
+anchor eligibility criterion is a pre-existing RICD formalism (§10.5b.13)
+which describes how an external anchor may prevent collapse even in
+high-entropy systems; the anchoring mechanism was written into RICD's
+core theory prior to the building of this tracker to catch precisely this
+pattern when assessing collapse risk in systems showing divergence.
 
 Florida State (57.1%) and UCF (83.4%) are the live scores this applies to:
 real, currently-elevated `high_risk` scores -- elevated relative to a
