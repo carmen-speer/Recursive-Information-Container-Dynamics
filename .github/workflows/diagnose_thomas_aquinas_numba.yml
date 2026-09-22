@@ -1,0 +1,31 @@
+name: Diagnose Thomas Aquinas - Numba Backend
+
+# Tests whether compiling through PyTensor's Numba backend, instead of
+# its default C-compiled path (confirmed unstable across separate
+# runners by diagnose_thomas_aquinas_pinned_env.py, even inside a
+# byte-identical pinned environment), produces stable results across
+# separate job dispatches. Deliberately ONE evaluation per run, not
+# several replicates -- see diagnose_thomas_aquinas_numba.py's own
+# docstring for why. Run this workflow several separate times and
+# compare results ACROSS dispatches, not within one.
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies (including numba, for this diagnostic only)
+        run: |
+          pip install -r requirements.txt
+          pip install numba
+      - name: Run Thomas Aquinas Numba-backend diagnostic
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_thomas_aquinas_numba.py
