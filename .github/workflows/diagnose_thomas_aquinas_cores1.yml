@@ -1,0 +1,40 @@
+name: Thomas Aquinas College cores=1 isolation test
+
+# Manual-only diagnostic. Tests whether forcing single-process
+# (cores=1) sampling, instead of this pipeline's default
+# multiprocessing (cores=n_chains), restores full reproducibility for
+# Thomas Aquinas College (124292) at production settings. See
+# src/diagnose_thomas_aquinas_cores1.py's own module docstring for the
+# full reasoning -- this follows directly from
+# diagnose_thomas_aquinas_replication.py finding real non-determinism
+# (6 of 7 identical-settings runs at frac_high_entropy=1.0000, one at
+# 0.0000) despite a fixed random_seed=7.
+#
+# Requires score_institution.py's compute_features_for_institution to
+# already have the `cores` parameter added (2026-09-23) -- commit that
+# change first, or this will fail with a TypeError.
+#
+# Does not touch panel.json, dynamics.py, classifier.py,
+# docs/data/live_scores.json, or the public dashboard. Diagnostic only.
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run cores=1 isolation test for Thomas Aquinas College
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_thomas_aquinas_cores1.py
