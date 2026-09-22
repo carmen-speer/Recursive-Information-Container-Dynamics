@@ -5,7 +5,8 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.419,
-    "scored_at": "2026-09-22T18:50:00+00:00"
+    "scored_at": "2026-09-22T18:50:00+00:00",
+    "anchor_status": "No anchor identified (private, tuition-dependent)"
   },
   {
     "unitid": "211291",
@@ -13,7 +14,8 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.101,
-    "scored_at": "2026-09-22T18:45:00+00:00"
+    "scored_at": "2026-09-22T18:45:00+00:00",
+    "anchor_status": "No anchor identified (private, tuition-dependent)"
   },
   {
     "unitid": "110583",
@@ -21,7 +23,8 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.9577935680764275,
-    "scored_at": "2026-09-22T18:40:00+00:00"
+    "scored_at": "2026-09-22T18:40:00+00:00",
+    "anchor_status": "Anchor present, not fully absorbing -- see Known Gaps"
   },
   {
     "unitid": "217882",
@@ -29,7 +32,8 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.39027491076062415,
-    "scored_at": "2026-09-22T18:41:00+00:00"
+    "scored_at": "2026-09-22T18:41:00+00:00",
+    "anchor_status": "Not applicable -- not flagged"
   },
   {
     "unitid": "166124",
@@ -37,7 +41,8 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.054,
-    "scored_at": "2026-09-22T18:51:00+00:00"
+    "scored_at": "2026-09-22T18:51:00+00:00",
+    "anchor_status": "No anchor identified (private, tuition-dependent)"
   },
   {
     "unitid": "134097",
@@ -45,7 +50,8 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.5709864858295153,
-    "scored_at": "2026-09-22T18:44:00+00:00"
+    "scored_at": "2026-09-22T18:44:00+00:00",
+    "anchor_status": "Anchor absorbs this shock (\u00a710.5b.13)"
   },
   {
     "unitid": "232256",
@@ -53,7 +59,8 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.384,
-    "scored_at": "2026-09-22T18:49:00+00:00"
+    "scored_at": "2026-09-22T18:49:00+00:00",
+    "anchor_status": "No anchor identified (private, tuition-dependent)"
   },
   {
     "unitid": "212911",
@@ -61,7 +68,8 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.103,
-    "scored_at": "2026-09-22T18:46:00+00:00"
+    "scored_at": "2026-09-22T18:46:00+00:00",
+    "anchor_status": "No anchor identified (private, tuition-dependent)"
   },
   {
     "unitid": "233718",
@@ -69,7 +77,8 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.8012216250604414,
-    "scored_at": "2026-09-22T18:34:00+00:00"
+    "scored_at": "2026-09-22T18:34:00+00:00",
+    "anchor_status": "No anchor identified (private, tuition-dependent)"
   },
   {
     "unitid": "132903",
@@ -77,7 +86,8 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.8335014664070663,
-    "scored_at": "2026-09-22T18:43:00+00:00"
+    "scored_at": "2026-09-22T18:43:00+00:00",
+    "anchor_status": "Anchor absorbs this shock (\u00a710.5b.13)"
   },
   {
     "unitid": "225511",
@@ -85,7 +95,8 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.4064293154695227,
-    "scored_at": "2026-09-22T18:38:00+00:00"
+    "scored_at": "2026-09-22T18:38:00+00:00",
+    "anchor_status": "Not applicable -- not flagged"
   },
   {
     "unitid": "170976",
@@ -93,7 +104,8 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.05823025789496935,
-    "scored_at": "2026-09-22T18:33:00+00:00"
+    "scored_at": "2026-09-22T18:33:00+00:00",
+    "anchor_status": "Not applicable -- not flagged"
   },
   {
     "unitid": "484613",
@@ -101,7 +113,8 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.9999672557908077,
-    "scored_at": "2026-09-22T18:36:00+00:00"
+    "scored_at": "2026-09-22T18:36:00+00:00",
+    "anchor_status": "No anchor identified (private, tuition-dependent)"
   },
   {
     "unitid": "238032",
@@ -109,7 +122,8 @@
     "prediction": "stable",
     "method": "statistical_classifier",
     "probability": 0.44159202484587945,
-    "scored_at": "2026-09-22T18:37:00+00:00"
+    "scored_at": "2026-09-22T18:37:00+00:00",
+    "anchor_status": "Not applicable -- not flagged"
   },
   {
     "unitid": "206525",
@@ -117,6 +131,7 @@
     "prediction": "high_risk",
     "method": "statistical_classifier",
     "probability": 0.958,
-    "scored_at": "2026-09-22T18:52:00+00:00"
+    "scored_at": "2026-09-22T18:52:00+00:00",
+    "anchor_status": "No anchor identified (private, tuition-dependent)"
   }
 ]
