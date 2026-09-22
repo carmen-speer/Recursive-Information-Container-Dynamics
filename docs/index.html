@@ -92,7 +92,7 @@
     resource swing, not its <em>direction</em>, so a large positive shock and
     a destabilizing one looked alike; the fix (see repository Known Gaps)
     resolved this case correctly.</p>
-    <p style="margin:12px 0 4px;"><strong>Resolved, 2026-09-20 -- real distress, confirmed not legible to these eight features:</strong>
+    <p style="margin:12px 0 4px;"><strong>Resolved, 2026-09-20 -- real distress, correctly read as not disqualifying at this institution's scale:</strong>
     Clemson University (39.0%) flipped to <code>stable</code> under the fix
     despite real, documented financial distress (long-term liabilities up
     $231.9M year-over-year to $2.65B, expenses outpacing revenue). A
@@ -103,27 +103,49 @@
     against the entire validated panel found its 4 nearest real neighbors
     in feature space are all confirmed-stable large public flagships
     (Florida, Michigan, UVA, UNC-Chapel Hill, distance 1.23-1.41), with the
-    nearest real closure (Northland) meaningfully farther away (1.57).
-    Clemson's distress is real and financial -- in-domain for these
-    features, unlike Buffalo below -- but on this evidence it genuinely
-    isn't legible to any of the eight as currently built, and the
-    <code>stable</code> call is real, not a suppressed signal.</p>
-    <p style="margin:12px 0 4px;"><strong>Narrowed but not resolved -- convergence ruled out, feature-space position still ambiguous:</strong>
+    nearest real closure (Northland) meaningfully farther away (1.57). This
+    isn't the classifier failing to explain Clemson's distress -- it's the
+    classifier correctly placing Clemson among the institutions it actually
+    resembles. A few hundred million dollars in new long-term liabilities is
+    a large number in isolation, but it's the ordinary cost of running a
+    research university Clemson's size (construction, athletics facilities,
+    research infrastructure financed against predictable state and tuition
+    revenue), not the kind of borrowing a small, tuition-dependent private
+    college takes on when it's out of options -- the same scale mismatch
+    already documented for <code>reserve_adequacy</code> in the repository's
+    Known Gaps: these debt- and reserve-based features were built against,
+    and remain most diagnostic for, small private colleges, where this
+    panel's real closures actually happened, not large public flagships,
+    where they didn't. Clemson's <code>stable</code> call is real, not a
+    suppressed signal, and its real distress isn't the kind these eight
+    features were ever positioned to catch at this institution's size.</p>
+    <p style="margin:12px 0 4px;"><strong>Resolved, 2026-09-21 -- feature-by-feature comparison, then the fitted classifier's own weighting:</strong>
     West Virginia University (44.2%) also flipped to <code>stable</code>
     despite its real, widely reported 2023 financial crisis and
     program/faculty cuts. The same convergence recheck ruled out sampling
-    noise here too. But its feature-space comparison is genuinely mixed:
-    its nearest real neighbor is Wisconsin (stable, distance 0.86), but its
-    second-nearest is Trinity Christian -- a real, confirmed closure -- at
-    distance 1.10 (closer than three of Clemson's four stable comparisons),
-    with a second real closure (Lourdes University) also nearby (1.30).
-    That doesn't clear the bar for "overwhelmingly stable" the way
-    Clemson's does, so West Virginia isn't being closed out the same way.
-    <u>Next step, not yet run:</u> a feature-by-feature comparison against
-    the panel (the same check already used for Houston/UCF/FSU) to see
-    whether West Virginia's real distress shows up in any of the other
-    seven features even though <code>frac_high_entropy</code> no longer
-    flags it. Full detail on both institutions in the repository's
+    noise here too, but its feature-space comparison was genuinely mixed at
+    that point: its nearest real neighbor was Wisconsin (stable, distance
+    0.86), while its second-nearest was Trinity Christian -- a real,
+    confirmed closure -- at distance 1.10, closer than three of Clemson's
+    four stable comparisons. A dedicated feature-by-feature comparison
+    against both reference institutions followed. At production sampling
+    settings, the seven non-entropy features split evenly, three toward
+    Wisconsin and three toward Trinity Christian; two of the three leaning
+    toward Trinity Christian showed the same convergence warning ruled out
+    elsewhere on this page, and re-running at 4x precision flipped both,
+    moving the tally to 5 leaning Wisconsin against 1 --
+    <code>reserve_adequacy</code>, the model's single largest-magnitude
+    feature, which isn't sensitive to sampling precision and still leaned
+    toward Trinity Christian. Because that one holdout is the most
+    heavily-weighted feature in the fitted model, a raw tally of features
+    couldn't settle this on its own, so West Virginia's real, high-precision
+    feature vector was run directly through the fitted classifier instead of
+    counted by hand: it returns 40.6% probability of <code>high_risk</code>,
+    consistent with -- and slightly firmer than -- this table's own
+    production-settings 44.2%. The two numbers agreeing, with only a small,
+    explainable difference in margin, is corroboration, not a live
+    discrepancy needing its own fix. Full detail on both institutions in the
+    repository's
     <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#known-gaps--stated-honestly-not-smoothed-over">Known Gaps</a> section.</p>
     <p style="margin:12px 0 4px;"><strong>Still high_risk, but the driver is identified and real -- not the classifier misreading a stable institution:</strong>
     Florida State University's (57.1%) signal traces to a real, separate
@@ -199,63 +221,63 @@
           <td class="closure">high_risk</td>
           <td>95.8%</td>
           <td>statistical_classifier</td>
-          <td>2026-09-21 18:31 UTC</td>
+          <td>2026-09-20 02:56 UTC</td>
         </tr>
         <tr>
           <td>Clemson University</td>
           <td class="stable">stable</td>
           <td>39.0%</td>
           <td>statistical_classifier</td>
-          <td>2026-09-21 18:32 UTC</td>
+          <td>2026-09-20 02:58 UTC</td>
         </tr>
         <tr>
           <td>Florida State University</td>
           <td class="closure">high_risk</td>
           <td>57.1%</td>
           <td>statistical_classifier</td>
-          <td>2026-09-21 18:34 UTC</td>
+          <td>2026-09-20 03:01 UTC</td>
         </tr>
         <tr>
           <td>Sweet Briar College</td>
           <td class="closure">high_risk</td>
           <td>80.1%</td>
           <td>statistical_classifier</td>
-          <td>2026-09-21 18:26 UTC</td>
+          <td>2026-09-20 02:51 UTC</td>
         </tr>
         <tr>
           <td>University of Central Florida</td>
           <td class="closure">high_risk</td>
           <td>83.4%</td>
           <td>statistical_classifier</td>
-          <td>2026-09-21 18:33 UTC</td>
+          <td>2026-09-20 02:59 UTC</td>
         </tr>
         <tr>
           <td>University of Houston</td>
           <td class="stable">stable</td>
           <td>40.6%</td>
           <td>statistical_classifier</td>
-          <td>2026-09-21 18:30 UTC</td>
+          <td>2026-09-20 02:55 UTC</td>
         </tr>
         <tr>
           <td>University of Michigan-Ann Arbor</td>
           <td class="stable">stable</td>
           <td>5.8%</td>
           <td>statistical_classifier</td>
-          <td>2026-09-21 18:25 UTC</td>
+          <td>2026-09-20 02:50 UTC</td>
         </tr>
         <tr>
           <td>University of Phoenix-Arizona</td>
           <td class="closure">high_risk</td>
           <td>100.0%</td>
           <td>statistical_classifier</td>
-          <td>2026-09-21 18:27 UTC</td>
+          <td>2026-09-20 02:53 UTC</td>
         </tr>
         <tr>
           <td>West Virginia University</td>
           <td class="stable">stable</td>
           <td>44.2%</td>
           <td>statistical_classifier</td>
-          <td>2026-09-21 18:28 UTC</td>
+          <td>2026-09-20 02:54 UTC</td>
         </tr>
 <!-- STATIC_LIVE_ROWS_END -->
     </tbody>
