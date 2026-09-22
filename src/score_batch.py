@@ -235,8 +235,21 @@ def main():
                     "method": "governance_override",
                 }
             else:
+                # NUMBA BACKEND (2026-09-22, Thomas Aquinas investigation
+                # follow-up): compile_mode="NUMBA" is now the real
+                # production setting for the whole batch, not just a
+                # diagnostic-only override. See
+                # compute_features_for_institution's own docstring in
+                # score_institution.py for what this changes, and the
+                # README's Known Gaps section for the full evidence
+                # (20/20 real trials -- 10 across separate job
+                # dispatches, 10 across varied random seeds -- all
+                # agreeing on frac_high_entropy under this backend,
+                # though real rhat<1.01 convergence was not achieved
+                # under any tested backend, Numba included).
                 features = compute_features_for_institution(
-                    unitid, name, sector=sector, start_year=start_year, cores=1,
+                    unitid, name, sector=sector, start_year=start_year,
+                    cores=1, compile_mode="NUMBA",
                 )
                 if features is None:
                     result_dict = {"unitid": unitid, "name": name, "prediction": "insufficient_data"}
