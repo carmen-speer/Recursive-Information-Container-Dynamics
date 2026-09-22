@@ -27,6 +27,7 @@ from pathlib import Path
 
 import numpy as np
 import pymc as pm
+import arviz as az
 
 import model as mdl
 import dynamics as dyn
@@ -60,29 +61,25 @@ def compute_features_for_institution(
     re-running the identical pipeline at higher settings, without
     duplicating or forking this function to do it.
 
-    cores defaults to n_chains (this pipeline's production behavior,
-    unchanged for every existing caller that doesn't pass it) --
-    added 2026-09-23 as a real, separate parameter, for the same
-    reason n_draws/n_tune/n_chains/target_accept were: to let a
-    diagnostic caller isolate one specific variable without forking
-    this function. Confirmed need: Thomas Aquinas College's live
-    score (UNITID 124292) came back frac_high_entropy=1.0000 in six
-    of seven independent invocations at identical nominal production
-    settings (n_draws=300, n_tune=300, n_chains=2, target_accept=0.9,
-    the same fixed random_seed=7 below in every case) and
-    frac_high_entropy=0.0000 in the seventh -- real, observed
-    non-determinism despite a fixed seed, correlated directly with
-    whether that run's sampler reported divergences (153 in every
-    1.0000 run, none in the 0.0000 run). cores=n_chains means
-    production always runs its chains as separate OS processes
-    (multiprocessing); setting cores=1 here, while leaving n_chains
-    unchanged, keeps the same statistical procedure (same number of
-    chains, same total draws) but runs them sequentially in one
-    process instead, isolating whether multiprocessing itself is part
-    of what's breaking reproducibility under the seed, as opposed to
-    the degraded, non-BLAS-linked math this pipeline has warned about
-    on every single run in this environment (see
-    diagnose_thomas_aquinas_cores1.py).
+    cores (2026-09-23 addition): defaults to None, which preserves the
+    exact original behavior (cores=n_chains, real multiprocessing).
+    Exists so a diagnostic caller can force cores=1 (sequential,
+    single-process) while leaving n_chains untouched, isolating
+    multiprocessing as a variable -- added during the Thomas Aquinas
+    College reproducibility investigation, where frac_high_entropy
+    itself (not just minor posterior-mean noise) varied between
+    otherwise-identical runs at production settings.
+
+    CONVERGENCE printing (2026-09-22 addition): every call now prints
+    the real divergence count and max rhat from its own idata, straight
+    from pm.sample()'s own output -- not estimated, not inferred from
+    the DIRECTIONAL ENTROPY line. This exists because the same
+    Thomas Aquinas investigation found frac_high_entropy correlated
+    directly with divergence count (153 divergences <-> 1.0, 0
+    divergences <-> 0.0) across repeated runs, and a diagnostic caller
+    needs to see that number directly, per-run, rather than inferring
+    it indirectly from which of two contradictory outcomes a run
+    happened to land on.
     """
     end_year = end_year or (datetime.date.today().year - 2)  # IPEDS lags by ~2 years
     window_years = [f"{y}-{str(y + 1)[2:]}" for y in range(start_year, end_year)]
@@ -129,6 +126,13 @@ def compute_features_for_institution(
         idata = pm.sample(n_draws, tune=n_tune, chains=n_chains,
                            cores=cores if cores is not None else n_chains,
                            target_accept=target_accept, progressbar=False, random_seed=7)
+
+    # CONVERGENCE (2026-09-22): real, extracted diagnostics, printed
+    # directly from this run's own idata -- see docstring above.
+    n_divergences = int(idata.sample_stats["diverging"].values.sum())
+    rhat_max = float(az.rhat(idata).max().to_array().max())
+    print(f"CONVERGENCE: {n_divergences} divergences, max rhat={rhat_max:.4f} "
+          f"(rhat should be close to 1.0; PyMC's own warning threshold is 1.01)")
 
     d_A_t = idata.posterior["d_A_t"].mean(dim=["chain", "draw"]).values
     delta_R_t = idata.posterior["delta_R_t"].mean(dim=["chain", "draw"]).values
