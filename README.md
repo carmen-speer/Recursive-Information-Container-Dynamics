@@ -123,7 +123,6 @@ panel (23 confirmed closures spanning seven distinct collapse
 mechanisms, 31 confirmed-stable comparisons), with zero misclassifications.
 Reproduce this directly:
 
-```bash
 pip install -r requirements.txt
 cd src
 python -c "
@@ -134,7 +133,6 @@ acc, misclassified = clf.leave_one_out_accuracy(panel)
 print(f'Accuracy: {acc:.2%}')
 print(f'Misclassified: {misclassified}')
 "
-```
 
 **What that 100% figure is actually a statement about, checked directly rather than left implicit:** of the panel's 23 confirmed closures, only 2 (Northland College, King's College NY) are classified via the direct External Governance Attestation override described above — the other 21 are correctly classified by the fitted statistical model itself, not exempted from it. So the 100% accuracy claim is overwhelmingly a statement about the classifier, not about the override rule doing the real work. Separately, `reserve_adequacy`'s coefficient — the largest-magnitude one in the model — is stable across all 52 real leave-one-out refits that actually pass through the fitted model (the 2 override folds never do): it stays in a tight -1.79 to -1.93 band around its full-panel value of -1.88, and none of the eight features flip sign in any of the 52 folds. No single institution's removal is quietly driving the result. This is a real answer to "is the panel too small/one feature too dominant for this to be trustworthy," not a claim that it resolves the separate, still-open gap below: coefficient stability says the fit isn't fragile to which institution gets held out; it says nothing about whether `reserve_adequacy` is well-calibrated against real public-sector distress, which it structurally is not (see Known Gaps).
 
@@ -158,24 +156,29 @@ resolve a hard classification problem.
 
 ## Distress, not collapse: what an elevated score means for a public flagship
 
-Florida State (57.1%) and UCF (83.4%) are the live scores this section is
-actually about: real, currently-elevated `high_risk` scores -- elevated
-relative to a stable flagship like Michigan (5.8%), comparable instead to
-Houston's pre-fix reading -- driven by real, specific financial distress.
-But distress is not the outcome this classifier was built and validated to
-predict. The outcome is collapse: a small, tuition-dependent private
-college's financial exigency closing it outright, which is what every
-confirmed closure in the 54-institution panel actually is. In FSU's and
-UCF's case, the classifier is working exactly as intended -- correctly
-detecting a real, sizable jump in reported liabilities -- and the reason
-that correctly-detected distress doesn't mean collapse is external to
-anything the eight features measure: each holds what RICD's own framework
-formalizes as an external anchor (§10.5b.13, Anchor Eligibility): a
-structurally distinct system that absorbs a shock so the anchored
-container doesn't have to, whether by a vigilant neighbor actively
-maintaining zero extraction flux toward it, a structurally inert boundary
-with nothing to extract, or a purpose-built buffering structure sized to
-its designed capacity.
+This section exists because a handful of live scores read as elevated
+without meaning the institution is at risk of closing, and the reason is
+structural, not a caveat added after the fact. This classifier's job is to
+catch collapse -- a small, tuition-dependent private college's financial
+exigency closing it outright, which is what every confirmed closure in the
+54-institution panel actually is -- not distress in general; where the two
+come apart for a public flagship, the explanation is a criterion RICD's
+own framework already formalized before this tracker was built (§10.5b.13,
+Anchor Eligibility), not a label invented afterward to explain away FSU's
+and UCF's scores specifically.
+
+Florida State (57.1%) and UCF (83.4%) are the live scores this applies to:
+real, currently-elevated `high_risk` scores -- elevated relative to a
+stable flagship like Michigan (5.8%), comparable instead to Houston's
+pre-fix reading. In both cases the classifier is working exactly as
+intended, correctly detecting a real, sizable jump in reported
+liabilities; each institution holds what RICD's own framework formalizes
+as an external anchor (§10.5b.13, Anchor Eligibility): a structurally
+distinct system that absorbs a shock so the anchored container doesn't
+have to, whether by a vigilant neighbor actively maintaining zero
+extraction flux toward it, a structurally inert boundary with nothing to
+extract, or a purpose-built buffering structure sized to its designed
+capacity.
 
 For a public university flagship, that anchor is rarely one single thing;
 it typically has several concrete, independent parts: direct state
@@ -678,7 +681,6 @@ everything below is complete:
 
 ## Repository structure
 
-```
 src/
   model.py               Bayesian state-space model (PyMC)
   jump_diffusion.py       Shock-type latent process for debt
@@ -749,7 +751,6 @@ future-projects/
   diagnose_clemson_wvu.yml            Manual-only: runs diagnose_clemson_wvu.py (see Known Gaps)
   diagnose_west_virginia_feature_comparison.yml   Manual-only: runs diagnose_west_virginia_feature_comparison.py, with an optional high-precision checkbox (see Known Gaps)
   diagnose_reset_recovery.yml         Manual-only: runs diagnose_reset_recovery.py (see Known Gaps)
-```
 
 ## Re-scoring cadence
 
