@@ -1,0 +1,37 @@
+name: Replicate Clemson and West Virginia (reproducibility check)
+
+# Manual-only diagnostic. Confirms whether Clemson University's and
+# West Virginia University's existing "resolved" status (README Known
+# Gaps) actually reproduces across independent runs at production
+# settings, not just within a single run comparing production against
+# high-precision settings (diagnose_clemson_wvu.py's original check).
+# Run because Thomas Aquinas College's diagnostics found real
+# non-determinism that an internally-self-consistent single run did
+# not catch. See src/diagnose_clemson_wvu_replication.py's own module
+# docstring for the full reasoning.
+#
+# Does not touch panel.json, dynamics.py, classifier.py,
+# score_institution.py, docs/data/live_scores.json, or the public
+# dashboard. Diagnostic only.
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run replication check for Clemson and West Virginia
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_clemson_wvu_replication.py
