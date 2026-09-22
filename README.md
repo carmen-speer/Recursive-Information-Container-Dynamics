@@ -352,7 +352,7 @@ everything below is complete:
   currently constructed, and the `stable` call is real, not suppressed
   signal — the same status as Buffalo's gap, reached by a different
   mechanism (feature-space evidence here, domain mismatch there).
-  **West Virginia is narrowed but not resolved:** convergence is ruled
+  West Virginia was narrowed but not yet resolved at that point: convergence is ruled
   out the same way, but its peer comparison is genuinely mixed — its
   nearest neighbor is Wisconsin (stable, 0.86), but its second-nearest is
   Trinity Christian, a real confirmed closure, at 1.10 (closer than three
