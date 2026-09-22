@@ -1,74 +1,130 @@
 [
   {
+    "unitid": "143084",
+    "name": "Augustana College",
+    "prediction": "stable",
+    "method": "statistical_classifier",
+    "probability": 0.46798699058248344,
+    "scored_at": "2026-09-22T04:38:50.198737+00:00"
+  },
+  {
+    "unitid": "211291",
+    "name": "Bucknell University",
+    "prediction": "stable",
+    "method": "statistical_classifier",
+    "probability": 0.09446934372161755,
+    "scored_at": "2026-09-22T04:35:09.563632+00:00"
+  },
+  {
     "unitid": "110583",
     "name": "California State University-Long Beach",
     "prediction": "high_risk",
     "method": "statistical_classifier",
-    "probability": 0.9577935680764275,
-    "scored_at": "2026-09-21T18:31:29.967252+00:00"
+    "probability": 0.9559231990883797,
+    "scored_at": "2026-09-22T04:31:08.060570+00:00"
   },
   {
     "unitid": "217882",
     "name": "Clemson University",
     "prediction": "stable",
     "method": "statistical_classifier",
-    "probability": 0.39027491076062415,
-    "scored_at": "2026-09-21T18:32:45.516982+00:00"
+    "probability": 0.37578982937058053,
+    "scored_at": "2026-09-22T04:32:15.352700+00:00"
+  },
+  {
+    "unitid": "166124",
+    "name": "College of the Holy Cross",
+    "prediction": "stable",
+    "method": "statistical_classifier",
+    "probability": 0.04838675813747972,
+    "scored_at": "2026-09-22T04:39:49.496593+00:00"
   },
   {
     "unitid": "134097",
     "name": "Florida State University",
     "prediction": "high_risk",
     "method": "statistical_classifier",
-    "probability": 0.5709864858295153,
-    "scored_at": "2026-09-21T18:34:59.848612+00:00"
+    "probability": 0.650290529441663,
+    "scored_at": "2026-09-22T04:34:15.030952+00:00"
+  },
+  {
+    "unitid": "232256",
+    "name": "Hampden-Sydney College",
+    "prediction": "stable",
+    "method": "statistical_classifier",
+    "probability": 0.3616265354827924,
+    "scored_at": "2026-09-22T04:37:57.987401+00:00"
+  },
+  {
+    "unitid": "212911",
+    "name": "Haverford College",
+    "prediction": "stable",
+    "method": "statistical_classifier",
+    "probability": 0.09224691936913458,
+    "scored_at": "2026-09-22T04:36:02.554657+00:00"
   },
   {
     "unitid": "233718",
     "name": "Sweet Briar College",
     "prediction": "high_risk",
     "method": "statistical_classifier",
-    "probability": 0.8012216250604414,
-    "scored_at": "2026-09-21T18:26:23.982547+00:00"
+    "probability": 0.7955208400557868,
+    "scored_at": "2026-09-22T04:26:31.872771+00:00"
+  },
+  {
+    "unitid": "124292",
+    "name": "Thomas Aquinas College",
+    "prediction": "high_risk",
+    "method": "statistical_classifier",
+    "probability": 0.9550809165402715,
+    "scored_at": "2026-09-22T04:37:01.817579+00:00"
   },
   {
     "unitid": "132903",
     "name": "University of Central Florida",
     "prediction": "high_risk",
     "method": "statistical_classifier",
-    "probability": 0.8335014664070663,
-    "scored_at": "2026-09-21T18:33:57.142400+00:00"
+    "probability": 0.8511196926639585,
+    "scored_at": "2026-09-22T04:33:17.686966+00:00"
   },
   {
     "unitid": "225511",
     "name": "University of Houston",
     "prediction": "stable",
     "method": "statistical_classifier",
-    "probability": 0.4064293154695227,
-    "scored_at": "2026-09-21T18:30:14.312513+00:00"
+    "probability": 0.3656317645208583,
+    "scored_at": "2026-09-22T04:30:01.694662+00:00"
   },
   {
     "unitid": "170976",
     "name": "University of Michigan-Ann Arbor",
     "prediction": "stable",
     "method": "statistical_classifier",
-    "probability": 0.05823025789496935,
-    "scored_at": "2026-09-21T18:25:12.635074+00:00"
+    "probability": 0.09195059214736898,
+    "scored_at": "2026-09-22T04:25:28.299269+00:00"
   },
   {
     "unitid": "484613",
     "name": "University of Phoenix-Arizona",
     "prediction": "high_risk",
     "method": "statistical_classifier",
-    "probability": 0.9999672557908077,
-    "scored_at": "2026-09-21T18:27:35.471723+00:00"
+    "probability": 0.9999606478323848,
+    "scored_at": "2026-09-22T04:27:33.372702+00:00"
   },
   {
     "unitid": "238032",
     "name": "West Virginia University",
     "prediction": "stable",
     "method": "statistical_classifier",
-    "probability": 0.44159202484587945,
-    "scored_at": "2026-09-21T18:28:51.725202+00:00"
+    "probability": 0.4162681486313129,
+    "scored_at": "2026-09-22T04:28:41.965488+00:00"
+  },
+  {
+    "unitid": "206525",
+    "name": "Wittenberg University",
+    "prediction": "high_risk",
+    "method": "statistical_classifier",
+    "probability": 0.953418084970818,
+    "scored_at": "2026-09-22T04:41:13.821881+00:00"
   }
 ]
