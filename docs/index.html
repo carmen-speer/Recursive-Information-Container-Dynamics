@@ -93,7 +93,7 @@
     mechanism was written into RICD's core theory prior to the building
     of this tracker to catch precisely this pattern when assessing
     collapse risk in systems showing divergence.
-    FSU (57.1%) and UCF (83.4%) below are real, currently-elevated
+    FSU (65.0%) and UCF (85.1%) below are real, currently-elevated
     <code>high_risk</code> scores -- elevated relative to a stable flagship
     like Michigan (5.8%), comparable instead to Houston's pre-fix reading --
     driven by real, specific financial distress. But distress isn't the
@@ -126,10 +126,28 @@
     resemble the ones that produced real closures," not as a probability of
     actual collapse; whether distress converts to collapse depends on an
     anchor this classifier doesn't measure at all.</p>
+    <p style="margin:12px 0 4px;">What these flagships' real data turned out
+    to show is distress, not imminent closure, which is prevented by various
+    forms of external anchoring as described above -- state appropriations,
+    state-backed debt, political stakes, and diversified revenue among them
+    -- and while that anchoring could in principle be traced and measured
+    directly for a given institution, that work hasn't been done yet: the
+    anchor eligibility criterion accounts for the mechanism, not yet a
+    quantified adjustment to what the classifier itself outputs (the various
+    forms of anchors have not yet been mathematically calculated, in other
+    words).</p>
+    <p style="margin:12px 0 4px;">Whether this model could double as a
+    potentially highly useful stress-calculator for flagships (which would
+    require measuring anchor types and cross-referencing those mechanisms
+    with the various causes of distress measured by the 8-feature panel in
+    order to make recommendations) remains an open question; at present the
+    model is designed to measure collapse and as such, its distress rankings
+    for large schools are mainly useful in showing the degree rather than
+    the fact of said distress.</p>
     <p style="margin:12px 0 4px;"><strong>Clemson and West Virginia are a different case, not a milder version of
     this one.</strong> Both carry real, seriously documented financial
-    distress, and both are currently scored <code>stable</code> (39.0% and
-    44.2%) -- the opposite direction from FSU and UCF, not another instance
+    distress, and both are currently scored <code>stable</code> (37.6% and
+    41.6%) -- the opposite direction from FSU and UCF, not another instance
     of the anchor mechanism above. An anchor explains why a shock the
     classifier <em>did</em> detect doesn't convert to collapse; Clemson's and
     West Virginia's distress was never detected as elevated risk in the
@@ -139,17 +157,19 @@
     distinct case -- not a missing anchor either, but a kind of strain none
     of these eight features were built to detect at all.)</p>
     <p style="margin:12px 0 4px;"><strong>Fix confirmed working:</strong>
-    University of Houston is now <code>stable</code> (40.6%), down from 87.3%
-    before this fix. This is the case that motivated the fix: Houston
-    received a real $1.3B infusion from the Texas University Fund in this
-    same period -- S&amp;P upgraded its bond rating to AA+, citing a $287M
-    operating surplus and $3.3B in reserves -- the opposite of distress.
+    University of Houston is now <code>stable</code> (36.6% as of the most
+    recent live batch run; 40.6% when this fix was first validated on
+    2026-09-20), down from 87.3% before this fix. This is the case that
+    motivated the fix: Houston received a real $1.3B infusion from the
+    Texas University Fund in this same period -- S&amp;P upgraded its bond
+    rating to AA+, citing a $287M operating surplus and $3.3B in reserves --
+    the opposite of distress.
     <code>frac_high_entropy</code> used to measure the <em>size</em> of a
     resource swing, not its <em>direction</em>, so a large positive shock and
     a destabilizing one looked alike; the fix (see repository Known Gaps)
     resolved this case correctly.</p>
     <p style="margin:12px 0 4px;"><strong>Resolved, 2026-09-20 -- real distress, correctly read as not disqualifying at this institution's scale:</strong>
-    Clemson University (39.0%) flipped to <code>stable</code> under the fix
+    Clemson University (37.6%) flipped to <code>stable</code> under the fix
     despite real, documented financial distress (long-term liabilities up
     $231.9M year-over-year to $2.65B, expenses outpacing revenue). A
     two-step check resolved this rather than leaving it open. First, a
@@ -176,7 +196,7 @@
     suppressed signal, and its real distress isn't the kind these eight
     features were ever positioned to catch at this institution's size.</p>
     <p style="margin:12px 0 4px;"><strong>Resolved, 2026-09-21 -- feature-by-feature comparison, then the fitted classifier's own weighting:</strong>
-    West Virginia University (44.2%) also flipped to <code>stable</code>
+    West Virginia University (41.6%) also flipped to <code>stable</code>
     despite its real, widely reported 2023 financial crisis and
     program/faculty cuts. The same convergence recheck ruled out sampling
     noise here too, but its feature-space comparison was genuinely mixed at
@@ -198,18 +218,19 @@
     feature vector was run directly through the fitted classifier instead of
     counted by hand: it returns 40.6% probability of <code>high_risk</code>,
     consistent with -- and slightly firmer than -- this table's own
-    production-settings 44.2%. The two numbers agreeing, with only a small,
-    explainable difference in margin, is corroboration, not a live
-    discrepancy needing its own fix. Full detail on both institutions in the
+    production-settings 44.2% at the time this diagnostic ran. The two
+    numbers agreeing, with only a small, explainable difference in margin,
+    was corroboration, not a live discrepancy needing its own fix. Full
+    detail on both institutions in the
     repository's
     <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#known-gaps--stated-honestly-not-smoothed-over">Known Gaps</a> section.</p>
     <p style="margin:12px 0 4px;"><strong>Still high_risk, but the driver is identified and real -- not the classifier misreading a stable institution:</strong>
-    Florida State University's (57.1%) signal traces to a real, separate
+    Florida State University's (65.0%) signal traces to a real, separate
     financial strain from its core institutional finances: its athletics
     department closed FY2025 with $437 million in athletics-related debt,
     widely reported as the largest such debt load in college sports
     (Sportico, Athletic Business, Feb. 2026). University of Central
-    Florida's (83.4%) signal traces to real, documented capital debt
+    Florida's (85.1%) signal traces to real, documented capital debt
     strain as well -- a $144 million student-housing bond issue (priced
     Dec. 2024) carrying a speculative-grade Ba1 rating from Moody's,
     citing rising operating costs and revenue volatility. Both
@@ -223,12 +244,12 @@
     whole being at risk -- is not something this classifier's single
     probability number can express on its own.</p>
     <p style="margin:12px 0 4px;"><strong>Likely genuine signal:</strong>
-    California State University-Long Beach (95.8%) has a real, documented
+    California State University-Long Beach (95.6%) has a real, documented
     enrollment collapse (38,000 to 36,000 students, projected toward
     33,000) alongside a real $42M budget cut. Nothing here contradicts
     this score.</p>
     <p style="margin:12px 0 4px;"><strong>Tested 2026-09-20, real but thin evidence -- not yet built into the classifier:</strong>
-    University of Phoenix-Arizona (100.0%) and Sweet Briar College (80.1%)
+    University of Phoenix-Arizona (100.0%) and Sweet Briar College (79.6%)
     sit on a separate problem from the ones above: the model has no state
     for "collapse, but already reset." A candidate within-window trend
     feature was built and tested against both, with a convergence recheck
@@ -254,6 +275,46 @@
     model's eight features are built to detect -- its real financial strain
     is a $47M federal research-funding cut, not debt, reserves, or
     enrollment. See <code>score_batch.py</code>'s own docstring.</p>
+    <p style="margin:12px 0 4px;"><strong>Seven institutions added 2026-09-22, five with nothing anomalous to report:</strong>
+    Bucknell University, Haverford College, Hampden-Sydney College,
+    Augustana College, and College of the Holy Cross were added to this
+    batch using the same neutral-selection methodology already documented
+    in <code>score_batch.py</code>'s own docstring -- no institution chosen
+    for an expected outcome. All five score <code>stable</code> below, with
+    nothing unusual about any of their results. Thomas Aquinas College and
+    Wittenberg University, also added the same day, are each the subject of
+    their own note just below, for different reasons.</p>
+    <p style="margin:12px 0 4px; border-left:3px solid #a33; padding-left:10px;"><strong>Thomas Aquinas College's score below should not be trusted yet.</strong>
+    It is under active investigation right now, as of this writing: the same
+    pipeline has produced a clean 0% result and a clean, opposite
+    ~95-100% result on separate, otherwise-identical runs. Confirmed cause
+    of the underlying instability: this project's PyMC/PyTensor installation
+    cannot link to a real BLAS library and runs on a "severely degraded"
+    fallback math path (PyTensor's own warning, printed on every single run
+    of this investigation) -- plausible, not yet confirmed, explanation:
+    real hardware differences between separate GitHub Actions runners
+    interacting with that degraded math, since results are perfectly
+    consistent within one run but can differ entirely between two separate
+    ones. Four other explanations (multiprocessing, under-sampling,
+    within-run chain disagreement, and cross-institution state leakage
+    within one batch run) were tested directly and ruled out. A production
+    fix (disabling multiprocessing) is already shipped but not yet confirmed
+    to help under real batch conditions; a second, more fundamental fix
+    (installing the math libraries properly, via conda instead of pip, so
+    they link to a real BLAS implementation) is being tested right now.
+    Full detail, including everything ruled out and the exact next steps,
+    is in the repository's
+    <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#known-gaps--stated-honestly-not-smoothed-over">Known Gaps</a>
+    section.</p>
+    <p style="margin:12px 0 4px;"><strong>Wittenberg University's score came with a data-quality warning, not yet
+    investigated.</strong> Its most recent scoring run flagged an elevated
+    convergence statistic (max rhat 1.77, against PyMC's own 1.01
+    threshold), meaning this specific run's math may not have fully settled
+    -- deliberately not yet investigated, since the Thomas Aquinas issue
+    directly above is the higher-priority version of the same kind of
+    question right now. Separately from the convergence question, a high
+    score is independently plausible here: Wittenberg is under a real,
+    confirmed Higher Learning Commission financial-distress probation.</p>
     None of this should be read as "this institution is X% likely to
     close." Full detail is in the repository's
     <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#known-gaps--stated-honestly-not-smoothed-over">Known Gaps</a>
