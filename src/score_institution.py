@@ -1,4 +1,3 @@
-
 """
 The real, end-to-end deployment entry point: given a UNITID, fetch
 live data, run it through the RICD state-space model, extract the
@@ -64,10 +63,18 @@ def compute_features_for_institution(
     duplicating or forking this function to do it.
 
     cores (2026-09-23 addition): defaults to None, which preserves the
-    exact original behavior (cores=n_chains, real multiprocessing).
-    Exists so a diagnostic caller can force cores=1 (sequential,
-    single-process) while leaving n_chains untouched, isolating
-    multiprocessing as a variable.
+    exact original behavior (cores=n_chains, real multiprocessing) for
+    any existing caller that doesn't pass it. Real production callers
+    now pass cores=1 explicitly (see main() below) -- confirmed during
+    the Thomas Aquinas College investigation that cores=2 (real
+    multiprocessing) can give an entire batch of otherwise-identical
+    runs a different answer from another whole batch, while cores=1
+    gave the same answer seven times in a row, including direct
+    chain-to-chain agreement within each run. The default itself is
+    left at None/n_chains rather than flipped to 1, so existing
+    diagnostic scripts that deliberately test production's real
+    multiprocessing behavior (e.g. diagnose_thomas_aquinas_replication.py)
+    keep doing exactly that without being silently changed underneath them.
 
     CONVERGENCE printing (2026-09-22 addition): every call prints the
     real divergence count and max rhat from its own idata.
@@ -76,14 +83,7 @@ def compute_features_for_institution(
     change to existing behavior. When True, also prints each
     individual chain's own frac_high_entropy value (computed from that
     chain alone, not averaged with the others) right after the
-    CONVERGENCE line -- added during the Thomas Aquinas College
-    reproducibility investigation, where the returned feature values
-    are always built from the cross-chain MEAN trajectory
-    (.mean(dim=["chain", "draw"])), which can quietly average together
-    chains that landed in genuinely different places (consistent with
-    the high rhat and degenerate-chain warning already observed) into
-    one misleadingly clean-looking number. This makes that possible
-    split directly visible instead of only inferable from rhat.
+    CONVERGENCE line.
     """
     end_year = end_year or (datetime.date.today().year - 2)  # IPEDS lags by ~2 years
     window_years = [f"{y}-{str(y + 1)[2:]}" for y in range(start_year, end_year)]
@@ -404,7 +404,7 @@ def main():
             "method": "governance_override",
         }
     else:
-        features = compute_features_for_institution(unitid, name, sector=args.sector)
+        features = compute_features_for_institution(unitid, name, sector=args.sector, cores=1)
         if features is None:
             result_dict = {"unitid": unitid, "name": name, "prediction": "insufficient_data"}
         else:
