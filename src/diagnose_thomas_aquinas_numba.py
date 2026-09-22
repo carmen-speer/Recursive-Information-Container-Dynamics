@@ -25,6 +25,20 @@ did not, that's real evidence the instability lives specifically in
 PyTensor's default fallback path rather than being an unavoidable
 property of this model or this institution's data.
 
+DIRECT MODE CONFIRMATION (2026-09-22 addition): the first three real
+Numba dispatches all agreed (rhat=1.2398 exactly, three separate times)
+and ran 4-5x faster than the default-path runs -- but the "PyTensor
+could not link to a BLAS installation" warning kept printing anyway,
+which is ambiguous on its own (that warning fires from PyTensor's own
+BLAS-detection check, not necessarily tied to which mode a specific
+compile call ends up using). Rather than keep inferring engagement
+indirectly from timing and warning text, _confirm_compile_mode()
+below independently compiles a trivial PyTensor function with the
+same mode string, using PyTensor's own base-level pytensor.function()
+API rather than going through pm.sample(), and prints the actual
+linker class it gets back -- direct, positive confirmation instead of
+inference from side effects.
+
 ONE evaluation per dispatch, not several replicates -- replicates
 within a single job are guaranteed to agree with each other regardless
 of anything, since random_seed=7 is fixed (confirmed by the extreme-
@@ -34,14 +48,46 @@ across those separate dispatches, exactly how the pinned-environment
 diagnostic was actually evaluated.
 """
 
+import pytensor
+import pytensor.tensor as pt
+
 from score_institution import compute_features_for_institution
 
 UNITID = "124292"
 NAME = "Thomas Aquinas College"
+COMPILE_MODE = "NUMBA"
+
+
+def _confirm_compile_mode(mode):
+    """
+    Compiles a trivial function (f(x) = x * 2) with the given mode and
+    prints the actual linker class PyTensor produced. This is
+    independent of pm.sample() and of this project's model code
+    entirely -- it only tests whether PyTensor itself honors this mode
+    string in this environment. A linker class name containing "Numba"
+    confirms real engagement; anything else (e.g. falling back to the
+    default CLinker/VMLinker) means the mode request was silently
+    ignored, which the rest of this script's output alone couldn't
+    have told us.
+    """
+    x = pt.dscalar("x")
+    f = pytensor.function([x], x * 2, mode=mode)
+    linker = f.maker.linker
+    linker_name = f"{type(linker).__module__}.{type(linker).__name__}"
+    print(f"COMPILE MODE CHECK: requested mode={mode!r} -> actual linker class={linker_name}")
+    if "numba" in linker_name.lower():
+        print("COMPILE MODE CHECK: CONFIRMED -- Numba linker really is engaged.")
+    else:
+        print("COMPILE MODE CHECK: NOT CONFIRMED -- this did not produce a Numba "
+              "linker. The mode request may be silently falling back to the "
+              "default path; the CONVERGENCE result below should not be trusted "
+              "as a real Numba-backend result until this is resolved.")
 
 
 def main():
-    features = compute_features_for_institution(UNITID, NAME, cores=1, compile_mode="NUMBA")
+    _confirm_compile_mode(COMPILE_MODE)
+
+    features = compute_features_for_institution(UNITID, NAME, cores=1, compile_mode=COMPILE_MODE)
     if features is None:
         print("Diagnostic inconclusive: returned None (insufficient live data).")
         return
