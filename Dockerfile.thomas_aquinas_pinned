@@ -1,0 +1,25 @@
+# Pinned-environment test for the Thomas Aquinas College reproducibility
+# investigation (see README.md's Known Gaps section). Every diagnostic
+# tried so far ran on GitHub's `ubuntu-latest` runners with dependencies
+# resolved fresh by pip on every single job -- meaning exact library
+# versions, and the underlying hardware, could differ between separate
+# job dispatches even though random_seed=7 is fixed in
+# score_institution.py and can never vary. This image pins the Python
+# version and installs from requirements.txt exactly once, at build
+# time, so that every separate run of diagnose_thomas_aquinas_pinned_env.py
+# against this same built image uses byte-identical software --
+# isolating whether the remaining instability is environment drift
+# (fixable by shipping this image to production) or genuine
+# hardware/numerics non-determinism across different runner machines
+# (not fixable by pinning software alone).
+#
+# Built once by build_thomas_aquinas_pinned_image.yml and pushed to
+# GitHub's container registry (GHCR); diagnose_thomas_aquinas_pinned_env.yml
+# pulls this exact already-built image every time rather than rebuilding
+# it, so dispatching it multiple times reuses the identical environment.
+FROM python:3.11.9-slim-bookworm
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY src/ ./src/
