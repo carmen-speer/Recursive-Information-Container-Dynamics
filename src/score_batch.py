@@ -127,6 +127,71 @@ evaluated that real risk, so it's removed rather than left showing an
 uninformative number. It was chosen by the same neutral, disclosed rule
 as UCF and FSU above and is not being pulled to hide an inconvenient
 result -- see the README's Known Gaps section for the full reasoning.
+
+Added 2026-09-22, a third expansion: seven small, tuition-dependent
+private liberal arts colleges. This batch had drifted toward large
+public flagships and edge cases (Houston, UCF, FSU, Buffalo, Clemson,
+Cal State Long Beach) -- exactly the population these eight features
+were NOT built to resolve cleanly -- while the population the classifier
+was actually validated against (small, tuition-dependent private
+colleges) was underrepresented in what the live dashboard shows.
+
+Selected by a disclosed, two-source neutral rule, decided before looking
+at any institution's financial condition:
+- Source 1: Niche's "Best Liberal Arts Colleges" ranking (216
+  institutions, a reputation-based ranking with no relationship to
+  financial condition), first 50 positions (the deepest range reliably
+  fetchable -- see below), every 7th position: Williams, Vassar,
+  Haverford, Bucknell, Thomas Aquinas, Sewanee, Hampden-Sydney.
+- Source 2: The Annapolis Group's own published member roster (112
+  colleges, ordered by state on the group's own site -- an order with no
+  relationship to financial condition), first 50 positions, every 7th
+  position: Occidental, Augustana, Wabash, College of the Holy Cross,
+  Millsaps, Wittenberg, Bates.
+- The two 7-item lists were concatenated (Source 1 first, Source 2
+  second) into one 14-item list, and every odd position was kept
+  (1, 3, 5, 7, 9, 11, 13): Williams, Haverford, Thomas Aquinas,
+  Hampden-Sydney, Augustana, College of the Holy Cross, Wittenberg.
+- U.S. News's own liberal-arts ranking, the first-choice source for
+  Source 1, blocks automated fetching outright; Niche's ranking was the
+  fetchable substitute, and its own pagination did not reliably serve
+  results past rank 50 in this environment -- both are real tooling
+  limitations, not a choice to stop early once a preferred result
+  appeared.
+- Williams College is already a confirmed-stable member of the validated
+  54-institution panel (UNITID 168342) -- adding it here would be
+  redundant with data already scored and validated, not a new test. Per
+  a disclosed substitution rule (drop any panel collision, replace with
+  the nearest even-numbered position moving forward through the same
+  14-item composite list), the next position (2, Vassar College) was
+  tried -- also already a confirmed-stable panel member (UNITID 197133)
+  -- so the rule moved forward again to position 4 (Bucknell
+  University), which is clear of the panel. Two collisions, one
+  substitution.
+
+Final seven, UNITIDs confirmed for real from each institution's own NCES
+IPEDS Data Feedback Report (not guessed, and not taken from College
+Navigator's own page, which did not render institution data through
+this project's fetch tooling):
+- Bucknell University (211291, Lewisburg, PA) -- substituted in per the
+  collision rule above.
+- Haverford College (212911, Haverford, PA).
+- Thomas Aquinas College (124292, Santa Paula, CA) -- not to be confused
+  with St. Thomas Aquinas College, Sparkill, NY (UNITID 195243), a
+  separate institution with a similar name.
+- Hampden-Sydney College (232256, Hampden-Sydney, VA).
+- Augustana College (143084, Rock Island, IL) -- not to be confused with
+  Augustana University, Sioux Falls, SD, a separate institution with a
+  similar name.
+- College of the Holy Cross (166124, Worcester, MA).
+- Wittenberg University (206525, Springfield, OH).
+
+All seven are private nonprofit institutions, so this batch exercises
+the private-sector finance-parsing path (like Sweet Briar above), not
+the already heavily-tested public-sector path most of the batch above
+uses. None of their real financial conditions were checked before
+selection, and none are checked here either -- that's what live-scoring
+them is for.
 """
 
 from __future__ import annotations
@@ -145,6 +210,13 @@ INSTITUTIONS = [
     ("217882", "Clemson University", "public", 2013),
     ("132903", "University of Central Florida", "public", 2013),
     ("134097", "Florida State University", "public", 2013),
+    ("211291", "Bucknell University", "private", 2013),
+    ("212911", "Haverford College", "private", 2013),
+    ("124292", "Thomas Aquinas College", "private", 2013),
+    ("232256", "Hampden-Sydney College", "private", 2013),
+    ("143084", "Augustana College", "private", 2013),
+    ("166124", "College of the Holy Cross", "private", 2013),
+    ("206525", "Wittenberg University", "private", 2013),
 ]
 
 
