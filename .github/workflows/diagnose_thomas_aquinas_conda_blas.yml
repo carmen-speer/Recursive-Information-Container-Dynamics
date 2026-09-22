@@ -1,0 +1,37 @@
+name: Diagnose Thomas Aquinas - Conda/BLAS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Miniforge (conda, conda-forge channel)
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          python-version: '3.11'
+          channels: conda-forge
+          channel-priority: strict
+          activate-environment: ricd-blas-test
+
+      - name: Install dependencies via conda-forge (real linked BLAS)
+        run: |
+          conda install -y -c conda-forge numpy scipy scikit-learn "pymc>=5.10" "arviz>=0.16" pandas requests
+
+      - name: Confirm BLAS is actually linked (sanity check against the pip warning)
+        run: |
+          python -c "import numpy; numpy.show_config()"
+
+      - name: Run Thomas Aquinas conda/BLAS diagnostic
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
+        run: |
+          cd src
+          python diagnose_thomas_aquinas_conda_blas.py
