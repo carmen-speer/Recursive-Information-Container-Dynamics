@@ -32,6 +32,33 @@ unverified change this project doesn't make. The plan is to present the
 two scores side by side — a second, independently computed number shown
 alongside the classifier's, not merged into it.
 
+## The math already in RICD
+
+This isn't a new mechanism invented for the sensor. §10.5b.13 (Anchor
+Eligibility) already defines what counts as a real anchor: a vigilant
+baseline container maintaining zero extraction and displacement flux
+throughout, a structurally safe semi-rigid field, or a purpose-built
+buffer assessed against its designed capacity, with §10.5b.13a requiring
+the relationship be strictly one-directional. That's the qualitative test
+this sensor operationalizes into a number.
+
+The cross-referencing itself follows a pattern RICD already uses:
+Proposition 10.5b.13.1 defines margin_i^cluster(t) = margin_i(t) +
+κ_cluster · Φ_mutual(t)·Γ_mutual(t), a fitted additive correction to a
+container's own instability margin using a separately-computed
+anchor-related quantity. That's the shape this sensor's output will take
+against Tell's own classifier score: an additive, fitted correction using
+an independently-computed anchor term, not a merge into one shared model.
+
+One caveat, stated plainly rather than smoothed over: Φ_mutual and
+Γ_mutual are defined for mutual anchor clusters, containers reciprocally
+anchoring each other. Sweet Briar and Phoenix are the opposite case, a
+one-directional external anchor acting on the institution, not a peer
+relationship. What carries over directly is the pattern, not the formula
+itself — this sensor needs its own fitted constant, analogous to
+κ_cluster but built for one-directional anchoring, rather than reusing
+Φ_mutual/Γ_mutual as written.
+
 ## What it's for
 
 One specific thing it's scoped to test: whether it can resolve a gap the
