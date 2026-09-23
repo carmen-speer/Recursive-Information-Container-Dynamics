@@ -42,7 +42,7 @@ def compute_features_for_institution(
     n_draws: int = 300, n_tune: int = 300, n_chains: int = 2,
     target_accept: float = 0.9, cores: int | None = None,
     debug_per_chain: bool = False, compile_mode: str | None = None,
-    random_seed: int = 7,
+    random_seed: int = 7, debug_param_rhat: bool = False,
 ) -> InstitutionFeatures | None:
     """
     Real, live scoring pipeline for one institution, replicating
@@ -115,6 +115,24 @@ def compute_features_for_institution(
     whether the sampler's own random initialization affects the result,
     only whether the identical deterministic computation repeats itself.
     Real seed variation had never been tested before this addition.
+
+    debug_param_rhat (2026-09-23 addition, item 6 of the Thomas Aquinas
+    investigation's own stated next step): defaults to False, no change
+    to existing behavior. When True, prints every sampled variable's own
+    max rhat, worst first, right after the CONVERGENCE line -- not just
+    the single worst-case number that line already reports. The point:
+    CONVERGENCE's rhat_max says *that* something in this model's ~20 free
+    parameters hasn't converged; it can't say *which* one, and a real
+    reparameterization fix (the kind that already worked once in this
+    model -- see z_raw/xi_scale's non-centering in model.py's own
+    docstring, which fixed that parameter's specific funnel geometry)
+    needs to target the actual offending parameter, not the model as a
+    whole. This distinguishes real sampled/free parameters (marked with
+    a '*' in the printed output -- an actual prior NUTS is exploring)
+    from Deterministics (unmarked -- these only inherit whatever rhat
+    their upstream free parameters already have, so a high rhat on a
+    Deterministic like d_A_t is a symptom of the real free-parameter
+    problem, not a second, separate one to chase).
     """
     end_year = end_year or (datetime.date.today().year - 2)  # IPEDS lags by ~2 years
     window_years = [f"{y}-{str(y + 1)[2:]}" for y in range(start_year, end_year)]
@@ -173,6 +191,26 @@ def compute_features_for_institution(
     rhat_max = float(az.rhat(idata).max().to_array().max())
     print(f"CONVERGENCE: {n_divergences} divergences, max rhat={rhat_max:.4f} "
           f"(rhat should be close to 1.0; PyMC's own warning threshold is 1.01)")
+
+    # PER-PARAMETER RHAT BREAKDOWN (2026-09-23, opt-in only): see
+    # debug_param_rhat's own docstring above for why this exists and how
+    # to read the '*' marker.
+    if debug_param_rhat:
+        rhat_ds = az.rhat(idata)
+        free_rv_names = {rv.name for rv in pymc_model.free_RVs}
+        rows = []
+        for var in rhat_ds.data_vars:
+            var_vals = rhat_ds[var].values
+            var_max_rhat = float(np.nanmax(var_vals))
+            rows.append((var, var_max_rhat, var in free_rv_names))
+        rows.sort(key=lambda r: r[1], reverse=True)
+        print(f"PER-PARAMETER RHAT BREAKDOWN ({len(rows)} variables, worst first; "
+              f"'*' = a real sampled/free parameter NUTS is directly exploring, "
+              f"unmarked = a Deterministic that only inherits its rhat from "
+              f"whichever free parameters feed it):")
+        for var, var_max_rhat, is_free in rows:
+            marker = "*" if is_free else " "
+            print(f"  {marker} {var:20s} max_rhat={var_max_rhat:.4f}")
 
     # PER-CHAIN BREAKDOWN (2026-09-23, opt-in only): see docstring above.
     if debug_per_chain:
