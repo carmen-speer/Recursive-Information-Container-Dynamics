@@ -704,6 +704,58 @@ everything below is complete:
   step) that adding a genuine 9th feature requires. Not shipped, not
   abandoned — a real, partially-supportive experiment with a specific,
   named next step.
+- **A separate anchor-quantification sensor is now being built as its
+  own project, to run alongside this 8-feature panel and cross-reference
+  against it — not as a 9th feature merged into it — and one thing it's
+  specifically scoped to test is whether it can resolve the reset/
+  recovery gap just described for Sweet Briar and Phoenix.** The
+  two-layer distinction already established elsewhere in this document
+  — the classifier as the sensor (internal financial distress) and the
+  anchor-eligibility criterion as the run-flat mechanism (external
+  support that can prevent collapse without appearing in the
+  classifier's own math) — has so far been qualitative: the manuscript
+  establishes that anchoring exists and matters, not a quantified
+  measurement of how much of it a given institution has. This is that
+  quantification, built separately for a specific reason: there's no
+  real anchor-failure/closure data anywhere to fit a coefficient
+  against — the same structural data-scarcity problem already
+  documented above for `reserve_adequacy`'s public-sector gap — so
+  folding an unvalidatable coefficient into the panel's own fitted
+  classifier would be exactly the kind of unverified change this
+  project doesn't make. Since this project reflects RICD being applied
+  in real time, extra planned features get built as the project goes
+  rather than all specified up front; the anchor-quantifier sensor
+  measures something structurally different from the 8-feature panel
+  (capacity for external support, not internal distress), and the plan
+  is to present the two side by side and cross-reference them into a
+  combined picture, not fold them into one shared coefficient vector.
+  Sweet Briar and Phoenix are the two live test cases, and — checked
+  directly for this addition, 2026-09-22 — they turn out to be
+  genuinely different kinds of "anchor," which is itself a reason real
+  measurement is needed rather than one assumed mechanism. Sweet
+  Briar's 2015 near-closure was resolved by a real external
+  philanthropic and legal rescue: a Virginia Attorney General-brokered
+  settlement paired with a large alumnae-led fundraising campaign (the
+  "Saving Sweet Briar" effort, widely reported at roughly $44 million
+  raised in the years that followed) — capital and legal restructuring
+  injected from outside the institution's own operating budget, the
+  textbook shape of a RICD anchor. Phoenix-Arizona has no matching
+  event: its planned sale to a University of Idaho-created nonprofit
+  (announced 2023) was called off in June 2025 after the parties
+  couldn't close, and its for-profit holding company moved toward an
+  IPO instead (reported starting September 2025) — ownership
+  restructuring within the same investor-owned structure, not an
+  external anchor being added. If anchor quantification separates these
+  two the way their very different actual outcomes suggest it should,
+  that's real corroborating evidence for the approach; if it doesn't,
+  that's a real negative result worth stating plainly, not a reason to
+  reach for a different explanation. **Not yet built:** what data
+  actually feeds this — state appropriation/legal-intervention records,
+  ownership and acquisition filings, bond guarantees, donor/rescue-
+  commitment size relative to operating budget — and what "cross-
+  referenced against the panel" looks like in practice (a second,
+  independently computed score shown alongside the classifier's, not
+  merged into it). Design not yet finalized.
 - **`reserve_adequacy` — confirmed the classifier's single strongest
   feature (largest-magnitude fitted coefficient, -1.88 on the
   standardized panel, next closest -1.38 for `d_A_trend`) — has no
@@ -802,109 +854,139 @@ everything below is complete:
   9.22%, Hampden-Sydney 36.16%, Augustana 46.80%, Holy Cross 4.84% —
   all `stable`, none showing an anomaly requiring individual treatment
   under this section's documentation standard. Thomas Aquinas and
-  Wittenberg each get their own entry below, for different reasons:
-  Thomas Aquinas because its live score is not currently trustworthy,
-  Wittenberg because of a newly observed, not-yet-investigated
-  convergence anomaly.
-- **Thomas Aquinas College's live score is genuinely non-reproducible
-  across separate GitHub Actions runs, and this is under active,
-  real-time investigation right now (as of 2026-09-22/23) — not yet
-  resolved, and no single percentage for it should be trusted until it
-  is.** First surfaced when `frac_high_entropy` came back a clean
+  Wittenberg each get their own entry below: Thomas Aquinas because its
+  reproducibility instability triggered a multi-day investigation across
+  three independent fixes, now resolved with a real, evidence-backed
+  production number; Wittenberg because its elevated convergence rhat,
+  once investigated, needed the same backend fix.
+- **Thomas Aquinas College's live score is still genuinely
+  non-reproducible in the strict MCMC-convergence sense, after a full
+  investigation across three independent fixes — resolved as a story,
+  not resolved as a textbook-converged number, but now resolved enough
+  to trust the classification output, with real evidence behind that
+  claim.** First surfaced when `frac_high_entropy` came back a clean
   0.0000 in one full isolated replication (5/5 agreement, at `cores=2`
   multiprocessing) and then a clean but opposite 1.0000 in a second,
   equally clean isolated replication run under the same settings — a
   direct instance of the same trap already documented earlier in this
   section: a single clean result isn't evidence of anything on its own
   if a competing condition can produce an equally clean, opposite
-  result. **Confirmed, not hypothesized:** PyTensor — the numerical
-  backend this project's `model.py` relies on for MCMC sampling via
-  PyMC — cannot link to a BLAS (Basic Linear Algebra Subprograms)
-  installation under this project's current pip-based dependency setup,
-  and prints its own warning to that effect ("PyTensor could not link
-  to a BLAS installation. Operations that might benefit from BLAS will
-  be severely degraded") on every single run across this entire
-  investigation, with no exception. Four specific hypotheses for the
-  non-reproducibility were tested directly and disproven, not just
-  argued against: (1) `cores` (real multiprocessing during MCMC
-  sampling) as the sole cause — disproven when a second isolated
-  replication round at the same `cores=2` setting gave the opposite
-  result of the first; (2) MCMC under-sampling/precision as the cause —
-  disproven when a much higher-precision re-run (4 chains, 800/800
-  draws, target_accept=0.95) still failed PyMC's own rhat convergence
-  threshold (1.1062 against a 1.01 threshold), meaning a clean-looking
+  result. Four specific hypotheses for the non-reproducibility were
+  tested directly and disproven, not just argued against: (1) `cores`
+  (real multiprocessing) as the sole cause; (2) MCMC
+  under-sampling/precision as the cause — a much higher-precision re-run
+  (4 chains, 800/800 draws, target_accept=0.95) still failed PyMC's own
+  rhat convergence threshold (1.1062 against 1.01), so a clean-looking
   "0 divergences" result does not by itself mean the run actually
-  converged; (3) within-run chain multimodality (the sampler's own
-  chains disagreeing with each other inside one run) — disproven by a
-  per-chain diagnostic showing all chains agreeing closely with each
-  other in every run checked; (4) batch-position/in-process state
-  leakage (scoring Thomas Aquinas after other institutions in the same
-  batch run somehow affecting its result) — disproven by a direct
-  cold-vs-warm test within a single script run, giving bit-identical
-  results either way. **Current, still-unconfirmed leading
-  explanation:** results appear to be decided once per GitHub Actions
-  runner/job — perfectly reproducible *within* a single job (confirmed
-  repeatedly, including the per-chain and cold/warm checks above) but
-  capable of landing on a different answer entirely in a separate job —
-  consistent with genuine runner-to-runner hardware variability
-  interacting with PyTensor's confirmed-degraded, non-BLAS math, which
-  lacks the numerical robustness across different hardware that a
-  properly linked BLAS implementation would provide. As a first,
-  already-shipped mitigation, `score_institution.py`'s CLI and
-  `score_batch.py`'s batch loop were both switched to `cores=1` (real
-  multiprocessing disabled) on 2026-09-23, after isolated `cores=1`
-  diagnostics ran consistently 7 times in a row; this is a real but so
-  far incompletely validated fix, not a confirmed one — a real
-  production `rescore.yml` batch run under the new `cores=1` setting
-  still landed Thomas Aquinas in the opposite (high-divergence) camp
-  from every one of nine separate isolated `cores=1` diagnostic runs,
-  meaning `cores=1` alone does not yet have confirmed real-world
-  protective value. **Two things are running in parallel right now,
-  both real, not hypothetical:** a second real `rescore.yml` production
-  run, to get a second real data point on whether `cores=1` helps under
-  actual batch conditions; and a new diagnostic workflow,
-  `diagnose_thomas_aquinas_conda_blas.yml`, testing PyTensor installed
-  through conda-forge instead of pip — the standard fix implied
-  directly by PyTensor's own warning text, since conda-forge's build
-  links against a real, optimized BLAS implementation rather than
-  leaving PyTensor to run its severely-degraded fallback path.
-  Depending what these show: if the conda/BLAS environment produces
-  consistent results across separate job dispatches (not yet tested
-  even once as of this writing — a single job's internal consistency
-  was never actually the open question), that will be treated as the
-  real fix and rolled into production; if Thomas Aquinas's live score
-  still cannot be trusted after that, it will be documented here as a
-  genuinely unresolved sampling-instability case, with no single
-  percentage asserted for it on the live dashboard, rather than
-  publishing a number known to be an artifact of which server happened
-  to run it. **Note for anyone checking the live dashboard directly
-  right now:** it currently shows Thomas Aquinas at 95.5081% (153
-  divergences), the result of the one real production run completed so
-  far under `cores=1` — given everything above, that specific figure
-  should be read as provisional, not confirmed, until this
-  investigation resolves.
-- **Wittenberg University's live score (95.34%) came back alongside an
-  elevated max rhat (1.7710) in the most recent real batch run —
-  noticed 2026-09-22, not yet investigated, deliberately deferred
-  rather than silently accepted.** Deferred specifically because the
-  Thomas Aquinas reproducibility investigation (above) is the
-  higher-priority open question right now — it affects confidence in
-  the live pipeline broadly, not just one institution — and Wittenberg's
-  elevated rhat may turn out to be a related symptom of the same
-  underlying cause once that investigation resolves, rather than an
-  independent problem needing its own separate diagnostic path.
-  Substantively, a high score is plausible on independent grounds
-  regardless of the convergence question: Wittenberg is under a real,
-  confirmed Higher Learning Commission financial-distress probation,
-  which is why it was kept scored by the statistical classifier rather
-  than added to `GOVERNANCE_OVERRIDE_UNITIDS` — the override is reserved
-  for a closure-track governance verdict (a show-cause order or
-  withdrawal), and financial probation is a real but different, less
-  severe governance signal than that. Next step, not yet executed:
-  re-run Wittenberg specifically at high-precision settings, the same
-  convergence-isolation check already used for Thomas Aquinas, Clemson,
-  and West Virginia, once the higher-priority investigation above frees
-  up to take it on.
+  converged; (3) within-run chain multimodality; (4) batch-position/
+  in-process state leakage. A pinned, byte-identical Docker environment
+  (`Dockerfile.thomas_aquinas_pinned`, tested via
+  `diagnose_thomas_aquinas_pinned_env.py`) ruled out environment drift
+  directly: three separate job dispatches of the identical pinned image
+  still split — two agreeing at `frac_high_entropy=0.0000`, one landing
+  at 1.0000 with 153 divergences — meaning this was never a
+  software-version problem. With software pinned identical, the
+  remaining candidate was PyTensor's own default, non-BLAS-linked
+  fallback path (see its "severely degraded" warning, printed on every
+  single run across this entire investigation), which is exactly the
+  kind of unoptimized, less-tested math most likely to behave
+  differently across different underlying runner hardware. **A
+  conda-forge, real-BLAS-linked build was tested next, as PyTensor's own
+  warning text implies is the fix — and confirmed NOT to be one:** it
+  made convergence measurably worse (rhat 1.3936, against pip's best
+  1.1062), a real, checked, failed fix, not an assumption. This matters
+  because it separates two things this project was at risk of
+  conflating: fixing the BLAS *warning* and fixing the reproducibility
+  *instability* are not the same fix, and conda only ever addressed the
+  first. **A Numba backend was tried next** (`compile_mode="NUMBA"`,
+  added to `compute_features_for_institution` specifically for this) —
+  confirmed genuinely engaged via direct inspection of the compiled
+  linker's class (`diagnose_thomas_aquinas_numba.py`'s
+  `_confirm_compile_mode()`), not inferred indirectly from the BLAS
+  warning's absence, since that warning fires from PyTensor's own
+  setup-time detection regardless of which backend a given run actually
+  uses. Tested 20/20 real separate trials: 10 across separate job
+  dispatches at this project's usual fixed seed
+  (`diagnose_thomas_aquinas_numba.yml`), and 10 more across genuinely
+  varied random seeds within one job
+  (`diagnose_thomas_aquinas_varied_seed.py`). All 20 agreed on
+  `frac_high_entropy = 0.0000`. **A real methodological gap surfaced in
+  the course of this, worth stating on its own:** `random_seed` had been
+  hardcoded to 7 everywhere in this codebase's history until this point
+  — meaning every earlier "N replicates agree" claim anywhere in this
+  project's history, including everything above, only ever tested
+  whether an identical deterministic computation reproduces itself,
+  never whether the sampler's own random initialization changes the
+  result. It's now a real parameter on `compute_features_for_institution`
+  (default still 7, so no existing caller's behavior changed), added
+  specifically so this could finally be tested for real — the 10
+  varied-seed runs above are that test. **Honest residual, not smoothed
+  over: rhat itself has never dropped below PyMC's own 1.01 threshold
+  under any condition tested anywhere in this investigation** — pip,
+  conda, or Numba, fixed seed or varied, diagnostic or production. Under
+  Numba specifically it clustered at 1.18–1.24 (fixed seed, diagnostic)
+  and ranged 1.03–1.47 (varied seeds); three of the ten varied-seed runs
+  also threw `RuntimeWarning: overflow encountered in dot` from PyMC's
+  own sampler code, flagged here, not yet investigated. So Numba is best
+  read as a real, evidence-backed fix for the practically important
+  question — does the classification output stay stable — not a full
+  fix for the underlying one — does the sampler actually converge in the
+  textbook sense. Those are different claims, and this project isn't
+  conflating them. **Done, 2026-09-22:** `compile_mode="NUMBA"` is now
+  the real production setting in both `score_institution.py`'s CLI and
+  `score_batch.py`'s batch call, and `numba` is a real dependency in
+  `requirements.txt`, not an ad hoc diagnostic-only install. A real
+  production `rescore.yml` run the same day put Thomas Aquinas back on
+  the live dashboard for the first time since this investigation began:
+  0 divergences, max rhat=1.2321 — squarely inside the 1.18–1.24 range
+  this same backend produced across 10 separate diagnostic dispatches at
+  this project's usual seed, real corroboration rather than a fluke —
+  and **68.72% probability of `high_risk`**, replacing the old,
+  explicitly-flagged-as-untrustworthy 95.5081% figure. Separately
+  ongoing: identifying which specific model parameters are driving the
+  persistent rhat failure, using this investigation's own per-chain
+  diagnostic tooling (`diagnose_thomas_aquinas_perchain.py`) — the real
+  next step toward a reparameterization fix, if one exists.
+- **Wittenberg University's live score came back alongside an elevated
+  max rhat (1.7710) in a real batch run — noticed 2026-09-22, deferred
+  at the time because the Thomas Aquinas investigation above was the
+  higher-priority question, then actually investigated once that
+  freed up, with a real, reproducible result.** Substantively, a high
+  score is plausible on independent grounds regardless of the
+  convergence question: Wittenberg is under a real, confirmed Higher
+  Learning Commission financial-distress probation, which is why it was
+  kept scored by the statistical classifier rather than added to
+  `GOVERNANCE_OVERRIDE_UNITIDS` — the override is reserved for a
+  closure-track governance verdict (a show-cause order or withdrawal),
+  and financial probation is a real but different, less severe
+  governance signal than that. **Re-run 2026-09-23**
+  (`diagnose_wittenberg_numba.py`) at high precision (4 chains, 800/800
+  draws, target_accept=0.95) under the same Numba backend now used in
+  production, with the same direct linker-class confirmation used for
+  Thomas Aquinas (`CONFIRMED -- Numba linker really is engaged`): 3
+  independent replicates, run sequentially, agreed exactly — 0
+  divergences, max rhat=1.1099, `frac_high_entropy=1.0000`, all three
+  times, no spread at all. That rhat is a real, substantial improvement
+  over both the original default-path production figure (1.7710) and
+  the same-day production-settings Numba figure (1.2090, see the live
+  table) — more precision keeps helping here, even though, like Thomas
+  Aquinas, it has not yet crossed PyMC's 1.01 threshold. Unlike Thomas
+  Aquinas, `frac_high_entropy` itself moved with precision here (0.8000
+  at production settings under Numba, 1.0000 at high precision), and did
+  so identically across all three replicates at the higher settings —
+  real, reproducible evidence that production settings were genuinely
+  under-resolved for this specific institution's data, not evidence of
+  the cross-run non-determinism documented above for Thomas Aquinas.
+  This diagnostic only tested repeats within one job at a fixed seed,
+  not separate dispatches or varied seeds the way Thomas Aquinas's
+  Numba backend was tested — that broader check hasn't been run for
+  Wittenberg and isn't assumed here. The high-precision result
+  (97.20% probability `high_risk`) and the production figure (95.45%)
+  agree on the call and sit close in margin, the same standard for
+  corroboration-not-discrepancy already used elsewhere in this section;
+  `docs/data/live_scores.json` deliberately stays at production settings
+  for consistency across every institution, the same reasoning already
+  documented for West Virginia above.
 
 ## Repository structure
 
@@ -936,7 +1018,12 @@ src/
   diagnose_clemson_wvu_cores1.py             Re-validates Clemson and West Virginia's live scores under cores=1 (see Known Gaps)
   diagnose_phoenix_cores1.py                 Re-validates Phoenix's live score under cores=1 (see Known Gaps)
   diagnose_thomas_aquinas_batch_position.py  Cold-vs-warm test ruling out batch-position/in-process state leakage for Thomas Aquinas (see Known Gaps)
-  diagnose_thomas_aquinas_conda_blas.py      Tests whether a conda-forge (real BLAS-linked) PyTensor install resolves Thomas Aquinas's reproducibility instability (see Known Gaps)
+  diagnose_thomas_aquinas_conda_blas.py      Tests whether a conda-forge (real BLAS-linked) PyTensor install resolves Thomas Aquinas's reproducibility instability -- confirmed NOT a fix, made rhat worse (see Known Gaps)
+  diagnose_thomas_aquinas_extreme_precision.py  Pushes MCMC settings far beyond production (2000/2000/4 chains, target_accept=0.99) to test whether Thomas Aquinas's posterior can converge at all given enough sampling effort (see Known Gaps)
+  diagnose_thomas_aquinas_pinned_env.py      Single-evaluation diagnostic run inside a byte-identical pinned Docker environment, to isolate environment drift from runner-hardware-level non-determinism (see Known Gaps)
+  diagnose_thomas_aquinas_numba.py           Tests PyTensor's Numba backend as an alternative to its default non-BLAS-linked path, with direct linker-class confirmation that Numba is really engaged -- the adopted fix (see Known Gaps)
+  diagnose_thomas_aquinas_varied_seed.py     Tests genuinely varied random seeds (not this project's usual fixed seed) under the Numba backend, after random_seed became a real parameter (see Known Gaps)
+  diagnose_wittenberg_numba.py               High-precision convergence check for Wittenberg University under the Numba backend, the deferred follow-up to the Thomas Aquinas investigation (see Known Gaps)
 data/
   panel/panel.json           The real, validated 54-institution panel
 docs/
@@ -990,6 +1077,11 @@ future-projects/
   diagnose_phoenix_cores1.yml                     Manual-only: runs diagnose_phoenix_cores1.py (see Known Gaps)
   diagnose_thomas_aquinas_batch_position.yml      Manual-only: runs diagnose_thomas_aquinas_batch_position.py (see Known Gaps)
   diagnose_thomas_aquinas_conda_blas.yml          Manual-only: runs diagnose_thomas_aquinas_conda_blas.py, installing dependencies via conda-forge instead of pip (see Known Gaps)
+  build_thomas_aquinas_pinned_image.yml           Manual-only: builds and pushes the byte-identical pinned Docker image (Dockerfile.thomas_aquinas_pinned) to GHCR, used by diagnose_thomas_aquinas_pinned_env.yml (see Known Gaps)
+  diagnose_thomas_aquinas_pinned_env.yml          Manual-only: runs diagnose_thomas_aquinas_pinned_env.py inside the pinned Docker image (see Known Gaps)
+  diagnose_thomas_aquinas_numba.yml               Manual-only: runs diagnose_thomas_aquinas_numba.py -- one evaluation per dispatch, run several separate times and compared across dispatches (see Known Gaps)
+  diagnose_thomas_aquinas_varied_seed.yml         Manual-only: runs diagnose_thomas_aquinas_varied_seed.py, testing 10 varied seeds within one job (see Known Gaps)
+  diagnose_wittenberg_numba.yml                   Manual-only: runs diagnose_wittenberg_numba.py, 3 replicates at high precision under the Numba backend (see Known Gaps)
 
 ## Re-scoring cadence
 
