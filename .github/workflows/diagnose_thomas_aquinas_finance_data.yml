@@ -1,0 +1,26 @@
+name: Diagnose Thomas Aquinas finance data (real values, no model)
+
+# Item 6, next step: the sigma_fin split (diagnose_sigma_fin_split.yml)
+# fixed E_exch cleanly and substantially improved M_maint and W_total,
+# but did nothing for W_instr (still the worst parameter in the model
+# after the split). This run doesn't touch the model at all -- it
+# downloads and prints Thomas Aquinas College's real, actual finance
+# data for all four channels, to check whether W_instr's real
+# year-over-year volatility is disproportionate to its GaussianRandomWalk
+# latent's fixed sigma=0.01 compared to the other three channels' own
+# sigmas. See diagnose_thomas_aquinas_finance_data.py's own docstring
+# for the full reasoning.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: cd src && python diagnose_thomas_aquinas_finance_data.py
