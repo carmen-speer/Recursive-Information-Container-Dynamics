@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>RICD Higher-Education Collapse Tracker</title>
+<title>Tell — Higher-Education Collapse Tracker</title>
 <style>
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; color: #1a1a1a; }
   h1 { font-size: 1.6em; }
@@ -20,7 +20,22 @@
 </style>
 </head>
 <body>
-  <h1>RICD Higher-Education Collapse Tracker</h1>
+  <h1>Tell</h1>
+  <p style="margin: 0 0 20px; font-size: 0.95em;">
+    A Bayesian state-space model and validated classifier for
+    institutional financial collapse risk and degree of financial
+    distress in U.S. higher education, built on the Recursive
+    Information-Container Dynamics (RICD) framework. It's called Tell
+    because what it reads is a poker tell: not a prediction of what
+    happens next, but a real, involuntary signal &mdash; the measured
+    divergence between how an institution represents itself and what its
+    own underlying financial data actually show &mdash; read directly
+    off the data itself. Developed under the working name "RICD
+    Higher-Education Collapse Tracker"; see the
+    <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics">README</a>
+    for the full explanation of the name and the distress-vs-collapse
+    distinction it points to.
+  </p>
   <div class="scope-note">
     This panel was built to validate a classifier, not to survey the sector.
     It is not a random or representative sample of U.S. degree-granting
@@ -352,14 +367,19 @@
     rather than folded into it as a 9th feature -- there's no real
     anchor-failure/closure data to fit a coefficient against, the same
     scarcity problem already documented for <code>reserve_adequacy</code>'s
-    public-sector gap. One thing it's specifically scoped to test: whether
-    it can explain the Sweet Briar/Phoenix pattern just described --
-    checked directly for this note, Sweet Briar's 2015 rescue (a Virginia
-    Attorney General-brokered settlement plus a ~$44M alumnae-led
+    public-sector gap. The combining math already exists in RICD (a
+    fitted additive correction, Proposition 10.5b.13.1), adapted here for
+    one-directional anchoring rather than the mutual case it was written
+    for -- what's still unbuilt is the data pipeline feeding it, not the
+    underlying mechanism. One thing it's specifically scoped to test:
+    whether it can explain the Sweet Briar/Phoenix pattern just described
+    -- checked directly for this note, Sweet Briar's 2015 rescue (a
+    Virginia Attorney General-brokered settlement plus a ~$44M alumnae-led
     fundraising campaign) and Phoenix's stalled University of Idaho
     acquisition followed by a planned IPO turn out to be genuinely
     different kinds of "anchor," which is itself a reason real measurement
-    is needed. Not yet built; full detail in the repository's Known Gaps
+    is needed. Full detail in the repository README's
+    <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#tells-upcoming-project">Tell's Upcoming Project</a>
     section.</p>
     <p style="margin:12px 0 4px;"><strong>No longer live-scored:</strong>
     University at Buffalo was removed from this batch on 2026-09-20 after
@@ -367,40 +387,45 @@
     model's eight features are built to detect -- its real financial strain
     is a $47M federal research-funding cut, not debt, reserves, or
     enrollment. See <code>score_batch.py</code>'s own docstring.</p>
-    <p style="margin:12px 0 4px;"><strong>Resolved enough to trust, not
-    textbook-converged -- Thomas Aquinas College, 2026-09-22/23.</strong>
-    This institution's live score was genuinely non-reproducible across
-    separate runs for several days, traced through a real investigation:
-    environment drift was ruled out (a byte-identical pinned Docker image
-    still split across separate dispatches), a conda-forge BLAS-linked
-    build was tested and confirmed to make convergence worse, not better,
-    and PyTensor's Numba backend was adopted instead -- confirmed really
-    engaged by directly inspecting the compiled linker, not inferred from
-    a warning message -- and tested 20 separate times (across repeated
-    dispatches and genuinely varied random seeds), agreeing on the
-    classification output all 20 times. rhat itself has still never
-    dropped below PyMC's own 1.01 convergence threshold under any
-    condition tested, an honest limitation stated plainly rather than
-    smoothed over; but the classification output is now backed by real,
-    repeated evidence in a way the earlier, since-retracted 95.5081%
-    figure never was. 68.7% above is that real, Numba-backed production
-    result.</p>
-    <p style="margin:12px 0 4px;"><strong>Elevated rhat, investigated and
-    improved, not fully resolved -- Wittenberg University, 2026-09-23.</strong>
-    Wittenberg's production score came back alongside an unusually high
-    rhat (1.7710); deferred while the Thomas Aquinas investigation above
-    took priority, then re-run at high precision under the same Numba
-    backend once that freed up. Three independent replicates agreed
-    exactly (rhat=1.1099, 0 divergences, 97.2% probability
-    <code>high_risk</code>) -- a real improvement over both the original
-    figure and the production-settings Numba run (rhat=1.2090), though
-    still short of PyMC's 1.01 threshold. Wittenberg is also under a
-    real, confirmed Higher Learning Commission financial-distress
-    probation, so an elevated score here is independently plausible
-    regardless of the convergence question. The table above shows the
-    production-settings figure (95.5%) for consistency with every other
-    institution; the two numbers agree on the call. Full detail on both
-    institutions in the repository's
+    <p style="margin:12px 0 4px;"><strong>A real bookkeeping gap, not a
+    scoring problem -- Thomas Aquinas College and Wittenberg University.</strong>
+    Neither institution's sampler has driven its own formal convergence
+    diagnostic (rhat) below PyMC's textbook threshold of 1.01, under any
+    fix tried. That doesn't mean either score is unreliable -- checked
+    directly, not assumed: Thomas Aquinas's classification came back
+    identical across 20 separate real runs (10 at this project's usual
+    fixed seed, 10 more at genuinely varied random seeds), regardless of
+    rhat ranging from 1.03 to 1.47. Wittenberg's production score (95.5%)
+    and an independent, higher-precision re-run (97.2%) agree closely as
+    well.</p>
+    <p style="margin:12px 0 4px;"><strong>Three specific fixes were
+    tested directly against Thomas Aquinas's worst-converging
+    parameter</strong>, a financial observation-noise scale historically
+    shared across all four of the model's financial channels. Splitting
+    that shared scale into four independent per-channel scales fully
+    resolved one channel and substantially improved two more, but left
+    the instructional-spending channel essentially unchanged, whose own
+    noise parameter then became the single worst in the model. A
+    hypothesis that this channel's real data was too volatile for its
+    fixed model parameters was tested directly against real IPEDS data
+    and rejected outright -- it's actually the least volatile of the
+    four channels, the opposite of the prediction. A follow-up check
+    found the strongest funnel-geometry signature of all four channels
+    specifically here, and applying the same non-centered
+    reparameterization already proven elsewhere in this model produced a
+    real, meaningful rhat improvement -- but also a large increase in
+    sampling divergences, trading one diagnostic problem for a different
+    one rather than resolving it cleanly.</p>
+    <p style="margin:12px 0 4px;"><strong>Testing stops here for now, as
+    a practical choice, not because the question is closed.</strong> If
+    this is picked back up, the concrete next step is direct: address the
+    new divergence problem the reparameterization introduced, or test the
+    most plausible remaining explanation -- not itself directly tested --
+    that this reflects how little real annual finance data exists per
+    institution (as few as 11 real years) relative to the model's
+    complexity, a genuine estimation-difficulty limit rather than a
+    single fixable bug. Neither institution's live score is affected by
+    any of this. Full detail on both institutions in the repository's
     <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#known-gaps--stated-honestly-not-smoothed-over">Known Gaps</a> section.</p>
     None of this should be read as "this institution is X% likely to
     close." Full detail is in the repository's
