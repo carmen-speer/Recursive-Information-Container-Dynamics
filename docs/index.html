@@ -345,12 +345,63 @@
     too sensitive to a single endpoint; only a cleaner result from that
     would justify the full panel re-validation a real 9th feature
     requires.</p>
+    <p style="margin:12px 0 4px;"><strong>In progress, 2026-09-22:</strong>
+    a separate anchor-quantification sensor is now being built to measure
+    external support (state backing, rescue funding, ownership structure)
+    directly, as its own project cross-referenced against this panel
+    rather than folded into it as a 9th feature -- there's no real
+    anchor-failure/closure data to fit a coefficient against, the same
+    scarcity problem already documented for <code>reserve_adequacy</code>'s
+    public-sector gap. One thing it's specifically scoped to test: whether
+    it can explain the Sweet Briar/Phoenix pattern just described --
+    checked directly for this note, Sweet Briar's 2015 rescue (a Virginia
+    Attorney General-brokered settlement plus a ~$44M alumnae-led
+    fundraising campaign) and Phoenix's stalled University of Idaho
+    acquisition followed by a planned IPO turn out to be genuinely
+    different kinds of "anchor," which is itself a reason real measurement
+    is needed. Not yet built; full detail in the repository's Known Gaps
+    section.</p>
     <p style="margin:12px 0 4px;"><strong>No longer live-scored:</strong>
     University at Buffalo was removed from this batch on 2026-09-20 after
     its score sat at a near-50/50 that didn't map to any mechanism this
     model's eight features are built to detect -- its real financial strain
     is a $47M federal research-funding cut, not debt, reserves, or
     enrollment. See <code>score_batch.py</code>'s own docstring.</p>
+    <p style="margin:12px 0 4px;"><strong>Resolved enough to trust, not
+    textbook-converged -- Thomas Aquinas College, 2026-09-22/23.</strong>
+    This institution's live score was genuinely non-reproducible across
+    separate runs for several days, traced through a real investigation:
+    environment drift was ruled out (a byte-identical pinned Docker image
+    still split across separate dispatches), a conda-forge BLAS-linked
+    build was tested and confirmed to make convergence worse, not better,
+    and PyTensor's Numba backend was adopted instead -- confirmed really
+    engaged by directly inspecting the compiled linker, not inferred from
+    a warning message -- and tested 20 separate times (across repeated
+    dispatches and genuinely varied random seeds), agreeing on the
+    classification output all 20 times. rhat itself has still never
+    dropped below PyMC's own 1.01 convergence threshold under any
+    condition tested, an honest limitation stated plainly rather than
+    smoothed over; but the classification output is now backed by real,
+    repeated evidence in a way the earlier, since-retracted 95.5081%
+    figure never was. 68.7% above is that real, Numba-backed production
+    result.</p>
+    <p style="margin:12px 0 4px;"><strong>Elevated rhat, investigated and
+    improved, not fully resolved -- Wittenberg University, 2026-09-23.</strong>
+    Wittenberg's production score came back alongside an unusually high
+    rhat (1.7710); deferred while the Thomas Aquinas investigation above
+    took priority, then re-run at high precision under the same Numba
+    backend once that freed up. Three independent replicates agreed
+    exactly (rhat=1.1099, 0 divergences, 97.2% probability
+    <code>high_risk</code>) -- a real improvement over both the original
+    figure and the production-settings Numba run (rhat=1.2090), though
+    still short of PyMC's 1.01 threshold. Wittenberg is also under a
+    real, confirmed Higher Learning Commission financial-distress
+    probation, so an elevated score here is independently plausible
+    regardless of the convergence question. The table above shows the
+    production-settings figure (95.5%) for consistency with every other
+    institution; the two numbers agree on the call. Full detail on both
+    institutions in the repository's
+    <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#known-gaps--stated-honestly-not-smoothed-over">Known Gaps</a> section.</p>
     None of this should be read as "this institution is X% likely to
     close." Full detail is in the repository's
     <a href="https://github.com/carmen-speer/Recursive-Information-Container-Dynamics#known-gaps--stated-honestly-not-smoothed-over">Known Gaps</a>
