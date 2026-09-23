@@ -41,3 +41,10 @@ than asserted.
   the Cognitive Trait Manifold Ratio (CMTR). Stated plainly by its own
   title: this is a working theory, at an earlier stage than anything else
   in this repository.
+- [`Anchor-Quantification Sensor - Seed Note.md`](<Anchor-Quantification Sensor - Seed Note.md>) —
+  a proposed quantification of anchor-eligibility (external support
+  capable of preventing collapse without appearing in the classifier's
+  own math), to run alongside the validated 8-feature panel and
+  cross-reference against it rather than merge into it. Tests directly
+  against Sweet Briar and Phoenix-Arizona, the two live cases already
+  documented in Known Gaps.
