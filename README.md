@@ -1,14 +1,34 @@
-# RICD Higher-Education Collapse Tracker
+# Tell
 
-A Bayesian state-space model and validated classifier for institutional
-financial collapse risk **and** degree of financial distress in U.S.
-higher education, built on the Recursive Information-Container Dynamics
-(RICD) framework. Measuring distress separately from collapse is not an
-incidental side effect of building a collapse classifier -- it is a
-stated, intentional capability of this project, explained in full in
+**Why "Tell":** in poker, a tell is an involuntary sign -- a hesitation, a
+shift in posture, a change in breathing -- that reveals what a player is
+actually holding, independent of how they're betting or what they're
+saying at the table. This project reads the financial equivalent. Its
+core model tracks three separate channels for every institution --
+official, operational, and meta -- specifically to measure the
+divergence between how an institution represents itself and what its own
+underlying financial and enrollment data actually show. That divergence
+is the tell: not a prediction of what happens next, but a real signal,
+read directly off the data, of what's going on underneath the public
+narrative. And critically, a tell in poker doesn't mean a player has
+already lost the hand -- it means their hand differs from their table
+talk. In the same way, an elevated score from this project doesn't mean
+an institution is closing; it means its real financial dynamics diverge
+from its projected stability. That distinction -- a real signal of
+distress, not a verdict on the outcome -- is the whole design of this
+project, covered in full in
 ["Distress, not collapse"](#distress-not-collapse-what-an-elevated-score-means-for-a-public-flagship)
 below. Read that section before concluding that an elevated score for a
 large, well-resourced institution is either an error or a limitation.
+
+Tell is a Bayesian state-space model and validated classifier for
+institutional financial collapse risk **and** degree of financial
+distress in U.S. higher education, built on the Recursive
+Information-Container Dynamics (RICD) framework. It was developed under
+the working name "RICD Higher-Education Collapse Tracker"; Tell is its
+name now that what it actually reads -- a real signal in the data, not a
+prediction of an outcome -- is the more accurate description of what it
+does.
 
 **The full RICD manuscript (the complete, domain-independent theory) lives at
 [`docs/RICD 15.8 manuscript.pdf`](<docs/RICD 15.8 manuscript.pdf>)
@@ -86,7 +106,13 @@ cognitive traits as regions on a continuous manifold rather than discrete
 types, and deriving from it a proposed learning-style metric, the Cognitive
 Trait Manifold Ratio, or CMTR -- a working theory, at an earlier stage than
 anything else in this repository, included so its actual state is checkable
-rather than asserted after the fact once, or if, it's validated).
+rather than asserted after the fact once, or if, it's validated), and
+[`Anchor-Quantification Sensor - Seed Note.md`](<future-projects/Anchor-Quantification Sensor - Seed Note.md>)
+(a proposed quantification of anchor-eligibility -- external support
+capable of preventing collapse without appearing in the classifier's own
+math -- planned to run alongside the validated 8-feature panel and
+cross-reference against it rather than merge into it; see "Tell's
+Upcoming Project" above for the full summary).
 
 The planned future tracker mentioned above is an
 **agent tracker**, which would investigate the specific real decisions and
@@ -148,6 +174,45 @@ print(f'Misclassified: {misclassified}')
 both the validated 54-institution panel ([`docs/data/panel.json`](docs/data/panel.json))
 and, in a separate section below it, real institutions scored live by the
 pipeline described in Known Gaps below ([`docs/data/live_scores.json`](docs/data/live_scores.json)).
+
+## Tell's Upcoming Project
+
+**A separate anchor-quantification sensor is now being built as its own
+project, planned to run alongside Tell's validated 8-feature panel and
+cross-reference against it -- not merged in as a 9th feature.** Tell's
+manuscript already establishes a two-layer distinction between internal
+financial distress (what the classifier above measures) and an
+institution's anchor eligibility -- external support such as state
+appropriations, state-backed debt, or a rescue campaign, capable of
+preventing collapse without appearing anywhere in the classifier's own
+math (see "Distress, not collapse" below). So far that distinction has
+been qualitative, real and load-bearing but not measured; this project is
+that measurement. It's being built separately because there's no real
+anchor-failure/closure data anywhere to fit a coefficient against -- the
+same structural data-scarcity problem already documented for
+`reserve_adequacy`'s public-sector gap in Known Gaps below -- so folding
+an unvalidated coefficient into the panel's own fitted classifier would
+be exactly the kind of unverified change this project doesn't make. The
+combining math isn't a blank slate either: RICD's own Proposition
+10.5b.13.1 already defines a fitted additive correction combining a
+container's own margin with a separately-computed anchor term, the same
+shape this sensor's output will take against Tell's classifier score,
+adapted for one-directional anchoring rather than the mutual case the
+proposition was written for. Sweet Briar College and University of
+Phoenix-Arizona are the two live test cases, chosen because they diverge
+sharply in their real outcomes -- a resolved philanthropic rescue versus
+an unresolved ownership restructuring -- while both currently read as
+thin or flat under the panel's own experimental recovery-detection
+feature (see Known Gaps below); if anchor quantification separates them
+the way their actual outcomes suggest it should, that's real
+corroborating evidence for the approach, and if it doesn't, that's a real
+negative result worth stating plainly.
+
+Full detail -- including the live panel's own institution count (15
+scored so far of 50 planned, distinct from the 54-institution validated
+backtest panel below) and exactly what's not yet built -- is in the seed
+note:
+[`Anchor-Quantification Sensor - Seed Note.md`](<future-projects/Anchor-Quantification Sensor - Seed Note.md>).
 
 ## The panel is a validation set, not a survey
 
@@ -704,58 +769,18 @@ everything below is complete:
   step) that adding a genuine 9th feature requires. Not shipped, not
   abandoned — a real, partially-supportive experiment with a specific,
   named next step.
-- **A separate anchor-quantification sensor is now being built as its
-  own project, to run alongside this 8-feature panel and cross-reference
-  against it — not as a 9th feature merged into it — and one thing it's
-  specifically scoped to test is whether it can resolve the reset/
-  recovery gap just described for Sweet Briar and Phoenix.** The
-  two-layer distinction already established elsewhere in this document
-  — the classifier as the sensor (internal financial distress) and the
-  anchor-eligibility criterion as the run-flat mechanism (external
-  support that can prevent collapse without appearing in the
-  classifier's own math) — has so far been qualitative: the manuscript
-  establishes that anchoring exists and matters, not a quantified
-  measurement of how much of it a given institution has. This is that
-  quantification, built separately for a specific reason: there's no
-  real anchor-failure/closure data anywhere to fit a coefficient
-  against — the same structural data-scarcity problem already
-  documented above for `reserve_adequacy`'s public-sector gap — so
-  folding an unvalidatable coefficient into the panel's own fitted
-  classifier would be exactly the kind of unverified change this
-  project doesn't make. Since this project reflects RICD being applied
-  in real time, extra planned features get built as the project goes
-  rather than all specified up front; the anchor-quantifier sensor
-  measures something structurally different from the 8-feature panel
-  (capacity for external support, not internal distress), and the plan
-  is to present the two side by side and cross-reference them into a
-  combined picture, not fold them into one shared coefficient vector.
-  Sweet Briar and Phoenix are the two live test cases, and — checked
-  directly for this addition, 2026-09-22 — they turn out to be
-  genuinely different kinds of "anchor," which is itself a reason real
-  measurement is needed rather than one assumed mechanism. Sweet
-  Briar's 2015 near-closure was resolved by a real external
-  philanthropic and legal rescue: a Virginia Attorney General-brokered
-  settlement paired with a large alumnae-led fundraising campaign (the
-  "Saving Sweet Briar" effort, widely reported at roughly $44 million
-  raised in the years that followed) — capital and legal restructuring
-  injected from outside the institution's own operating budget, the
-  textbook shape of a RICD anchor. Phoenix-Arizona has no matching
-  event: its planned sale to a University of Idaho-created nonprofit
-  (announced 2023) was called off in June 2025 after the parties
-  couldn't close, and its for-profit holding company moved toward an
-  IPO instead (reported starting September 2025) — ownership
-  restructuring within the same investor-owned structure, not an
-  external anchor being added. If anchor quantification separates these
-  two the way their very different actual outcomes suggest it should,
-  that's real corroborating evidence for the approach; if it doesn't,
-  that's a real negative result worth stating plainly, not a reason to
-  reach for a different explanation. **Not yet built:** what data
-  actually feeds this — state appropriation/legal-intervention records,
-  ownership and acquisition filings, bond guarantees, donor/rescue-
-  commitment size relative to operating budget — and what "cross-
-  referenced against the panel" looks like in practice (a second,
-  independently computed score shown alongside the classifier's, not
-  merged into it). Design not yet finalized.
+- **A separate anchor-quantification sensor, now being built as its own
+  project to run alongside this 8-feature panel and cross-reference
+  against it — not as a 9th feature merged into it — is summarized in
+  full in ["Tell's Upcoming Project"](#tells-upcoming-project) near the
+  top of this README, with complete detail in the project's own seed
+  note.** One thing worth flagging here specifically, since it bears
+  directly on this section's documentation standard: the sensor is
+  planned to test whether it can resolve the reset/recovery gap
+  described above for Sweet Briar and Phoenix, and the reasoning that
+  connects it to the same public-sector data-scarcity problem already
+  documented below for `reserve_adequacy` is spelled out there in full,
+  not repeated twice here.
 - **`reserve_adequacy` — confirmed the classifier's single strongest
   feature (largest-magnitude fitted coefficient, -1.88 on the
   standardized panel, next closest -1.38 for `d_A_trend`) — has no
@@ -854,139 +879,48 @@ everything below is complete:
   9.22%, Hampden-Sydney 36.16%, Augustana 46.80%, Holy Cross 4.84% —
   all `stable`, none showing an anomaly requiring individual treatment
   under this section's documentation standard. Thomas Aquinas and
-  Wittenberg each get their own entry below: Thomas Aquinas because its
+  Wittenberg get a combined entry below: Thomas Aquinas because its
   reproducibility instability triggered a multi-day investigation across
   three independent fixes, now resolved with a real, evidence-backed
   production number; Wittenberg because its elevated convergence rhat,
   once investigated, needed the same backend fix.
-- **Thomas Aquinas College's live score is still genuinely
-  non-reproducible in the strict MCMC-convergence sense, after a full
-  investigation across three independent fixes — resolved as a story,
-  not resolved as a textbook-converged number, but now resolved enough
-  to trust the classification output, with real evidence behind that
-  claim.** First surfaced when `frac_high_entropy` came back a clean
-  0.0000 in one full isolated replication (5/5 agreement, at `cores=2`
-  multiprocessing) and then a clean but opposite 1.0000 in a second,
-  equally clean isolated replication run under the same settings — a
-  direct instance of the same trap already documented earlier in this
-  section: a single clean result isn't evidence of anything on its own
-  if a competing condition can produce an equally clean, opposite
-  result. Four specific hypotheses for the non-reproducibility were
-  tested directly and disproven, not just argued against: (1) `cores`
-  (real multiprocessing) as the sole cause; (2) MCMC
-  under-sampling/precision as the cause — a much higher-precision re-run
-  (4 chains, 800/800 draws, target_accept=0.95) still failed PyMC's own
-  rhat convergence threshold (1.1062 against 1.01), so a clean-looking
-  "0 divergences" result does not by itself mean the run actually
-  converged; (3) within-run chain multimodality; (4) batch-position/
-  in-process state leakage. A pinned, byte-identical Docker environment
-  (`Dockerfile.thomas_aquinas_pinned`, tested via
-  `diagnose_thomas_aquinas_pinned_env.py`) ruled out environment drift
-  directly: three separate job dispatches of the identical pinned image
-  still split — two agreeing at `frac_high_entropy=0.0000`, one landing
-  at 1.0000 with 153 divergences — meaning this was never a
-  software-version problem. With software pinned identical, the
-  remaining candidate was PyTensor's own default, non-BLAS-linked
-  fallback path (see its "severely degraded" warning, printed on every
-  single run across this entire investigation), which is exactly the
-  kind of unoptimized, less-tested math most likely to behave
-  differently across different underlying runner hardware. **A
-  conda-forge, real-BLAS-linked build was tested next, as PyTensor's own
-  warning text implies is the fix — and confirmed NOT to be one:** it
-  made convergence measurably worse (rhat 1.3936, against pip's best
-  1.1062), a real, checked, failed fix, not an assumption. This matters
-  because it separates two things this project was at risk of
-  conflating: fixing the BLAS *warning* and fixing the reproducibility
-  *instability* are not the same fix, and conda only ever addressed the
-  first. **A Numba backend was tried next** (`compile_mode="NUMBA"`,
-  added to `compute_features_for_institution` specifically for this) —
-  confirmed genuinely engaged via direct inspection of the compiled
-  linker's class (`diagnose_thomas_aquinas_numba.py`'s
-  `_confirm_compile_mode()`), not inferred indirectly from the BLAS
-  warning's absence, since that warning fires from PyTensor's own
-  setup-time detection regardless of which backend a given run actually
-  uses. Tested 20/20 real separate trials: 10 across separate job
-  dispatches at this project's usual fixed seed
-  (`diagnose_thomas_aquinas_numba.yml`), and 10 more across genuinely
-  varied random seeds within one job
-  (`diagnose_thomas_aquinas_varied_seed.py`). All 20 agreed on
-  `frac_high_entropy = 0.0000`. **A real methodological gap surfaced in
-  the course of this, worth stating on its own:** `random_seed` had been
-  hardcoded to 7 everywhere in this codebase's history until this point
-  — meaning every earlier "N replicates agree" claim anywhere in this
-  project's history, including everything above, only ever tested
-  whether an identical deterministic computation reproduces itself,
-  never whether the sampler's own random initialization changes the
-  result. It's now a real parameter on `compute_features_for_institution`
-  (default still 7, so no existing caller's behavior changed), added
-  specifically so this could finally be tested for real — the 10
-  varied-seed runs above are that test. **Honest residual, not smoothed
-  over: rhat itself has never dropped below PyMC's own 1.01 threshold
-  under any condition tested anywhere in this investigation** — pip,
-  conda, or Numba, fixed seed or varied, diagnostic or production. Under
-  Numba specifically it clustered at 1.18–1.24 (fixed seed, diagnostic)
-  and ranged 1.03–1.47 (varied seeds); three of the ten varied-seed runs
-  also threw `RuntimeWarning: overflow encountered in dot` from PyMC's
-  own sampler code, flagged here, not yet investigated. So Numba is best
-  read as a real, evidence-backed fix for the practically important
-  question — does the classification output stay stable — not a full
-  fix for the underlying one — does the sampler actually converge in the
-  textbook sense. Those are different claims, and this project isn't
-  conflating them. **Done, 2026-09-22:** `compile_mode="NUMBA"` is now
-  the real production setting in both `score_institution.py`'s CLI and
-  `score_batch.py`'s batch call, and `numba` is a real dependency in
-  `requirements.txt`, not an ad hoc diagnostic-only install. A real
-  production `rescore.yml` run the same day put Thomas Aquinas back on
-  the live dashboard for the first time since this investigation began:
-  0 divergences, max rhat=1.2321 — squarely inside the 1.18–1.24 range
-  this same backend produced across 10 separate diagnostic dispatches at
-  this project's usual seed, real corroboration rather than a fluke —
-  and **68.72% probability of `high_risk`**, replacing the old,
-  explicitly-flagged-as-untrustworthy 95.5081% figure. Separately
-  ongoing: identifying which specific model parameters are driving the
-  persistent rhat failure, using this investigation's own per-chain
-  diagnostic tooling (`diagnose_thomas_aquinas_perchain.py`) — the real
-  next step toward a reparameterization fix, if one exists.
-- **Wittenberg University's live score came back alongside an elevated
-  max rhat (1.7710) in a real batch run — noticed 2026-09-22, deferred
-  at the time because the Thomas Aquinas investigation above was the
-  higher-priority question, then actually investigated once that
-  freed up, with a real, reproducible result.** Substantively, a high
-  score is plausible on independent grounds regardless of the
-  convergence question: Wittenberg is under a real, confirmed Higher
-  Learning Commission financial-distress probation, which is why it was
-  kept scored by the statistical classifier rather than added to
-  `GOVERNANCE_OVERRIDE_UNITIDS` — the override is reserved for a
-  closure-track governance verdict (a show-cause order or withdrawal),
-  and financial probation is a real but different, less severe
-  governance signal than that. **Re-run 2026-09-23**
-  (`diagnose_wittenberg_numba.py`) at high precision (4 chains, 800/800
-  draws, target_accept=0.95) under the same Numba backend now used in
-  production, with the same direct linker-class confirmation used for
-  Thomas Aquinas (`CONFIRMED -- Numba linker really is engaged`): 3
-  independent replicates, run sequentially, agreed exactly — 0
-  divergences, max rhat=1.1099, `frac_high_entropy=1.0000`, all three
-  times, no spread at all. That rhat is a real, substantial improvement
-  over both the original default-path production figure (1.7710) and
-  the same-day production-settings Numba figure (1.2090, see the live
-  table) — more precision keeps helping here, even though, like Thomas
-  Aquinas, it has not yet crossed PyMC's 1.01 threshold. Unlike Thomas
-  Aquinas, `frac_high_entropy` itself moved with precision here (0.8000
-  at production settings under Numba, 1.0000 at high precision), and did
-  so identically across all three replicates at the higher settings —
-  real, reproducible evidence that production settings were genuinely
-  under-resolved for this specific institution's data, not evidence of
-  the cross-run non-determinism documented above for Thomas Aquinas.
-  This diagnostic only tested repeats within one job at a fixed seed,
-  not separate dispatches or varied seeds the way Thomas Aquinas's
-  Numba backend was tested — that broader check hasn't been run for
-  Wittenberg and isn't assumed here. The high-precision result
-  (97.20% probability `high_risk`) and the production figure (95.45%)
-  agree on the call and sit close in margin, the same standard for
-  corroboration-not-discrepancy already used elsewhere in this section;
-  `docs/data/live_scores.json` deliberately stays at production settings
-  for consistency across every institution, the same reasoning already
-  documented for West Virginia above.
+- **A real bookkeeping gap, not a scoring problem, for two institutions
+  currently on the live dashboard — Thomas Aquinas College and
+  Wittenberg University: neither institution's sampler has driven its
+  own formal convergence diagnostic (rhat) below PyMC's textbook
+  threshold of 1.01, across any fix tried.** This does not mean either
+  institution's score is unreliable, and that's been checked directly,
+  not assumed: Thomas Aquinas's classification came back identical
+  across 20 separate real runs — 10 at this project's usual fixed seed
+  across separate dispatches, 10 more at genuinely varied random seeds —
+  regardless of rhat ranging from 1.03 to 1.47 across those runs.
+  Wittenberg's production score (95.45% probability `high_risk`) and an
+  independent, higher-precision re-run (97.20%) agree closely as well.
+  Three specific fixes were tested directly against Thomas Aquinas's
+  worst-converging parameter, a financial observation-noise scale
+  historically shared across all four of the model's financial channels.
+  Splitting that shared scale into four independent per-channel scales
+  fully resolved one channel and substantially improved two more, but
+  left the instructional-spending channel essentially unchanged, whose
+  own noise parameter then became the single worst in the model. A
+  hypothesis that this channel's real data was too volatile for its
+  fixed model parameters was tested directly against real IPEDS data and
+  rejected outright — it's actually the least volatile of the four
+  channels, the opposite of the prediction. A follow-up check found the
+  strongest funnel-geometry signature of all four channels specifically
+  here, and applying the same non-centered reparameterization already
+  proven elsewhere in this model produced a real, meaningful rhat
+  improvement — but also a large increase in sampling divergences,
+  trading one diagnostic problem for a different one rather than
+  resolving it cleanly. **Testing stops here for now, as a practical
+  choice, not because the question is closed.** If this is picked back
+  up, the concrete next step is direct: address the new divergence
+  problem the reparameterization introduced, or test the most plausible
+  remaining explanation — not itself directly tested — that this
+  reflects how little real annual finance data exists per institution
+  (as few as 11 real years) relative to the model's complexity, a
+  genuine estimation-difficulty limit rather than a single fixable bug.
+  Neither institution's live score is affected by any of this.
 
 ## Repository structure
 
