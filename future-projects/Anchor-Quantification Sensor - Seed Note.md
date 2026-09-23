@@ -91,7 +91,13 @@ What data actually feeds this: state appropriation/legal-intervention
 records, ownership and acquisition filings, bond guarantees, donor/
 rescue-commitment size relative to operating budget. What "cross-
 referenced against the panel" looks like in practice is also not yet
-finalized beyond the side-by-side principle above.
+finalized beyond the side-by-side principle above. The math itself is not
+open, though. The combining step will use the additive-correction pattern
+already described above, Proposition 10.5b.13.1's margin(t) plus a fitted
+term for the anchor quantity, with its own fitted constant built for
+one-directional anchoring rather than Φ_mutual/Γ_mutual's mutual-cluster
+case. What's unfinished is the data pipeline and that constant's actual
+fitted value, not the underlying mechanism.
 
 See the main tracker's [README — Known Gaps](../README.md#known-gaps--stated-honestly-not-smoothed-over)
 for this in the context of the full 8-feature panel and its documentation
