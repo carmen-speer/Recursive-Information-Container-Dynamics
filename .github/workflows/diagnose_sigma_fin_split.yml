@@ -1,0 +1,26 @@
+name: Diagnose sigma_fin split (Thomas Aquinas College)
+
+# Tests item 6's finding directly: does splitting the shared sigma_fin
+# observation-noise scale into four independent per-channel scales fix
+# the worst rhat found by diagnose_thomas_aquinas_param_rhat.yml (sigma_fin
+# at 1.1418, identical across 2 runs, by a wide margin over every other
+# free parameter)? See diagnose_sigma_fin_split.py's own docstring for
+# the full reasoning and model_variant_split_sigma_fin.py for the
+# isolated, diagnostic-only model variant this test runs against --
+# neither model.py nor the live scoring pipeline is touched by this run.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: cd src && python diagnose_sigma_fin_split.py
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
