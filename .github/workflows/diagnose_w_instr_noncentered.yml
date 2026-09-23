@@ -1,0 +1,28 @@
+name: Diagnose W_instr_latent non-centered (Thomas Aquinas College)
+
+# Item 6, continued: tests the non-centered reparameterization of
+# W_instr_latent -- the same technique already proven for z_raw/xi_scale
+# elsewhere in this model -- against the funnel geometry
+# diagnose_sigma_fin_instr_funnel.py's correlation check pointed to
+# (sigma_fin_instr had the strongest sigma/latent-path-variance
+# correlation of all four channels, 0.587). Baseline to compare against:
+# diagnose_sigma_fin_split.py's log (sigma_fin_instr=1.0983,
+# W_instr_latent=1.0605). See diagnose_w_instr_noncentered.py's own
+# docstring for the full reasoning. Does not touch model.py or the live
+# pipeline.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: cd src && python diagnose_w_instr_noncentered.py
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
