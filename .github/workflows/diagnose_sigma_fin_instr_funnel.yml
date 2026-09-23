@@ -1,0 +1,28 @@
+name: Diagnose sigma_fin_instr funnel (Thomas Aquinas College)
+
+# Item 6, continued: the finance-data check rejected the "W_instr is too
+# volatile for its fixed sigma" hypothesis (it's actually the LEAST
+# volatile of the four channels relative to its sigma, and the pattern
+# ran backwards from that hypothesis's prediction). This run tests the
+# next, better-grounded hypothesis directly: that sigma_fin_instr's
+# posterior is being pulled close to zero because W_instr's real data is
+# unusually smooth, a near-boundary/funnel geometry problem rather than a
+# volatility problem. See diagnose_sigma_fin_instr_funnel.py's own
+# docstring for the full reasoning. Does not touch model.py or the live
+# pipeline.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: cd src && python diagnose_sigma_fin_instr_funnel.py
+        env:
+          COLLEGE_SCORECARD_API_KEY: ${{ secrets.COLLEGE_SCORECARD_API_KEY }}
