@@ -3,7 +3,7 @@
 A separate project, planned to run alongside Tell's 8-feature validated
 panel and cross-reference against it, not as a 9th feature merged into
 it. It will be built while completing the full live panel of higher-ed
-institutions (15 scored so far, with 35 more planned, for 50 total).
+institutions (16 scored so far, with 34 more planned, for 50 total).
 That live panel is distinct from the 54-institution validated backtest
 panel used for the classifier's own leave-one-out accuracy. This work is
 a newly-identified project that turns Tell into something truly unique:
