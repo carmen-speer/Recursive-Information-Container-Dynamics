@@ -1,4 +1,6 @@
-# Built to measure feedback divergence (an institution's official metrics versus its operational reality), Tell tracks institutional distress -- financial distress, upheaval, recovery, and the anchoring metrics which determine distress risk vs. collapse risk -- in higher ed institutions.
+# Tell
+
+Built to measure feedback divergence (an institution's official metrics versus its operational reality), Tell tracks institutional distress -- financial distress, upheaval, recovery, and the anchoring metrics which determine distress risk vs. collapse risk -- in higher ed institutions.
 
 **Why "Tell":** in poker, a tell is an involuntary sign -- a hesitation, a
 shift in posture, a change in breathing -- that reveals what a player is
